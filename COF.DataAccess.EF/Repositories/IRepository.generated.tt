@@ -1,0 +1,1315 @@
+﻿<#@ template hostspecific="true" language="C#" debug="true"#>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE"#>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="EnvDTE"#>
+<#
+	//var input = System.IO.File.ReadAllText(Host.ResolvePath(@"..\COF.DataAccess.EF\EFContext.cs"));
+	// Use the input itself - e.g. when reading an xml file to parse with xml parser
+    //this.WriteLine(input);
+
+	// Or use a FileCodeModel if the Input is a C# or VB File
+
+	var coding = false;
+	string dbContextProject = "COF.DataAccess.EF";
+	string dbContextClass = "EFContext";
+	string dbContextNamespace = "COF.DataAccess.EF";
+	string entityNamespace = "COF.DataAccess.EF.Models";
+	string nameSpace =  "COF.DataAccess.EF.Repositories";
+	// string nameSpace = TemplateHelper.GetCustomToolNamespace(this.Host);
+	EnvDTE.ProjectItem dbContext  = null;
+	List<ClassDefininition> classDefinitions = null;
+
+	if(!coding)
+    {
+		try
+		{
+			var contextProject = TemplateHelper.GetProject(dbContextProject, this.Host);
+			dbContext = TemplateHelper.GetProjectItem(contextProject, dbContextClass + ".cs", this.Host);
+			var classNames = DbContextAnalyser.GetDbSetEntities(dbContext);
+			var codeClasses = TemplateHelper.GetProjectClasses(contextProject, classNames, entityNamespace);
+			classDefinitions = ClassAnalyser.GetClassProperties(codeClasses);
+		}
+		catch(Exception ex)
+		{
+			this.WriteLine("// File Access Error: " + ex.Message);
+		}
+    }
+
+	if(dbContext != null && classDefinitions != null)
+	{
+		try 
+		{
+			//var entities = DbContextAnalyser.GetDbSetEntities(dbContext);
+			var templateProject = TemplateHelper.GetTemplateProject(this.Host);
+
+			ClassStartTemplate start = new ClassStartTemplate(nameSpace, entityNamespace);
+			Write(start.TransformText());
+
+			//IRepositoryTemplate iRepository = new IRepositoryTemplate(nameSpace);
+			//Write(iRepository.TransformText());
+
+			//ExceptionTemplate exceptions = new ExceptionTemplate(nameSpace);
+			//Write(exceptions.TransformText());
+			//TemplateHelper.SaveTemplateOutputToTemplate(exceptions, this.Host, true);
+			
+			//IContextTemplate iContext = new IContextTemplate(nameSpace);
+			//TemplateHelper.SaveTemplateOutputToTemplate(iContext, this.Host, true);
+
+			//IUnitOfWorkTemplate iUnitOfwork = new IUnitOfWorkTemplate(nameSpace);
+			//Write(iUnitOfwork.TransformText());
+			//TemplateHelper.SaveTemplateOutputToTemplate(iUnitOfwork, this.Host, true);
+
+			DbContextUnitOfWorkTemplate dbContextUnitOfWork = new DbContextUnitOfWorkTemplate(dbContextClass, dbContextNamespace, nameSpace);
+			//Write(dbContextUnitOfWork.TransformText());
+			//TemplateHelper.SaveTemplateOutputToTemplate(dbContextUnitOfWork, this.Host, true);
+
+			DbContextRepositoryTemplate dbContextRepository = new DbContextRepositoryTemplate(nameSpace);
+			//Write(dbContextRepository.TransformText());
+			//TemplateHelper.SaveTemplateOutputToTemplate(dbContextRepository, this.Host, true);
+
+			//RepositoryIQueryableExtensionsTemplate extensions = new RepositoryIQueryableExtensionsTemplate(nameSpace);
+			//TemplateHelper.SaveTemplateOutputToTemplate(extensions, this.Host, true);
+
+			RepositoryHelperTemplate repositoryHelper = new RepositoryHelperTemplate(classDefinitions, nameSpace, entityNamespace);
+			//Write(repositoryHelper.TransformText());
+			//TemplateHelper.SaveTemplateOutputToTemplate(repositoryHelper, this.Host, true);
+
+			foreach (var entity in classDefinitions)
+			{
+				EntityRepositoryTemplate entityRepository = new EntityRepositoryTemplate(entity, nameSpace, entityNamespace);
+				Write(entityRepository.TransformText());
+				//TemplateHelper.SaveTemplateOutputToTemplate(entityRepository, this.Host, true);
+			}
+
+			ClassEndTemplate end = new ClassEndTemplate();
+			Write(end.TransformText());
+		}
+		catch(Exception ex)
+		{
+			this.WriteLine("// File Writing Error: " + ex.Message);
+		}
+	}
+	else
+	{
+		this.WriteLine("// Could not find the Db Context file");
+	}
+#>
+
+<#+
+
+public class BaseTemplate :  TextTransformation
+{
+    public string FileName { get; set; }
+    public string NameSpace { get; set; }
+
+    public BaseTemplate (string fileName, string nameSpace)
+    {
+		FileName = fileName;
+		NameSpace = nameSpace;
+    }
+
+    public override string TransformText()
+    {
+		return this.GenerationEnvironment.ToString();
+	}
+}
+
+public class ClassStartTemplate : TextTransformation
+{   
+    public string NameSpace { get; set; }
+    public string EntitiesNamespace { get; set; }
+
+    public ClassStartTemplate (string nameSpace, string entitiesNamespace)
+    {
+		NameSpace = nameSpace;
+		EntitiesNamespace = entitiesNamespace;
+    }
+
+    public override string TransformText()
+    {
+#>
+// <auto-generated />
+// ReSharper disable ConvertPropertyToExpressionBody
+// ReSharper disable DoNotCallOverridableMethodsInConstructor
+// ReSharper disable InconsistentNaming
+// ReSharper disable PartialMethodWithSinglePart
+// ReSharper disable PartialTypeWithSinglePart
+// ReSharper disable RedundantNameQualifier
+// ReSharper disable RedundantOverridenMember
+// ReSharper disable UseNameofExpression
+
+namespace <#= NameSpace #>
+{
+	using COF.DataAccess.EF.Infrastructure;
+<#+ if (!String.IsNullOrEmpty(EntitiesNamespace))
+	{#>
+	using Models = <#= EntitiesNamespace #>;
+<#+	}
+	else
+	{#>
+	using Models = <#= NameSpace #>;
+<#+	}#>
+
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class ClassEndTemplate : TextTransformation
+{   
+    public ClassEndTemplate ()
+    {
+    }
+
+    public override string TransformText()
+    {
+#>
+}
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class IUnitOfWorkTemplate : BaseTemplate
+{   
+	public IUnitOfWorkTemplate(string nameSpace)
+		: base("IUnitOfWork.generated.cs", nameSpace)
+    {
+    }
+
+    public override string TransformText()
+    {
+#>
+
+	public interface IUnitOfWork : IDisposable
+	{
+		DbContext Context { get; set; }
+		string ConnectionString { get; set; }
+		ICollection<ValidationResult> SaveChanges();
+		Task<ICollection<ValidationResult>> SaveChangesAsync();
+        IDbContextTransactionProxy BeginTransaction();
+	}
+    
+    public interface IDbContextTransactionProxy : IDisposable
+    {
+        void Commit();
+        void Rollback();
+    }
+
+    /// <summary>
+    /// This is proxy. We want accessing control of DbContextTransaction class. 
+    /// Because we can't write unit test for BeginTransaction.
+    /// DbContextTransaction does not have public constructors.
+    /// </summary>
+    public class DbContextTransactionProxy : IDbContextTransactionProxy
+    {
+        /// <summary>
+        /// Real Class which we want to control.
+        /// We can't mock it's because it does not have public constructors.
+        /// </summary>
+        private readonly DbContextTransaction _transaction;
+
+        public DbContextTransactionProxy(DbContext context)
+        {
+            _transaction = context.Database.BeginTransaction();
+        }
+
+        public void Commit()
+        {
+            _transaction.Commit();
+        }
+
+        public void Rollback()
+        {
+            _transaction.Rollback();
+        }
+
+        public void Dispose()
+        {
+            _transaction.Dispose();
+        }
+    }
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class IRepositoryTemplate : TextTransformation
+{   
+    public string NameSpace { get; set; }
+
+    public IRepositoryTemplate (string nameSpace)
+    {
+		NameSpace = nameSpace;
+    }
+
+    public override string TransformText()
+    {
+#>
+
+    public interface IRepository
+    {
+        IUnitOfWork UnitOfWork { get; set; }
+    }
+
+    public interface IRepository<TEntity> : IRepository where TEntity : class, Models.IDatabaseModel
+	{
+		IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null);
+		Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null);
+		IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null);
+		Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null);
+		TEntity GetOne(Expression<Func<TEntity, bool>> filter = null, string includeProperties = "");
+        Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null);
+		TEntity GetFirst(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "");
+		Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null);
+		TEntity GetById(object id);
+		Task<TEntity> GetByIdAsync(object id);
+		int GetCount(Expression<Func<TEntity, bool>> filter = null);
+		Task<int> GetCountAsync(Expression<Func<TEntity, bool>> filter = null);
+		bool GetExists(Expression<Func<TEntity, bool>> filter = null);
+		Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>> filter = null);
+
+        void Create(TEntity entity, string createdBy = null);
+		void Delete(object id, string modifiedBy = null);
+        void Delete(TEntity entity, string modifiedBy = null);
+        void Delete(Expression<Func<TEntity, bool>> filter, string modifiedBy = null);
+        void Update(TEntity entity, string modifiedBy = null);
+		void Update(TEntity entity, string[] fieldsToUpdate, string modifiedBy = null);
+	}
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class ExceptionTemplate : BaseTemplate
+{   
+	public ExceptionTemplate(string nameSpace)
+		: base("Exceptions.generated.cs", nameSpace)
+    {
+    }
+
+    public override string TransformText()
+    {
+#>
+
+    [System.Serializable]
+    public class ConcurrencyException : System.Exception
+    {
+        /// <summary>
+        /// The current entity data
+        /// </summary>
+        public object DatabaseData { get; set; }
+
+        public ConcurrencyException() { }
+        public ConcurrencyException(string message) : base(message) { }
+        public ConcurrencyException(string message, System.Exception inner) : base(message, inner) { }
+        public ConcurrencyException(string message, object databaseData) : base(message)
+        {
+            DatabaseData = databaseData ?? throw new ArgumentNullException("databaseData");
+        }
+        public ConcurrencyException(string message, object databaseData, System.Exception inner) : base(message, inner)
+        {
+            DatabaseData = databaseData ?? throw new ArgumentNullException("databaseData");
+        }
+        protected ConcurrencyException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+	
+    [System.Serializable]
+    public class DataException : System.Exception
+    {
+        public DataException() { }
+        public DataException(string message) : base(message) { }
+        public DataException(string message, System.Exception inner) : base(message, inner) { }
+        protected DataException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class RepositoryHelperTemplate : BaseTemplate
+{   
+    public IList<ClassDefininition> Entities { get; set; }
+    public string EntitiesNamespace { get; set; }
+	public RepositoryHelperTemplate(List<ClassDefininition> entities, string nameSpace, string entitiesNamespace)
+		: base("RepositoryHelper.generated.cs", nameSpace)
+    {
+		Entities = entities;
+		EntitiesNamespace = entitiesNamespace;
+    }
+
+    public override string TransformText()
+    {
+#>
+
+	public partial interface IRepositoryHelper
+	{
+		IDatabaseConnectionSettings ConnectionSettings { get; set; }
+        IUnitOfWork GetUnitOfWork();        
+        IUnitOfWork GetUnitOfWork(string connectionString = null);
+        TRepository GetRepository<TRepository>(IUnitOfWork unitOfWork)
+            where TRepository : class;
+	}
+
+	public partial class RepositoryHelper : IRepositoryHelper
+	{
+		public IDatabaseConnectionSettings ConnectionSettings { get; set; }
+		public RepositoryHelper(IDatabaseConnectionSettings connectionSettings)
+		{
+            ConnectionSettings = connectionSettings ?? throw new ArgumentException(nameof(connectionSettings));
+		}
+
+        public IUnitOfWork GetUnitOfWork()
+        {
+            var unitOfWork = new DbContextUnitOfWork(ConnectionSettings.ConnectionString);
+            return unitOfWork;
+        }
+
+        public IUnitOfWork GetUnitOfWork(string connectionString = null)
+        {
+            var unitOfWork = new DbContextUnitOfWork(connectionString);
+            return unitOfWork;
+        }		
+		
+        public TRepository GetRepository<TRepository>(IUnitOfWork unitOfWork)
+            where TRepository : class
+
+        {		
+<#+
+		foreach (var entity in Entities)
+        {
+#>
+            if (typeof(TRepository) == typeof(I<#= entity.Name #>Repository))
+            {
+				dynamic repo = new <#= entity.Name #>Repository();
+                repo.UnitOfWork = unitOfWork;
+                return (TRepository)repo;
+            }
+<#+
+        }
+#>
+			TRepository repository = null;
+            TryGetRepositoryPartial<TRepository>(unitOfWork, ref repository);
+			return repository;
+        }
+
+        partial void TryGetRepositoryPartial<TRepository>(IUnitOfWork unitOfWork, ref TRepository repository)
+            where TRepository : class;
+	}
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class DbContextRepositoryTemplate : BaseTemplate
+{   
+	public DbContextRepositoryTemplate(string nameSpace)
+		: base("DbContextRepository.generated.cs", nameSpace)
+    {
+    }
+
+    public override string TransformText()
+    {
+#>
+
+    public class ParameterDefinition
+    {
+        public ParameterDefinition(string name, object value, DbType? dbType = null, ParameterDirection? direction = null)
+        {
+            Name = name;
+            DatabaseType = dbType;
+            Direction = direction ?? ParameterDirection.Input;
+            Value = value;
+        }
+
+        public string Name { get; set; }
+        public DbType? DatabaseType { get; set; }
+        public ParameterDirection Direction { get; set; }
+        public object Value { get; set; }
+    }
+
+    public abstract class DbContextRepository : IRepository
+    {
+        public IUnitOfWork UnitOfWork { get; set; }
+		
+        protected virtual async Task<Tuple<IEnumerable<TEntity>, int>> QueryStoredProcedureAsync<TEntity>(string storedProcedureName, IEnumerable<ParameterDefinition> parameterDefinitions) where TEntity : class
+        {
+            var returnParamName = "spReturn";
+            var sqlParameters = new List<SqlParameter>();
+            var sb = new StringBuilder($"EXEC @{returnParamName} = {storedProcedureName}");
+            var seperator = new char[] { ' ', ',' };
+            bool useComma = false;
+            foreach (var paramDef in parameterDefinitions)
+            {
+                var sqlParam = new SqlParameter
+                {
+                    ParameterName = paramDef.Name,
+                    Value = paramDef.Value,
+                    Direction = paramDef.Direction
+                };
+                if (paramDef.DatabaseType.HasValue) sqlParam.DbType = paramDef.DatabaseType.Value;
+
+                sb.Append($"{(useComma ? seperator[1] : seperator[0])}@{paramDef.Name}{(paramDef.Direction == System.Data.ParameterDirection.Output ? " OUT" : "")}");
+                sqlParameters.Add(sqlParam);
+                useComma = true;
+            }
+            var returnParam = new SqlParameter
+            {
+                ParameterName = returnParamName,
+                DbType = DbType.Int32,
+                Direction = System.Data.ParameterDirection.Output
+            };
+            sqlParameters.Add(returnParam);
+			
+            var results = await UnitOfWork.Context.Database.SqlQuery<TEntity>(sb.ToString(), sqlParameters.ToArray()).ToListAsync();
+
+            return new Tuple<IEnumerable<TEntity>, int>(results, (int)returnParam.Value);
+        }
+    }
+
+    public abstract class DbContextRepository<TEntity> : DbContextRepository, IRepository<TEntity> where TEntity : class, Models.IDatabaseModel
+    {
+        private DbSet<TEntity> _dbset;
+        protected DbSet<TEntity> DbSet
+        {
+            get
+            {
+                if (_dbset == null)
+                {
+                    _dbset = UnitOfWork.Context.Set<TEntity>();
+                }
+                return _dbset;
+            }
+        }
+
+		protected virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null)
+		{
+			includeProperties = includeProperties ?? string.Empty;
+			IQueryable<TEntity> query = DbSet;
+
+			if (filter != null)
+			{
+				query = query.Where(filter);
+			}
+			
+			foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				query = query.Include(includeProperty);
+			}
+
+			if (orderBy != null)
+			{
+				query = orderBy(query);
+			}
+
+			if (skip.HasValue)
+			{
+				query = query.Skip(skip.Value);
+			}
+
+			if (take.HasValue)
+			{
+				query = query.Take(take.Value);
+			}
+
+			return query;
+		}
+
+		public virtual IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null)
+		{
+			return GetQueryable(null, orderBy, includeProperties, skip, take).ToList();
+		}
+
+		public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null)
+		{
+			return await GetQueryable(null, orderBy, includeProperties, skip, take).ToListAsync();
+		}
+
+		public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null)
+		{
+			return GetQueryable(filter, orderBy, includeProperties, skip, take).ToList();
+		}
+
+		public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null)
+		{
+			return await GetQueryable(filter, orderBy, includeProperties, skip, take).ToListAsync();
+		}
+
+		public virtual TEntity GetOne(Expression<Func<TEntity, bool>> filter = null, string includeProperties = "")
+		{
+			return GetQueryable(filter, null, includeProperties).SingleOrDefault();
+		}
+
+		public virtual async Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null)
+		{
+			return await GetQueryable(filter, null, includeProperties).SingleOrDefaultAsync();
+		}
+
+		public virtual TEntity GetFirst(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
+		{
+			return GetQueryable(filter, orderBy, includeProperties).FirstOrDefault();
+		}
+
+		public virtual async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null)
+		{
+			return await GetQueryable(filter, orderBy, includeProperties).FirstOrDefaultAsync();
+		}
+
+		public virtual TEntity GetById(object id)
+		{
+			return DbSet.Find(id);
+		}
+
+		public virtual Task<TEntity> GetByIdAsync(object id)
+		{
+			return DbSet.FindAsync(id);
+		}
+
+		public virtual int GetCount(Expression<Func<TEntity, bool>> filter = null)
+		{
+			return GetQueryable(filter).Count();
+		}
+
+		public virtual Task<int> GetCountAsync(Expression<Func<TEntity, bool>> filter = null)
+		{
+			return GetQueryable(filter).CountAsync();
+		}
+
+		public virtual bool GetExists(Expression<Func<TEntity, bool>> filter = null)
+		{
+			return GetQueryable(filter).Any();
+		}
+
+		public virtual Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>> filter = null)
+		{
+			return GetQueryable(filter).AnyAsync();
+		}
+
+        public void Create(TEntity entity, string createdBy = null)
+        {
+            entity.UpdatedDate = DateTime.UtcNow.AddHours(7);
+            entity.UpdatedBy = createdBy;
+            entity.CreatedDate = DateTime.UtcNow.AddHours(7);
+			entity.CreatedBy = createdBy;
+			DbSet.Add(entity);
+        }
+
+		public virtual void Delete(object id, string modifiedBy = null)
+		{
+			var entity = DbSet.Find(id);
+			Delete(entity, modifiedBy);
+		}
+
+        public virtual void Delete(TEntity entity, string modifiedBy = null)
+        {
+            if (UnitOfWork.Context.Entry(entity).State == EntityState.Detached)
+            {
+                DbSet.Attach(entity);
+            }
+			entity.UpdatedDate = DateTime.UtcNow.AddHours(7);
+			entity.UpdatedBy = modifiedBy;
+            DbSet.Remove(entity);
+        }
+
+        public virtual void Delete(Expression<Func<TEntity, bool>> filter, string modifiedBy = null)
+        {
+            var objects = GetQueryable(filter);
+            foreach (var obj in objects)
+			{
+                Delete(obj, modifiedBy);
+			}
+		}
+
+        public virtual void Update(TEntity entity, string modifiedBy = null)
+        {
+			entity.UpdatedDate = DateTime.UtcNow.AddHours(7);
+			entity.UpdatedBy = modifiedBy;
+            if (UnitOfWork.Context.Entry(entity).State == EntityState.Detached)
+            {
+                this.DbSet.Attach(entity);
+            }
+			UnitOfWork.Context.Entry(entity).State = EntityState.Modified;
+        }
+		
+        public virtual void Update(TEntity entity, string[] fieldsToUpdate, string modifiedBy = null)
+        {
+            entity.UpdatedDate = DateTime.UtcNow.AddHours(7);
+            entity.UpdatedBy = modifiedBy;
+			
+            this.DbSet.Attach(entity);
+            var dbEntityEntry = UnitOfWork.Context.Entry(entity);
+            var dbProperties = dbEntityEntry.GetDatabaseValues();
+            foreach (var property in dbEntityEntry.OriginalValues.PropertyNames.Where(p => !p.Equals("RecordVersion", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                var original = dbProperties.GetValue<object>(property);
+                var current = dbEntityEntry.CurrentValues.GetValue<object>(property);
+                 if (fieldsToUpdate.Contains(property) && (original == null && current != null || original != null && current == null || original != null && current != null) && ((original != null && !original.Equals(current)) || (current != null && !current.Equals(original)) ))
+                {
+                    dbEntityEntry.Property(property).IsModified = true;
+                }
+                else
+                {
+                    dbEntityEntry.Property(property).OriginalValue = dbEntityEntry.Property(property).CurrentValue = original;
+                    dbEntityEntry.Property(property).IsModified = false;
+                }
+            }
+        }
+    }
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class EntityRepositoryTemplate : BaseTemplate
+{   
+    public ClassDefininition Definition { get; set; }
+    public PropertyDefininition KeyProperty { get; set; }
+    public PropertyDefininition AltKeyProperty { get; set; }
+    public string EntitiesNamespace { get; set; }
+	public EntityRepositoryTemplate(ClassDefininition definition, string nameSpace, string entitiesNamespace)
+		: base (string.Format("{0}Repository.generated.cs", definition.Name), nameSpace)
+    {
+		Definition = definition;
+		EntitiesNamespace = entitiesNamespace;
+		KeyProperty = definition.Properties.FirstOrDefault(p=>p.IsPrimaryKey);
+		AltKeyProperty = definition.Properties.FirstOrDefault(p=>p.IsAlternatePrimaryKey);
+    }
+
+    public override string TransformText()
+    {
+#>
+	
+	public partial interface I<#= Definition.Name #>Repository : IRepository<Models.<#= Definition.Name #>> {}
+	
+	public partial class <#= Definition.Name #>Repository : EFRepository<Models.<#= Definition.Name #>>, I<#= Definition.Name #>Repository { public <#= Definition.Name #>Repository(EFContext context) : base(context){} }
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public class DbContextUnitOfWorkTemplate : BaseTemplate
+{   
+    public string DbContextName { get; set; }
+    public string ContextNamespace { get; set; }
+	public DbContextUnitOfWorkTemplate(string dbContextName, string contextNamespace, string nameSpace)
+		: base("DbContextUnitOfWork.generated.cs", nameSpace)
+    {
+		DbContextName = dbContextName;
+		ContextNamespace = contextNamespace;
+    }
+
+    public override string TransformText()
+    {
+#>
+
+    public class DbContextUnitOfWork : IUnitOfWork
+	{
+        
+		public DbContext Context { get; set; }
+
+		public string ConnectionString
+		{
+			get { return Context.Database.Connection.ConnectionString; }
+			set { Context.Database.Connection.ConnectionString = value; }
+		}
+		
+		public bool LazyLoadingEnabled { get; set; }
+
+        public bool ProxyCreationEnabled { get; set; }
+
+        public DbContextUnitOfWork(IDatabaseConnectionSettings settings)
+        {
+            Context = new <#= DbContextName #>(settings.ConnectionString);
+        }
+
+		public DbContextUnitOfWork(string connectionString = null)
+		{
+            
+            if (String.IsNullOrWhiteSpace(connectionString))
+                Context = new <#= DbContextName #>();
+            else
+    			Context = new <#= DbContextName #>(connectionString);
+		}
+
+		public ICollection<ValidationResult> SaveChanges()
+		{
+            var validationResults = new List<ValidationResult>();
+            try
+            {
+                
+                Context.SaveChanges();
+            }
+            catch (DbEntityValidationException dbe)
+            {
+                foreach (DbEntityValidationResult validation in dbe.EntityValidationErrors)
+                {
+                    ICollection<ValidationResult> validations = validation.ValidationErrors.Select(
+                        error => new ValidationResult(
+                                     error.ErrorMessage,
+                                     new[]
+                                         {
+                                             error.PropertyName
+                                         })).ToList();
+
+                    validationResults.AddRange(validations);
+
+                    return validationResults;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new ConcurrencyException("The records you attempted to edit or delete"
+                                               + " were modified by another user after you got the original value. The"
+                                               + " operation was canceled.", ex);
+            }
+            catch (DataException ex)
+            {
+                throw new DataException("Unable to save changes.", ex);
+            }
+            return validationResults;
+		}
+
+		public async Task<ICollection<ValidationResult>> SaveChangesAsync()
+		{
+            var validationResults = new List<ValidationResult>();
+            try
+            {
+                
+                await Context.SaveChangesAsync();
+            }
+            catch (DbEntityValidationException dbe)
+            {
+                foreach (DbEntityValidationResult validation in dbe.EntityValidationErrors)
+                {
+                    ICollection<ValidationResult> validations = validation.ValidationErrors.Select(
+                        error => new ValidationResult(
+                                     error.ErrorMessage,
+                                     new[]
+                                         {
+                                             error.PropertyName
+                                         })).ToList();
+
+                    validationResults.AddRange(validations);
+
+                    return validationResults;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var databaseValues = ex.Entries.Select(e=>e.GetDatabaseValues()).ToList();
+                throw new ConcurrencyException("The records you attempted to edit or delete"
+                                               + " were modified by another user after you got the original value. The"
+                                               + " operation was canceled.", databaseValues, ex);
+            }
+            catch (Exception ex)
+            {
+                throw new DataException("Unable to save changes.", ex);
+            }
+            return validationResults;
+		}
+		
+        /// <summary>
+        /// When we call begin transaction. Our proxy creates new Database.BeginTransaction and gives DbContextTransaction's control to proxy.
+        /// We do this for unit test.
+        /// </summary>
+        /// <returns>Proxy which controls DbContextTransaction(Ef transaction class)</returns>
+        public IDbContextTransactionProxy BeginTransaction()
+        {
+            return new DbContextTransactionProxy(this.Context);
+        }
+
+        public void Dispose()
+        {
+            if (Context.Database.Connection.State == ConnectionState.Open)
+            {
+                Context.Database.Connection.Close();
+            }
+            Context.Dispose();
+            GC.WaitForPendingFinalizers();
+        }
+
+        
+
+        private IEnumerable<DbEntityEntry> GetCreatedEntries()
+        {
+            var createdEntries = Context.ChangeTracker.Entries().Where(V =>
+                         EntityState.Added.HasFlag(V.State)
+                    );
+            return createdEntries;
+        }
+	}
+<#+
+        return this.GenerationEnvironment.ToString();
+    }
+}
+
+public static class DbContextAnalyser
+{
+	public static List<string> GetDbSetEntities(ProjectItem item)
+    {
+		return GetNamespaceClassProperties(item);
+    }
+
+	static List<string> GetNamespaceClassProperties(ProjectItem item)
+	{
+		if(item != null)
+		{
+			var fileCodeModel = item.FileCodeModel;
+			foreach (CodeElement element in fileCodeModel.CodeElements)
+			{
+				if (element.Kind == vsCMElement.vsCMElementNamespace)
+				{
+					foreach (CodeElement elem in ((CodeNamespace)element).Members)
+					{
+						if (elem.Kind == vsCMElement.vsCMElementClass)
+						{
+							//this.WriteLine("// " + ((EnvDTE.CodeClass)elem).Name);
+							return GetClassProperties((EnvDTE.CodeClass)elem);
+						}
+					}
+				}
+			}
+		}
+		return new List<string>();
+	}
+
+	static List<string> GetClassProperties(CodeClass element)
+	{
+		var props = new List<string>();
+		var properties = element.Members.Cast<CodeElement>().Where(member => member.Kind == vsCMElement.vsCMElementProperty && ((CodeProperty)member).Getter != null && ((CodeProperty)member).Access == vsCMAccess.vsCMAccessPublic && IsDbSet(((CodeProperty)member).Type.CodeType)).ToList();
+		
+		foreach (CodeElement prop in properties)
+		{
+			//this.WriteLine("// " + ((CodeProperty)prop).Name + " [" + GetFullName(((CodeProperty)prop).Type) + "]");
+			//this.WriteLine("// " + GetGenericType(((EnvDTE.CodeProperty)prop).Type.CodeType));
+			props.Add(GetGenericType(((EnvDTE.CodeProperty)prop).Type.CodeType));
+		}
+		return props.Distinct().OrderBy(x=>x).ToList();
+	}
+		
+	static string GetFullName(CodeTypeRef codeType)
+	{
+		string fullName;
+
+		if (codeType.TypeKind == vsCMTypeRef.vsCMTypeRefArray)
+		{
+			CodeTypeRef arrayType = codeType.ElementType;
+			fullName = arrayType.AsFullName + "[]";
+		}
+		else
+		{
+			fullName = codeType.AsFullName;
+		}
+		return fullName;
+	} 
+	
+	static string GetFullName(CodeType codeType)
+	{
+		string fullName;
+
+		fullName = codeType.FullName;
+
+		return fullName;
+	}
+	
+	static bool IsDbSet(CodeType codeType)
+	{
+		return codeType.FullName.Contains("System.Data.Entity.DbSet");
+	}
+	
+	static string GetGenericType(CodeType codeType)
+	{
+		string fullName = null;
+
+		fullName = codeType.FullName;
+		var split = fullName.Split(new char[] { '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
+		if(split.Length == 2)
+		{
+			fullName = split[1].Substring(split[1].LastIndexOf('.') + 1);
+		}
+
+		return fullName;
+	}
+}
+
+public class PropertyDefininition
+{
+	public string Name { get; set; }
+	public string Type { get; set; }
+	public bool IsPrimaryKey { get; set; }
+	public bool IsAlternatePrimaryKey { get; set; }
+	public bool IsConcurrencyCheck { get; set; }
+}
+
+public class ClassDefininition
+{
+    public ClassDefininition()
+    {
+		Properties = new List<PropertyDefininition>();
+    }
+
+	public string Name { get; set; }
+	public string FullName { get; set; }
+	public bool HasPartyReference { get; set; }
+
+	public List<PropertyDefininition> Properties { get; set; }
+
+}
+
+public static class ClassAnalyser
+{
+	static Dictionary<string,string> TypeFriendlyNameDictionary = new Dictionary<string,string>
+	{
+		{"Object", "object"},
+		{"String", "string"},
+		{"Boolean", "bool"},
+		{"Byte", "byte"},
+		{"Char", "char"},
+		{"Decimal", "decimal"},
+		{"Double", "double"},
+		{"Int16", "short"},
+		{"Int32", "int"},
+		{"Int64", "long"},
+		{"SByte", "sbyte"},
+		{"Single", "float"},
+		{"UInt16", "ushort"},
+		{"UInt32" ,"uint"},
+		{"UInt64", "ulong"}
+	};
+
+	public static List<ClassDefininition> GetClassProperties(List<EnvDTE.CodeClass> classes)
+    {
+		var classDefinitions = new List<ClassDefininition>();
+        foreach (var cls in classes)
+        {
+			var clasTyped = (EnvDTE.CodeClass)cls;
+			var classDef = new ClassDefininition { Name = clasTyped.Name, FullName = clasTyped.FullName };
+			classDef.Properties = GetClassProperties(clasTyped);
+			classDef.HasPartyReference = classDef.Properties.Any(p=>string.Equals(p.Name, "PartyId", StringComparison.OrdinalIgnoreCase));
+			classDefinitions.Add(classDef);
+        }
+		return classDefinitions;
+    }
+
+	static List<PropertyDefininition> GetClassProperties(EnvDTE.CodeClass element)
+	{
+		var props = new List<PropertyDefininition>();
+		var properties = element.Members.Cast<CodeElement>().Where(member => member.Kind == vsCMElement.vsCMElementProperty && ((CodeProperty)member).Getter != null && ((CodeProperty)member).Access == vsCMAccess.vsCMAccessPublic).ToList();
+		
+		foreach (CodeElement item in properties)
+		{
+			var typedProp = (EnvDTE.CodeProperty)item;
+			var propDef = new PropertyDefininition
+			{ 
+				Name = typedProp.Name,
+				Type = ((CodeTypeRef)typedProp.Type).CodeType.Name,
+            };
+
+			if(TypeFriendlyNameDictionary.ContainsKey(propDef.Type))
+            {
+				propDef.Type = TypeFriendlyNameDictionary[propDef.Type];
+            }
+
+			var attributes = typedProp.Attributes;
+
+            foreach (var atr in attributes)
+            {
+				var typedAtr = (EnvDTE.CodeAttribute)atr;
+				var name = typedAtr.Name;
+				if(string.Equals(name, "Key", StringComparison.OrdinalIgnoreCase))
+					propDef.IsPrimaryKey = true;
+				if(string.Equals(name, "AlternateKey", StringComparison.OrdinalIgnoreCase))
+					propDef.IsAlternatePrimaryKey = true;
+				if(string.Equals(name, "ConcurrencyCheck", StringComparison.OrdinalIgnoreCase))
+					propDef.IsConcurrencyCheck = true;
+            }
+			props.Add(propDef);
+		}
+		return props;
+	}
+}
+
+public static class TemplateHelper
+{
+	public static List<EnvDTE.CodeClass> GetProjectClasses(EnvDTE.Project project, List<string> classNameFilter, string searchNamespace)
+    {
+		var result = new List<EnvDTE.CodeClass>();
+		FindClasses(project.CodeModel.CodeElements, searchNamespace, classNameFilter, result, false);
+		return result;
+    }
+
+	static void FindClasses(EnvDTE.CodeElements elements, string searchNamespace, List<string> classNameFilter, List<EnvDTE.CodeClass> result, bool isNamespaceOk)
+	{
+		if (elements==null)return;
+		foreach (CodeElement element in elements)
+		{       
+			if(element is CodeNamespace)
+			{
+				CodeNamespace ns = element as CodeNamespace;
+				if(ns != null)
+				{
+					if (ns.FullName == searchNamespace)
+						FindClasses(ns.Members, searchNamespace, classNameFilter, result, true);
+					else
+						FindClasses(ns.Members, searchNamespace, classNameFilter, result, false);
+				}
+			}
+			else if(element is CodeClass && isNamespaceOk)
+			{
+				CodeClass c = element as CodeClass;
+				if (c != null && classNameFilter.Any(f=>string.Equals(f, c.Name,StringComparison.InvariantCultureIgnoreCase)))
+				{
+					result.Add(c);
+
+					FindClasses(c.Members, searchNamespace, classNameFilter, result, true);
+				}
+
+			}
+		}
+	}
+
+	public static void DeleteOldOutputs(ITextTemplatingEngineHost host)
+	{
+		ProjectItem templateProjectItem = GetTemplateProjectItem(host);
+		foreach (ProjectItem childProjectItem in templateProjectItem.ProjectItems)
+		{
+			//if (!__savedOutputs.Contains(childProjectItem.Name))
+			childProjectItem.Delete();
+		}
+	}  
+
+	public static void SaveTemplateOutputToTemplate(BaseTemplate template, ITextTemplatingEngineHost parentHost, bool overwriteExisting)
+	{
+		string templateDirectory = Path.GetDirectoryName(parentHost.TemplateFile);
+		string outputFilePath = Path.Combine(templateDirectory, template.FileName); 
+		ProjectItem templateProjectItem = GetTemplateProjectItem(parentHost); 
+
+		ProjectItem existingItem  = null;
+		try
+        {
+			existingItem = templateProjectItem.ProjectItems.Item(template.FileName);
+        }
+		catch{}
+
+		if(existingItem != null)
+        {
+			if(!overwriteExisting)
+			{
+				return;
+			}
+			existingItem.Delete();
+        }
+
+		File.WriteAllText(outputFilePath, template.TransformText());
+		templateProjectItem.ProjectItems.AddFromFile(outputFilePath);
+	}
+
+	public static void SaveTemplateOutputToProject(BaseTemplate template, Project project, bool overwriteExisting)
+	{
+		string projectDirectory = Path.GetDirectoryName(project.FileName);
+		string outputFilePath = Path.Combine(projectDirectory, template.FileName);
+		
+		ProjectItem existingItem  = null;
+		try
+        {
+			existingItem = project.ProjectItems.Item(template.FileName);
+        }
+		catch{}
+
+		if(existingItem != null)
+        {
+			if(!overwriteExisting)
+			{
+				return;
+			}
+			existingItem.Delete();
+        }
+
+		System.IO.File.WriteAllText(outputFilePath, template.TransformText());
+		project.ProjectItems.AddFromFile(outputFilePath);
+	}
+
+    public static void WriteTemplateOutputToFile(string relativeOutputFilePath, ITextTemplatingEngineHost parentHost, StringBuilder GenerationEnvironment)
+    {
+        string outputPath = System.IO.Path.GetDirectoryName(parentHost.TemplateFile);
+        string outputFilePath = Path.Combine(outputPath, relativeOutputFilePath);
+        System.IO.File.WriteAllText(outputFilePath, GenerationEnvironment.ToString());
+    }
+
+    public static String GetCustomToolNamespace(ITextTemplatingEngineHost host)
+	{
+        return GetTemplateProjectItem(host).Properties.Item("CustomToolNamespace").Value.ToString();
+    }
+		
+	/// <Summary> Get the Visual Studio ProjectItem of the Input file path </Summary>
+	public static ProjectItem GetProjectItem(string path, ITextTemplatingEngineHost host)
+	{
+		//this.WriteLine("//Item Path: " + path);
+		var dte = GetDTEObject(host);
+		//this.WriteLine("//Sol Name: " + dte.Solution.FullName);
+		var myProjectItem =  dte.Solution.FindProjectItem(path);	
+		//this.WriteLine("//Item Name: " + myProjectItem.Name);
+		return  myProjectItem.Collection.Parent as EnvDTE.ProjectItem;
+	}
+		
+	/// <Summary> Get the Visual Studio ProjectItem of the Input project and file</Summary>
+	public static Project GetProject(string projectName, ITextTemplatingEngineHost host)
+	{
+		//this.WriteLine("//projectName: " + projectName);
+		//this.WriteLine("//fileName: " + fileName);
+		var dte = GetDTEObject(host);
+		//Project project = null;
+		var solutionName = dte.Solution.FullName;
+		return FindProject(dte.Solution.Projects, projectName);
+	}
+
+	static Project FindProject(EnvDTE.ProjectItem item, string projectName)
+    {
+        if (item.Object is EnvDTE.Project)
+        {
+            var proj = (EnvDTE.Project)item.Object;
+            if (proj.Kind != EnvDTE.Constants.vsProjectKindSolutionItems)
+            {
+				if(string.Equals(projectName, proj.Name, StringComparison.OrdinalIgnoreCase))
+					return proj;
+            }
+            else
+            {
+                foreach (EnvDTE.ProjectItem innerItem in proj.ProjectItems)
+                {
+                    var project = FindProject(innerItem, projectName);
+					if(project != null)
+						return project;
+                }
+            }
+        }
+        if (item.ProjectItems != null)
+        {
+            foreach (EnvDTE.ProjectItem innerItem in item.ProjectItems)
+            {
+                var project = FindProject(innerItem, projectName);
+				if(project != null)
+					return project;
+            }
+        }
+		return null;
+    }
+
+	static Project FindProject(EnvDTE.Project item, string projectName)
+    {
+        if (item.Kind != EnvDTE.Constants.vsProjectKindSolutionItems)
+        {
+			if(string.Equals(projectName, item.Name, StringComparison.OrdinalIgnoreCase))
+				return item;
+        }
+        else
+        {
+            foreach (EnvDTE.ProjectItem innerItem in item.ProjectItems)
+            {
+                var project = FindProject(innerItem, projectName);
+				if(project != null)
+					return project;
+            }
+        }
+		return null;
+    }
+
+    static EnvDTE.Project FindProject(EnvDTE.Projects item, string projectName)
+    {
+        foreach (EnvDTE.Project innerItem in item)
+        {
+            var project = FindProject(innerItem, projectName);
+			if(project != null)
+				return project;
+        }
+		return null;
+    }
+		
+	/// <Summary> Get the Visual Studio ProjectItem of the Input project and file</Summary>
+	public static ProjectItem GetProjectItem(Project project, string fileName, ITextTemplatingEngineHost host)
+	{
+		ProjectItem item = null;
+		if(project != null)
+		{
+			var items = GetProjectItemsRecursively(project.ProjectItems);
+			foreach(var projItem in items)
+            {
+				var name = projItem.Name;
+				if(fileName.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+					item = projItem;
+					break;
+                }
+            }
+
+			//this.WriteLine("//Project Name: " + project.Name);
+			//ProjectItem item = project.ProjectItems.Item(fileName);
+			//if(item != null)
+			//{
+			//	//this.WriteLine("//File Name: " + item.Name);
+			//	return item;
+			//}
+		}
+		return item;
+	}
+
+	public static List<EnvDTE.ProjectItem> GetProjectItemsRecursively(EnvDTE.ProjectItems items)
+	{
+		var ret = new List<EnvDTE.ProjectItem>();
+		if (items == null) return ret;
+		foreach(EnvDTE.ProjectItem item in items)
+		{
+			ret.Add(item);
+			ret.AddRange(GetProjectItemsRecursively(item.ProjectItems));
+		}
+		return ret;
+	}
+
+	/// <Summary> Get the FilePath of the Input file for this dependent T4 file </Summary>
+	static string GetTemplateFilePath(ITextTemplatingEngineHost host)
+	{
+		return GetTemplateProjectItem(host).Properties.Item("FullPath").Value.ToString();
+	}
+
+	/// <Summary> Get the FilePath of the Input file for this dependent T4 file </Summary>
+	public static Project GetTemplateProject(ITextTemplatingEngineHost host)
+	{
+		return GetTemplateProjectItem(host).ContainingProject;
+
+	}
+
+	/// <Summary> Gets the FileCodeModel which contains method definitons etc. for the Input File - e.g. if it is C# or VB File  </Summary>
+	static FileCodeModel GetTemplateFileCodeModel(ITextTemplatingEngineHost host)
+	{
+		return GetTemplateProjectItem(host).FileCodeModel;
+	}
+
+	/// <Summary> Get the Visual Studio ProjectItem of the Input file for this dependent T4 file </Summary>
+	static ProjectItem GetTemplateProjectItem(ITextTemplatingEngineHost host)
+	{
+		var dte = GetDTEObject(host);
+		return dte.Solution.FindProjectItem(host.TemplateFile);	
+		//var myProjectItem =  dte.Solution.FindProjectItem(host.TemplateFile);	
+		//return  myProjectItem.Collection.Parent as EnvDTE.ProjectItem;
+	}
+
+	/// <Summary> Get the Visual Studio Automation Object</Summary>
+	public static EnvDTE.DTE GetDTEObject(ITextTemplatingEngineHost host)
+	{	
+		var hostServiceProvider = host as IServiceProvider;
+		EnvDTE.DTE dte = null;
+		if (hostServiceProvider != null)
+		{
+			dte = hostServiceProvider.
+			GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+		}
+		return dte;
+	}
+}
+#>
