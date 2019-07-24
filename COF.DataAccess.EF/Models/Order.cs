@@ -26,7 +26,8 @@ namespace COF.DataAccess.EF.Models
         [MaxLength(45)]
         public string Description { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
+        public virtual AppUser User { get; set; }
 
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }

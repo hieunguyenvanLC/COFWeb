@@ -11,6 +11,7 @@ namespace COF.DataAccess.EF.Models
         public TransactionType TypeAccess { get; set; }
         public decimal OldPoint { get; set; }
         public decimal Point { get; set; }
+        public decimal ActiveBonusPoint { get; set; }
         public string OldLevel { get; set; }
         public string Level { get; set; }
         public int CustomerId { get; set; }

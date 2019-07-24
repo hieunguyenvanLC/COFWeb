@@ -17,6 +17,7 @@ namespace COF.DataAccess.EF.Models
         public int BonusLevelId { get; set; }
         public virtual BonusLevel BonusLevel { get; set; }
         public decimal TotalBonusPoint { get; set; }
+        public decimal ActiveBonusPoint { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<BonusPointHistory> BonusPointHistories { get; set; }
 

@@ -15,6 +15,7 @@ namespace COF.DataAccess.EF.Configurations
             ToTable("Order");
             HasRequired(x => x.Shop).WithMany(x => x.Orders).HasForeignKey(x => x.ShopId).WillCascadeOnDelete(false);
             HasRequired(x => x.Customer).WithMany(x => x.Orders).HasForeignKey(x => x.CustomerId).WillCascadeOnDelete(false);
+            HasRequired(x => x.User).WithMany(x => x.Orders).HasForeignKey(x => x.UserId).WillCascadeOnDelete(false);
         }
     }
 }

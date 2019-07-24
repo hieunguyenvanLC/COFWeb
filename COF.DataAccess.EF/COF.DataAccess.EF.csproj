@@ -39,6 +39,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -56,14 +62,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\AppRoleMapping.cs" />
+    <Compile Include="Configurations\AppUserMapping.cs" />
     <Compile Include="Configurations\BonusLevelMapping.cs" />
     <Compile Include="Configurations\BonusPointHistoryMapping.cs" />
     <Compile Include="Configurations\CustomerMapping.cs" />
     <Compile Include="Configurations\OrderDetailMapping.cs" />
     <Compile Include="Configurations\OrderMapping.cs" />
+    <Compile Include="Configurations\PermissionMapping.cs" />
     <Compile Include="Configurations\RawMaterialHistoryMapping.cs" />
     <Compile Include="Configurations\RawMaterialMapping.cs" />
     <Compile Include="Configurations\RawMaterialUnitMapping.cs" />
+    <Compile Include="Configurations\RolePermissionMapping.cs" />
+    <Compile Include="Configurations\ShopHasUserMapping.cs" />
+    <Compile Include="Configurations\UserWorkingTimeMapping.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.Designer.cs">
       <DependentUpon>201907231649489_InitDb.cs</DependentUpon>
@@ -72,10 +84,17 @@
     <Compile Include="Migrations\201907241033404_AddMoreTable.Designer.cs">
       <DependentUpon>201907241033404_AddMoreTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907241631345_AddIdentity.cs" />
+    <Compile Include="Migrations\201907241631345_AddIdentity.Designer.cs">
+      <DependentUpon>201907241631345_AddIdentity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AppRole.cs" />
+    <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\BonusLevel.cs" />
     <Compile Include="Models\BonusPointHistory.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\Permission.cs" />
     <Compile Include="Models\ProductHasRawMaterial.cs" />
     <Compile Include="Configurations\ProductHasRawMaterialMapping.cs" />
     <Compile Include="Configurations\ProductMapping.cs" />
@@ -96,9 +115,12 @@
     <Compile Include="Infrastructure\ITransaction.cs" />
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Models\BaseEntity.cs" />
+    <Compile Include="Models\RolePermission.cs" />
     <Compile Include="Models\Shop.cs" />
+    <Compile Include="Models\ShopHasUser.cs" />
     <Compile Include="Models\Table.cs" />
     <Compile Include="Models\TableHasOrder.cs" />
+    <Compile Include="Models\UserWorkingTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IRepository.generated.cs">
       <AutoGen>True</AutoGen>
@@ -127,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907241033404_AddMoreTable.resx">
       <DependentUpon>201907241033404_AddMoreTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907241631345_AddIdentity.resx">
+      <DependentUpon>201907241631345_AddIdentity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
