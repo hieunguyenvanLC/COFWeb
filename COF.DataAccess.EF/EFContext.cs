@@ -23,6 +23,7 @@
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Table> Tables { get; set; }
+        public DbSet<TableHasOrder> TableHasOrders { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

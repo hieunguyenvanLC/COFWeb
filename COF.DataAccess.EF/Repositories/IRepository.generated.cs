@@ -17,6 +17,14 @@ namespace COF.DataAccess.EF.Repositories
 	
 	public partial class ShopRepository : EFRepository<Models.Shop>, IShopRepository { public ShopRepository(EFContext context) : base(context){} }
 	
+	public partial interface IOrderRepository : IRepository<Models.Order> {}
+	
+	public partial class OrderRepository : EFRepository<Models.Order>, IOrderRepository { public OrderRepository(EFContext context) : base(context){} }
+	
+	public partial interface ITableHasOrderRepository : IRepository<Models.TableHasOrder> {}
+	
+	public partial class TableHasOrderRepository : EFRepository<Models.TableHasOrder>, ITableHasOrderRepository { public TableHasOrderRepository(EFContext context) : base(context){} }
+	
 	public partial interface ITableRepository : IRepository<Models.Table> {}
 	
 	public partial class TableRepository : EFRepository<Models.Table>, ITableRepository { public TableRepository(EFContext context) : base(context){} }
@@ -24,9 +32,5 @@ namespace COF.DataAccess.EF.Repositories
 	public partial interface IProductRepository : IRepository<Models.Product> {}
 	
 	public partial class ProductRepository : EFRepository<Models.Product>, IProductRepository { public ProductRepository(EFContext context) : base(context){} }
-	
-	public partial interface IOrderRepository : IRepository<Models.Order> {}
-	
-	public partial class OrderRepository : EFRepository<Models.Order>, IOrderRepository { public OrderRepository(EFContext context) : base(context){} }
 }
 

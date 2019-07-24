@@ -56,19 +56,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\BonusLevelMapping.cs" />
+    <Compile Include="Configurations\BonusPointHistoryMapping.cs" />
+    <Compile Include="Configurations\CustomerMapping.cs" />
     <Compile Include="Configurations\OrderDetailMapping.cs" />
     <Compile Include="Configurations\OrderMapping.cs" />
+    <Compile Include="Configurations\RawMaterialHistoryMapping.cs" />
     <Compile Include="Configurations\RawMaterialMapping.cs" />
     <Compile Include="Configurations\RawMaterialUnitMapping.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.Designer.cs">
       <DependentUpon>201907231649489_InitDb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907241033404_AddMoreTable.cs" />
+    <Compile Include="Migrations\201907241033404_AddMoreTable.Designer.cs">
+      <DependentUpon>201907241033404_AddMoreTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\BonusLevel.cs" />
+    <Compile Include="Models\BonusPointHistory.cs" />
+    <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\ProductHasRawMaterial.cs" />
     <Compile Include="Configurations\ProductHasRawMaterialMapping.cs" />
     <Compile Include="Configurations\ProductMapping.cs" />
     <Compile Include="Models\RawMaterial.cs" />
+    <Compile Include="Models\RawMaterialHistory.cs" />
     <Compile Include="Models\RawMaterialUnit.cs" />
     <Compile Include="Configurations\TableHasOrderMapping.cs" />
     <Compile Include="Models\Order.cs" />
@@ -112,6 +124,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201907231649489_InitDb.resx">
       <DependentUpon>201907231649489_InitDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907241033404_AddMoreTable.resx">
+      <DependentUpon>201907241033404_AddMoreTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

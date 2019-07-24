@@ -29,6 +29,7 @@ namespace COF.DataAccess.EF.Models
         public int UserId { get; set; }
 
         public int CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
 
         public string OrderStatus { get; set; }
         public int ShopId { get; set; }
@@ -39,5 +40,6 @@ namespace COF.DataAccess.EF.Models
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<TableHasOrder> TableHasOrders { get; set; }
+        public virtual ICollection<BonusPointHistory> BonusPointHistories { get; set; }
     }
 }
