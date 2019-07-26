@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
 namespace COF.API.Controllers
 {
-    public class HomeController : Controller
+    [RoutePrefix("bang-dieu-khien")]
+    public class DashboardController : Controller
     {
+        // GET: Dashboard
+        [Route("")]
         public ActionResult Index()
         {
-            return Redirect("/bang-dieu-khien");
+            return View();
         }
-        
     }
 }

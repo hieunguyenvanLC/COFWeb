@@ -9,21 +9,21 @@ namespace COF.DataAccess.EF.Models
 {
     public class Order : BaseEntity
     {
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string OrderNumber { get; set; }
 
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string ItemName { get; set; }
 
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string Date { get; set; }
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string TimeCreated { get; set; }
 
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string TimeCompleted { get; set; }
 
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string Description { get; set; }
 
         public string UserId { get; set; }

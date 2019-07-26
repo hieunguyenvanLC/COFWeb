@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
+using COF.BusinessLogic.Services;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
@@ -61,9 +62,9 @@ namespace COF.API.Ioc
                 .AsImplementedInterfaces().InstancePerRequest();
 
             // Services
-            //builder.RegisterAssemblyTypes(typeof(ProductService).Assembly)
-            //   .Where(t => t.Name.EndsWith("Service"))
-            //   .AsImplementedInterfaces().InstancePerRequest();
+            builder.RegisterAssemblyTypes(typeof(ShopService).Assembly)
+               .Where(t => t.Name.EndsWith("Service"))
+               .AsImplementedInterfaces().InstancePerRequest();
 
             builder.RegisterModule(new AutofacWebTypesModule());
             Container = builder.Build();

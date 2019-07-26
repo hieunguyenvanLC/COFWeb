@@ -10,21 +10,20 @@ namespace COF.DataAccess.EF.Models
 {
     public class Shop : BaseEntity
     {
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string ShopName { get; set; }
         [MaxLength(45)]
         public string PhoneNumber { get; set; }
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string Address { get; set; }
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string City { get; set; }
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string State { get; set; }
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string ZipCode { get; set; }
-        [MaxLength(45)]
         public string Description { get; set; }
-        [MaxLength(45)]
+        [MaxLength(250)]
         public string Status { get; set; }
         public virtual ICollection<Table> Tables { get; set; }
         public virtual ICollection<Product> Products { get; set; }

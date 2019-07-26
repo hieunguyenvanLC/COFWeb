@@ -13,7 +13,7 @@ namespace COF.API
         {
 
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
+            routes.MapMvcAttributeRoutes();
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
@@ -21,12 +21,7 @@ namespace COF.API
                 namespaces: new string[] { "COF.API.Controllers" }
             );
 
-            routes.MapRoute("redirect all other requests", "{*url}",
-            new
-            {
-                controller = "Login",
-                action = "Index"
-            }).DataTokens = new RouteValueDictionary(new { area = "System" });
+            
         }
     }
 }

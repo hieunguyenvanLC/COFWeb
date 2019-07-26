@@ -88,6 +88,10 @@
     <Compile Include="Migrations\201907241631345_AddIdentity.Designer.cs">
       <DependentUpon>201907241631345_AddIdentity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907261600317_ChangeMaxLength.cs" />
+    <Compile Include="Migrations\201907261600317_ChangeMaxLength.Designer.cs">
+      <DependentUpon>201907261600317_ChangeMaxLength.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -152,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907241631345_AddIdentity.resx">
       <DependentUpon>201907241631345_AddIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907261600317_ChangeMaxLength.resx">
+      <DependentUpon>201907261600317_ChangeMaxLength.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

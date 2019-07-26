@@ -11,12 +11,11 @@ namespace COF.DataAccess.EF.Models
 {
     public class Product : BaseEntity
     {
-        [MaxLength(45)]
+        [MaxLength(256)]
         public string ProductName { get; set; }
 
         public decimal Cost { get; set; }
 
-        [MaxLength(45)]
         public string Description { get; set; }
 
         public int ShopId { get; set; }

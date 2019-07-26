@@ -150,6 +150,9 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ReachFramework" />
+    <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ComponentModel.Annotations.4.4.1\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
@@ -234,6 +237,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -280,6 +286,7 @@
     <Compile Include="Api\Core\ApiControllerBase.cs" />
     <Compile Include="Api\Core\PaginationSet.cs" />
     <Compile Include="Api\Core\ServiceFactory.cs" />
+    <Compile Include="Api\ShopController.cs" />
     <Compile Include="App_Start\Bootstrapper.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -287,7 +294,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Ioc\AutofacWebapiConfig.cs" />
     <Compile Include="Global.asax.cs">
@@ -297,8 +306,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\AuthorizationServerProvider.cs" />
     <Compile Include="Providers\QueryStringOAuthBearerProvider.cs" />
-    <Compile Include="Utilities\AuthRepository.cs" />
-    <Compile Include="Utilities\MD5PasswordHasher.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ConfirmSuccess.html" />
@@ -7143,7 +7150,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -7153,6 +7160,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\COF.BusinessLogic\COF.BusinessLogic.csproj">
+      <Project>{0FF42E2C-A09C-4283-8D54-52E927D51A13}</Project>
+      <Name>COF.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\COF.DataAccess.EF\COF.DataAccess.EF.csproj">
       <Project>{35293B2D-4C59-41DB-BC50-1A4713EB4B6E}</Project>
       <Name>COF.DataAccess.EF</Name>
