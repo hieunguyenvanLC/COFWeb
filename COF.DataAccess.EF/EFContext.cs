@@ -30,6 +30,7 @@
         public DbSet<IdentityUserRole> UserRoles { set; get; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Size> Sizes { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

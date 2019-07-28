@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Models;
-using CustomOAuthTutorial.API.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;

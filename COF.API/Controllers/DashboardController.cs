@@ -7,6 +7,7 @@ using System.Web.Mvc;
 namespace COF.API.Controllers
 {
     [RoutePrefix("bang-dieu-khien")]
+    [Authorize]
     public class DashboardController : Controller
     {
         // GET: Dashboard

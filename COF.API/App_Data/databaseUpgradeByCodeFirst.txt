@@ -1,0 +1,11 @@
+?enable-migrations -StartUpProjectName COF.API -verbose -ProjectName 2.Data
+
+//add entity
+Add-Migration -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF CreateOrganizationEntity
+
+
+//update database
+Update-database -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF
+
+//update database to specified target
+Update-database -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF -TargetMigration:"201801240459221_AddArtReceivedStatus"

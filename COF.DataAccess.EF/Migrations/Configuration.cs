@@ -99,7 +99,10 @@
         private void CreateSizes(EFContext context)
         {
 
-            var sizes = new List<Size>
+
+            if (context.Sizes.Count() == 0)
+            {
+                var sizes = new List<Size>
                 {
                     new Size
                     {
@@ -114,15 +117,9 @@
                          Name = "F"
                     },
                 };
-            foreach (var size in sizes)
-            {
-                context.Sizes.Add(size);
+                context.Sizes.AddRange(sizes);
+                context.SaveChanges();
             }
-            context.SaveChanges();
-            //if (context.Sizes.Count() == 0)
-            //{
-               
-            //}
         }
     }
 }

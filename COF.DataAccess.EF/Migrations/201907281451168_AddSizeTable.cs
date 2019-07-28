@@ -23,8 +23,9 @@ namespace COF.DataAccess.EF.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Product", t => t.ProductId)
-                .ForeignKey("dbo.Size", t => t.ProductId)
-                .Index(t => t.ProductId);
+                .ForeignKey("dbo.Size", t => t.SizeId)
+                .Index(t => t.ProductId)
+                .Index(t => t.SizeId);
             
             CreateTable(
                 "dbo.Size",
@@ -46,8 +47,9 @@ namespace COF.DataAccess.EF.Migrations
         public override void Down()
         {
             AddColumn("dbo.Product", "Cost", c => c.Decimal(nullable: false, precision: 18, scale: 2));
-            DropForeignKey("dbo.ProductSize", "ProductId", "dbo.Size");
+            DropForeignKey("dbo.ProductSize", "SizeId", "dbo.Size");
             DropForeignKey("dbo.ProductSize", "ProductId", "dbo.Product");
+            DropIndex("dbo.ProductSize", new[] { "SizeId" });
             DropIndex("dbo.ProductSize", new[] { "ProductId" });
             DropTable("dbo.Size");
             DropTable("dbo.ProductSize");

@@ -13,7 +13,7 @@ namespace COF.DataAccess.EF.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201907280910413_AddSizeTable"; }
+            get { return "201907281451168_AddSizeTable"; }
         }
         
         string IMigrationMetadata.Source

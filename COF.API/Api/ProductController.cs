@@ -33,7 +33,5 @@ namespace COF.API.Api
             return SuccessResult(result);
         }
         #endregion
-
-
     }
 }

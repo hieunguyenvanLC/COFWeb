@@ -6,7 +6,6 @@ using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
-using CustomOAuthTutorial.API.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;

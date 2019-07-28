@@ -41,7 +41,7 @@ namespace COF.BusinessLogic.Services
         #region public methods
         public async Task<List<ProductByCategoryModel>> GetAllProductsAsync(int shopId)
         {
-            var categories = await _categoryRepository.GetByFilterAsync(x => x.ShopId == shopId);
+            var categories = await _categoryRepository.GetByShopId(shopId);
             var result = categories.Select(x => new ProductByCategoryModel
             {
                 CategoryId = x.Id,
