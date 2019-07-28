@@ -23,6 +23,7 @@
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
             CreateUser(context);
+            CreateSizes(context);
             CreateShop(context);
         }
 
@@ -62,30 +63,66 @@
 
         private void CreateShop(EFContext context)
         {
-            //if (context.Shops.Count() == 0)
+            if (context.Shops.Count() == 0)
+            {
+                var shops = new List<Shop>
+                {
+                    new Shop
+                    {
+                        ShopName = "Moda House Coffee Tô Ký",
+                        Address = "263/90 Tô Ký, Trung Mỹ Tây, Quận 12, Hồ Chí Minh",
+                        PhoneNumber = "093 834 65 38",
+                        //Products = new List<Product>
+                        //{
+                        //    new Product
+                        //    {
+                        //        ProductName = 
+                        //    }
+                        //}
+                    },
+                    new Shop
+                    {
+                        ShopName = "Moda House Coffee Nguyễn Oanh",
+                        Address = "11 Nguyễn Oanh, P.10, Quận Gò Vấp, Phường 10, Quận Gò Vấp, Gò Vấp, Hồ Chí Minh",
+                        PhoneNumber = "093 815 19 69"
+                    }
+                };
+                foreach (var shop in shops)
+                {
+                    context.Shops.Add(shop);
+                }
+                context.SaveChanges();
+            }
+
+        }
+
+        private void CreateSizes(EFContext context)
+        {
+
+            var sizes = new List<Size>
+                {
+                    new Size
+                    {
+                         Name = "C"
+                    },
+                    new Size
+                    {
+                         Name = "O"
+                    },
+                     new Size
+                    {
+                         Name = "F"
+                    },
+                };
+            foreach (var size in sizes)
+            {
+                context.Sizes.Add(size);
+            }
+            context.SaveChanges();
+            //if (context.Sizes.Count() == 0)
             //{
-            //    var shops = new List<Shop>
-            //    {
-            //        new Shop
-            //        {
-            //            ShopName = "Moda House Coffee Tô Ký",
-            //            Address = "263/90 Tô Ký, Trung Mỹ Tây, Quận 12, Hồ Chí Minh",
-            //            PhoneNumber = "093 834 65 38"
-            //        },
-            //        new Shop
-            //        {
-            //            ShopName = "Moda House Coffee Nguyễn Oanh",
-            //            Address = "11 Nguyễn Oanh, P.10, Quận Gò Vấp, Phường 10, Quận Gò Vấp, Gò Vấp, Hồ Chí Minh",
-            //            PhoneNumber = "093 815 19 69"
-            //        }
-            //    };
-            //    foreach (var shop in shops)
-            //    {
-            //        context.Shops.Add(shop);
-            //    }
-            //    context.SaveChanges();
+               
             //}
-           
         }
     }
 }

@@ -21,6 +21,10 @@ namespace COF.DataAccess.EF.Repositories
 	
 	public partial class OrderRepository : EFRepository<Models.Order>, IOrderRepository { public OrderRepository(EFContext context) : base(context){} }
 	
+	public partial interface IPermissionRepository : IRepository<Models.Permission> {}
+	
+	public partial class PermissionRepository : EFRepository<Models.Permission>, IPermissionRepository { public PermissionRepository(EFContext context) : base(context){} }
+	
 	public partial interface ITableHasOrderRepository : IRepository<Models.TableHasOrder> {}
 	
 	public partial class TableHasOrderRepository : EFRepository<Models.TableHasOrder>, ITableHasOrderRepository { public TableHasOrderRepository(EFContext context) : base(context){} }
@@ -32,5 +36,9 @@ namespace COF.DataAccess.EF.Repositories
 	public partial interface IProductRepository : IRepository<Models.Product> {}
 	
 	public partial class ProductRepository : EFRepository<Models.Product>, IProductRepository { public ProductRepository(EFContext context) : base(context){} }
+	
+	public partial interface ICategoryRepository : IRepository<Models.Category> {}
+	
+	public partial class CategoryRepository : EFRepository<Models.Category>, ICategoryRepository { public CategoryRepository(EFContext context) : base(context){} }
 }
 

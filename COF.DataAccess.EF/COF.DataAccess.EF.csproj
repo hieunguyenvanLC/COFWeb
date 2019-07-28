@@ -66,15 +66,18 @@
     <Compile Include="Configurations\AppUserMapping.cs" />
     <Compile Include="Configurations\BonusLevelMapping.cs" />
     <Compile Include="Configurations\BonusPointHistoryMapping.cs" />
+    <Compile Include="Configurations\CategoryMapping.cs" />
     <Compile Include="Configurations\CustomerMapping.cs" />
     <Compile Include="Configurations\OrderDetailMapping.cs" />
     <Compile Include="Configurations\OrderMapping.cs" />
     <Compile Include="Configurations\PermissionMapping.cs" />
+    <Compile Include="Configurations\ProductSizeMapping.cs" />
     <Compile Include="Configurations\RawMaterialHistoryMapping.cs" />
     <Compile Include="Configurations\RawMaterialMapping.cs" />
     <Compile Include="Configurations\RawMaterialUnitMapping.cs" />
     <Compile Include="Configurations\RolePermissionMapping.cs" />
     <Compile Include="Configurations\ShopHasUserMapping.cs" />
+    <Compile Include="Configurations\SizeMapping.cs" />
     <Compile Include="Configurations\UserWorkingTimeMapping.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.Designer.cs">
@@ -92,11 +95,20 @@
     <Compile Include="Migrations\201907261600317_ChangeMaxLength.Designer.cs">
       <DependentUpon>201907261600317_ChangeMaxLength.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907280809163_AddCategoryTable.cs" />
+    <Compile Include="Migrations\201907280809163_AddCategoryTable.Designer.cs">
+      <DependentUpon>201907280809163_AddCategoryTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907280910413_AddSizeTable.cs" />
+    <Compile Include="Migrations\201907280910413_AddSizeTable.Designer.cs">
+      <DependentUpon>201907280910413_AddSizeTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\BonusLevel.cs" />
     <Compile Include="Models\BonusPointHistory.cs" />
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Permission.cs" />
     <Compile Include="Models\ProductHasRawMaterial.cs" />
@@ -159,6 +171,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907261600317_ChangeMaxLength.resx">
       <DependentUpon>201907261600317_ChangeMaxLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907280809163_AddCategoryTable.resx">
+      <DependentUpon>201907280809163_AddCategoryTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907280910413_AddSizeTable.resx">
+      <DependentUpon>201907280910413_AddSizeTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

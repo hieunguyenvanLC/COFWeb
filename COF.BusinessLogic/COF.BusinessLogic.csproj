@@ -107,7 +107,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Product\ProductByCategoryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ProductService.cs" />
     <Compile Include="Services\ShopService.cs" />
     <Compile Include="Settings\BusinessLogicResult.cs" />
     <Compile Include="Settings\ValidationResultExtensions.cs" />

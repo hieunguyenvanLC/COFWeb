@@ -20,5 +20,10 @@ namespace COF.DataAccess.EF.Models
         [MaxLength(250)]
         public string UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
+
+        public BaseEntity()
+        {
+            CreatedOnUtc = DateTime.UtcNow;
+        }
     }
 }

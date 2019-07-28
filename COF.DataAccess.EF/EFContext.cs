@@ -27,8 +27,9 @@
         public DbSet<Table> Tables { get; set; }
         public DbSet<TableHasOrder> TableHasOrders { get; set; }
         public DbSet<Permission> Permissions { set; get; }
-        public DbSet<AppRole> AppRoles { set; get; }
         public DbSet<IdentityUserRole> UserRoles { set; get; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Size> Sizes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
