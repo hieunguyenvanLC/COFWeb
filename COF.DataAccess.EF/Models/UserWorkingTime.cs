@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class UserWorkingTime : BaseEntity
+    public class UserWorkingTime : BaseEntity, IPartner
     {
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string UserId { get; set; }
         public virtual AppUser User { get; set; }
+        public int PartnerId { get ; set; }
+
     }
 }

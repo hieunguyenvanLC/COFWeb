@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class RawMaterialHistory : BaseEntity
+    public class RawMaterialHistory : BaseEntity, IPartner
     {
         public DateTime TimeAccess { get; set; }
         public TransactionType TransactionTypeId { get; set; }
@@ -15,6 +15,7 @@ namespace COF.DataAccess.EF.Models
         public int RawMaterialId { get; set; }
         public RawMaterial RawMaterial { get; set; }
         public int TotalQtyAtTimeAccess { get; set; }
+        public int PartnerId { get; set; }
     }
     public enum TransactionType
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class ProductHasRawMaterial : BaseEntity
+    public class ProductHasRawMaterial : BaseEntity, IPartner
     {
         public int RawMaterialId { get; set; }
         public int ProductId { get; set; }
@@ -15,6 +15,6 @@ namespace COF.DataAccess.EF.Models
 
         public virtual RawMaterial RawMaterial { get; set; }
         public virtual Product Product { get; set; }
-
+        public int PartnerId { get; set; }
     }
 }

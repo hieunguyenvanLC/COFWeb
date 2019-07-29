@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class TableHasOrder : BaseEntity
+    public class TableHasOrder : BaseEntity, IPartner
     {
         public int TableId { get; set; }
         public int OrderId { get; set; }
 
         public virtual Table Table { get; set; }
         public virtual Order Order { get; set; }
+        public int PartnerId { get; set; }
     }
 }

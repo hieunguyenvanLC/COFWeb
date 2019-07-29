@@ -28,4 +28,15 @@ namespace COF.BusinessLogic.Models.Product
         public string Size { get; set; }
         public decimal Cost { get; set; }
     }
+
+    public class ProductByShop
+    {
+        public int ShopId { get; set; }
+        public string Name { get; set; }
+        public List<ProductByCategoryModel> Categories {get;set;}
+        public ProductByShop()
+        {
+            this.Categories = new List<ProductByCategoryModel>();
+        }
+    }
 }

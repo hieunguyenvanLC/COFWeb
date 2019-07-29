@@ -21,13 +21,7 @@ namespace COF.API.Api
             _shopService = shopService;
         }
 
-        [Route("")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetTaskAsync()
-        {
-            var result = await _shopService.GetAllShopAsync();
-            return SuccessResult(result);
-        }
+      
 
         [Route("{id}")]
         [HttpGet]

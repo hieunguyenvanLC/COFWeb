@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class Customer : BaseEntity
+    public class Customer : BaseEntity, IPartner
     {
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
@@ -14,6 +14,7 @@ namespace COF.DataAccess.EF.Models
         public string FullName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public int PartnerId { get; set; }
         public int BonusLevelId { get; set; }
         public virtual BonusLevel BonusLevel { get; set; }
         public decimal TotalBonusPoint { get; set; }

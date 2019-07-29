@@ -13,6 +13,7 @@ namespace COF.BusinessLogic.Services
     public interface IProductService
     {
         Task<List<ProductByCategoryModel>> GetAllProductsAsync(int shopId);
+        Task<List<ProductByShop>> GetAllProductsByPartnerIdAsync(int partnerId);
     }
     public class ProductService : IProductService
     {
@@ -21,6 +22,7 @@ namespace COF.BusinessLogic.Services
         private readonly IProductRepository _productRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IShopRepository _shopRepository;
         #endregion
 
         #region ctor
@@ -28,12 +30,14 @@ namespace COF.BusinessLogic.Services
         (
             IUnitOfWork unitOfWork,
             IProductRepository productRepository,
-            ICategoryRepository categoryRepository
+            ICategoryRepository categoryRepository,
+            IShopRepository shopRepository
         )
         {
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _categoryRepository = categoryRepository;
+            _shopRepository = shopRepository;
         }
 
         #endregion
@@ -59,6 +63,26 @@ namespace COF.BusinessLogic.Services
             }).ToList();
             return result;
 
+        }
+
+        public async Task<List<ProductByShop>> GetAllProductsByPartnerIdAsync(int partnerId)
+        {
+            var listShops = await _shopRepository.GetAllShopByPartnerIdAsync(partnerId);
+            var result = new List<ProductByShop>();
+            if (listShops.Any())
+            {
+                foreach (var shop in listShops)
+                {
+                    var item = new ProductByShop
+                    {
+                        ShopId = shop.Id,
+                        Name = shop.ShopName
+                    };
+                    item.Categories = await GetAllProductsAsync(shop.Id);
+                    result.Add(item);
+                }
+            }
+            return result;
         }
         #endregion
     }

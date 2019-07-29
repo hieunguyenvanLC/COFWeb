@@ -1,6 +1,8 @@
 ﻿namespace COF.DataAccess.EF
 {
+    using COF.DataAccess.EF.Infrastructure;
     using COF.DataAccess.EF.Models;
+    using EntityFramework.DynamicFilters;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Data.Entity;
@@ -10,15 +12,19 @@
 
     public class EFContext : IdentityDbContext<AppUser>
     {
+        private int _partnerId = 0;
+
+
         public EFContext()
             : base("name=COFContext")
         {
-            this.Configuration.LazyLoadingEnabled = false;
+            
         }
 
-        public EFContext(String connectionString) : base(connectionString)
+        public EFContext(IPartnerContext partnerContext, String connectionString) : base(connectionString)
         {
-
+            this.InitializeDynamicFilters();
+            if (partnerContext.PartnerId > 0) SetPartnerId(partnerContext.PartnerId);
         }
 
         public DbSet<Shop> Shops { get; set; }
@@ -31,6 +37,7 @@
         public DbSet<Category> Categories { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Partner> Partners { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -42,6 +49,13 @@
             //base.OnModelCreating(modelBuilder);
         }
 
+
+        public void SetPartnerId(int partnerId)
+        {
+            _partnerId = partnerId;
+            this.SetFilterScopedParameterValue("Partner", "partnerId", _partnerId);
+            this.SetFilterGlobalParameterValue("Partner", "partnerId", _partnerId);
+        }
 
         private void ConfigureEntities(DbModelBuilder modelBuilder)
         {
@@ -59,6 +73,11 @@
         public static EFContext Create()
         {
             return new EFContext();
+        }
+
+        public DbSet<TEntity> DbSet<TEntity>() where TEntity : class
+        {
+            return this.Set<TEntity>();
         }
 
 

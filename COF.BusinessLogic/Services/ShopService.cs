@@ -11,7 +11,7 @@ namespace COF.BusinessLogic.Services
 {
     public interface IShopService
     {
-        Task<List<Shop>> GetAllShopAsync();
+        Task<List<Shop>> GetAllShopAsync(int partnerId);
         Task<Shop> GetByIdAsync(int id);
         void AddShopAsync(List<Shop> shops);
     }
@@ -37,7 +37,7 @@ namespace COF.BusinessLogic.Services
         #endregion
 
         #region public methods
-        public async Task<List<Shop>> GetAllShopAsync()
+        public async Task<List<Shop>> GetAllShopAsync(int partnerId)
         {
             var shops = await _shopRepository.GetAllAsync();
             return shops;

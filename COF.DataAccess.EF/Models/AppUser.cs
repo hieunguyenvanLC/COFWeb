@@ -27,6 +27,8 @@ namespace COF.DataAccess.EF.Models
 
         public bool? Gender { get; set; }
 
+        public int? PartnerId { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<AppUser> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -34,7 +36,6 @@ namespace COF.DataAccess.EF.Models
             // Add custom user claims here
             return userIdentity;
         }
-
         public virtual ICollection<Order> Orders { set; get; }
         public virtual ICollection<UserWorkingTime> UserWorkingTimes { get; set; }
         public virtual ICollection<ShopHasUser> ShopHasUsers { get; set; }

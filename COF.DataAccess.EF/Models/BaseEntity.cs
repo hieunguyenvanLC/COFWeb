@@ -26,4 +26,9 @@ namespace COF.DataAccess.EF.Models
             CreatedOnUtc = DateTime.UtcNow;
         }
     }
+
+    public interface IPartner
+    {
+        int PartnerId { get; set; }
+    }
 }

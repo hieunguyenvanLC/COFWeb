@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class BonusPointHistory : BaseEntity
+    public class BonusPointHistory : BaseEntity, IPartner
     {
         public TransactionType TypeAccess { get; set; }
         public decimal OldPoint { get; set; }
@@ -16,10 +16,10 @@ namespace COF.DataAccess.EF.Models
         public string Level { get; set; }
         public int CustomerId { get; set; }
         public string Description { get; set; }
-
         public int OrderId { get; set; }
         public virtual Order Order { get; set; }
 
         public virtual Customer Customer { get; set; }
+        public int PartnerId { get; set; }
     }
 }

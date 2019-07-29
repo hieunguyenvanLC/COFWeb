@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class OrderDetail : BaseEntity
+    public class OrderDetail : BaseEntity, IPartner
     {
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
@@ -15,5 +15,6 @@ namespace COF.DataAccess.EF.Models
 
         public virtual Product Product { get; set; }
         public virtual Order Order { get; set; }
+        public int PartnerId { get; set; }
     }
 }

@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Configurations
 {
-    public class ShopMapping : EntityTypeConfiguration<Shop>
+    public class PartnerMapping : EntityTypeConfiguration<Partner>
     {
-        public ShopMapping()
+        public PartnerMapping()
         {
-            ToTable("Shop");
-
-            HasRequired(x => x.Partner).WithMany(x => x.Shops).HasForeignKey(x => x.PartnerId).WillCascadeOnDelete(false);
+            ToTable("Partner");
         }
     }
 }

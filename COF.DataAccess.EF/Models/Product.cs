@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Models
 {
-    public class Product : BaseEntity
+    public class Product : BaseEntity , IPartner
     {
         [MaxLength(256)]
         public string ProductName { get; set; }
@@ -18,6 +18,7 @@ namespace COF.DataAccess.EF.Models
 
         public int ShopId { get; set; }
 
+        public int PartnerId { get; set; }
         public int CategoryId { get; set; }
 
         public virtual Shop Shop { get; set; }

@@ -37,5 +37,7 @@ namespace COF.API.Controllers.Core
                 return HttpContext.GetOwinContext().Authentication;
             }
         }
+
+        protected int? ShopId { get; set; }
     }
 }

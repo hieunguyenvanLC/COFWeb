@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@model List<COF.BusinessLogic.Models.Product.ProductByShop>
+
+<section class="content-header">
+    <h1>
+        Danh sách sản phẩm
+        
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Simple</li>
+    </ol>
+</section>
+
+<section class="content">
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+               
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                        @{
+                            foreach (var shop in Model)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" id="@shop.ShopId-tab" data-toggle="tab" href="#@shop.ShopId" role="tab" aria-controls="@shop.ShopId" aria-selected="true">@shop.Name</a>
+                                </li>
+                            }
+
+
+
+                        }
+                    </ul>
+                    @{
+                   
+                        <div class="tab-content" id="myTabContent">
+                        @foreach (var shop in Model)
+                        {
+                        <div class="tab-pane fade show active" id="@shop.ShopId" role="tabpanel" aria-labelledby="@shop.ShopId-tab">
+                            <div class="box-body table-responsive">
+                                <div>
+                                    <button class="btn btn-success">Thêm sản phẩm</button>
+                                    <br />
+                                    <br />
+                                </div>
+                                @{
+                                    foreach (var category in shop.Categories)
+                                    {
+                                        <div>
+                                            <div style="background-color:#305496!important;color:white; font-size:20px"> @category.Name - (@category.Products.Count() sản phẩm) </div>
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Tên</th>
+                                                        <th>Size</th>
+                                                        <th>Giá tiền</th>
+                                                    </tr>
+                                                    @{
+                                                        foreach (var product in category.Products)
+                                                        {
+                                                            <tr>
+                                                                <td rowspan="@product.Sizes.Count()"><b>@product.Name</b></td>
+                                                                <td>
+                                                                    <table>
+                                                                        @foreach (var size in product.Sizes)
+                                                                        {
+                                                                        <tr>
+                                                                            <td>@size.Size</td>
+                                                                            <td>@size.Cost</td>
+                                                                        </tr>
+
+                                                                        }
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                }
+
+
+
+                            </div>
+
+                        </div>
+                        }
+                    </div>
+
+                       
+                    }
+                    <!-- /.row -->
+                </div>
+                <!-- ./box-body -->
+        
+            </div>
+          
+
+        </div>
+    </div>
+</section>
