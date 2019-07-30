@@ -1,4 +1,5 @@
-﻿using COF.DataAccess.EF.Infrastructure;
+﻿using COF.BusinessLogic.Models.Shop;
+using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
 using System;
@@ -11,9 +12,7 @@ namespace COF.BusinessLogic.Services
 {
     public interface IShopService
     {
-        Task<List<Shop>> GetAllShopAsync(int partnerId);
-        Task<Shop> GetByIdAsync(int id);
-        void AddShopAsync(List<Shop> shops);
+        Task<List<ShopModel>> GetAllShopAsync(int partnerId);
     }
     public class ShopService : IShopService
     {
@@ -37,10 +36,11 @@ namespace COF.BusinessLogic.Services
         #endregion
 
         #region public methods
-        public async Task<List<Shop>> GetAllShopAsync(int partnerId)
+        public async Task<List<ShopModel>> GetAllShopAsync(int partnerId)
         {
             var shops = await _shopRepository.GetAllAsync();
-            return shops;
+            var result = shops.Select(x => new ShopModel { Id = x.Id, Name = x.ShopName }).ToList();
+            return result;
         }
 
 
@@ -59,10 +59,6 @@ namespace COF.BusinessLogic.Services
            
         }
 
-        public async Task<Shop> GetByIdAsync(int id)
-        {
-            return await _shopRepository.GetByIdAsync(id);
-        }
         #endregion
 
 

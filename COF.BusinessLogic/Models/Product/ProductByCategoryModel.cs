@@ -39,4 +39,16 @@ namespace COF.BusinessLogic.Models.Product
             this.Categories = new List<ProductByCategoryModel>();
         }
     }
+
+    public class ProductFilterModel
+    {
+        public ProductFilterType filterType { get; set; }
+        public string Value { get; set; }
+    }
+
+    public enum ProductFilterType
+    {
+        Shop = 1,
+        Keyword = 2
+    }
 }

@@ -16,26 +16,34 @@ namespace COF.API.Controllers
         #region fields 
         private readonly IProductService _productService;
         private readonly IUserService _userService;
+        private readonly IShopService _shopService;
         #endregion
 
 
         #region ctor
         public ProductController(
             IProductService productService, 
-            IUserService userService)
+            IUserService userService,
+            IShopService shopService)
         {
             _productService = productService;
             _userService = userService;
+            _shopService = shopService;
         }
 
         #endregion
 
         public async Task<ActionResult> Index()
         {
-            var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            var result = await _productService.GetAllProductsAsync(7);
+            return View(result);
+        }
 
-            var allMenu = await _productService.GetAllProductsByPartnerIdAsync(user.PartnerId.GetValueOrDefault());
-            return View(allMenu);
+        [HttpGet]
+        public async Task<JsonResult> GetAllProducts(int shopId)
+        {
+            var result = await _productService.GetAllProductsAsync(shopId);
+            return HttpGetSuccessResponse(result);
         }
 
         

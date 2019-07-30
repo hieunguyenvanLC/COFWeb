@@ -1,12 +1,11 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Sản phẩm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
-@model List<COF.BusinessLogic.Models.Product.ProductByShop>
-
+@model List<COF.BusinessLogic.Models.Product.ProductByCategoryModel>
 <section class="content-header">
     <h1>
         Danh sách sản phẩm
@@ -27,83 +26,80 @@
                
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-
-                        @{
-                            foreach (var shop in Model)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" id="@shop.ShopId-tab" data-toggle="tab" href="#@shop.ShopId" role="tab" aria-controls="@shop.ShopId" aria-selected="true">@shop.Name</a>
-                                </li>
-                            }
-
-
-
-                        }
-                    </ul>
-                    @{
-                   
-                        <div class="tab-content" id="myTabContent">
-                        @foreach (var shop in Model)
-                        {
-                        <div class="tab-pane fade show active" id="@shop.ShopId" role="tabpanel" aria-labelledby="@shop.ShopId-tab">
-                            <div class="box-body table-responsive">
-                                <div>
-                                    <button class="btn btn-success">Thêm sản phẩm</button>
-                                    <br />
-                                    <br />
-                                </div>
+                    <div class="box-body table-responsive">
+                        <div>
+                            <button class="btn btn-success">Thêm sản phẩm</button>
+                            <br />
+                            <br />
+                        </div>
+                        <table class="table table-bordered">
+                            <tbody>
                                 @{
-                                    foreach (var category in shop.Categories)
+                                    foreach (var category in Model)
                                     {
-                                        <div>
-                                            <div style="background-color:#305496!important;color:white; font-size:20px"> @category.Name - (@category.Products.Count() sản phẩm) </div>
-                                            <table class="table table-striped">
-                                                <tbody>
-                                                    <tr>
-                                                        <th>Tên</th>
-                                                        <th>Size</th>
-                                                        <th>Giá tiền</th>
-                                                    </tr>
-                                                    @{
-                                                        foreach (var product in category.Products)
+                                        <tr>
+                                            <td colspan="4" style="background-color:beige"><b>@category.Name.ToUpper()</b>  - @category.Products.Count sản phẩm </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tên</th>
+                                            <th>Size</th>
+                                            <th>Giá tiền</th>
+                                            <th></th>
+                                        </tr>
+                                        {
+                                            foreach (var product in category.Products)
+                                            {
+                                                {
+                                                    var sizes = product.Sizes.Count();
+                                                    if (sizes > 0)
+                                                    {
+                                                        for (int i = 0; i < product.Sizes.Count; i++)
                                                         {
+                                                            var size = product.Sizes[i];
                                                             <tr>
-                                                                <td rowspan="@product.Sizes.Count()"><b>@product.Name</b></td>
+                                                                @if (i == 0)
+                                                                {
+                                                                    <td rowspan="@sizes" style="text-align:center">@product.Name.ToUpper()</td>
+                                                                }
+                                                                <td>@size.Size</td>
+                                                                <td>@size.Cost</td>
                                                                 <td>
-                                                                    <table>
-                                                                        @foreach (var size in product.Sizes)
-                                                                        {
-                                                                        <tr>
-                                                                            <td>@size.Size</td>
-                                                                            <td>@size.Cost</td>
-                                                                        </tr>
-
-                                                                        }
-                                                                    </table>
+                                                                    <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
+                                                                    <button class="btn btn-danger"><i class="fa fa-remove"></i></button>
                                                                 </td>
                                                             </tr>
                                                         }
                                                     }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            
+                                                            <td style="text-align:center">@product.Name.ToUpper()</td>
+                                                            
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>
+                                                                <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
+                                                                <button class="btn btn-danger"><i class="fa fa-remove"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    }
 
-                                                    
-                                                </tbody>
-                                            </table>
-                                        </div>
+
+
+                                                }
+
+                                            }
+                                        }
+
                                     }
                                 }
 
+                            </tbody>
+                            </table>
 
-
-                            </div>
-
-                        </div>
-                        }
                     </div>
 
-                       
-                    }
-                    <!-- /.row -->
                 </div>
                 <!-- ./box-body -->
         

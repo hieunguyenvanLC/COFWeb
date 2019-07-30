@@ -39,5 +39,43 @@ namespace COF.API.Controllers.Core
         }
 
         protected int? ShopId { get; set; }
+
+        public JsonResult HttpGetSuccessResponse(object data, string message = "")
+        {
+            return Json(new
+            {
+                status = true,
+                message = message,
+                data = data
+            }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult HttpPostSuccessResponse(object data, string message)
+        {
+            return Json(new
+            {
+                status = true,
+                message = message,
+                data = data
+            });
+        }
+
+        public JsonResult HttpGetErrorResponse(object data, string message)
+        {
+            return Json(new
+            {
+                status = false,
+                errorMessage = message
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult HttpPostErrorResponse(object data, string message)
+        {
+            return Json(new
+            {
+                status = false,
+                errorMessage = message
+            });
+        }
+
     }
 }
