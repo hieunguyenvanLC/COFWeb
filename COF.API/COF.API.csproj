@@ -7143,6 +7143,7 @@
     <Content Include="Scripts\plugin\moment.js" />
     <Content Include="Scripts\plugin\w2ui.min.css" />
     <Content Include="Scripts\plugin\w2ui.min.js" />
+    <Content Include="Scripts\app\product\product.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -7163,9 +7164,11 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Product\_PartialCreateUpdateProduct.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Product\js\" />
     <Folder Include="Views\Supplier\" />
   </ItemGroup>
   <ItemGroup>

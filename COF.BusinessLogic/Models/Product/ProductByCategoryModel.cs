@@ -19,6 +19,7 @@ namespace COF.BusinessLogic.Models.Product
     public class ProductModel
     {
         public string Name { get; set; }
+        public string Description { get; set; }
         public List<ProductSize> Sizes { get; set;}
     }
 

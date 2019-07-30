@@ -14,6 +14,8 @@ namespace COF.BusinessLogic.Services
     {
         Task<List<ProductByCategoryModel>> GetAllProductsAsync(int shopId);
         Task<List<ProductByShop>> GetAllProductsByPartnerIdAsync(int partnerId);
+        Task<List<ProductByCategoryModel>> GetAllCategoriesAsync(int shopId);
+        Task<ProductModel> GetByIdAsync(int id);
     }
     public class ProductService : IProductService
     {
@@ -38,8 +40,8 @@ namespace COF.BusinessLogic.Services
             _unitOfWork = unitOfWork;
             _categoryRepository = categoryRepository;
             _shopRepository = shopRepository;
-        }
 
+        }
         #endregion
 
         #region public methods
@@ -84,6 +86,39 @@ namespace COF.BusinessLogic.Services
             }
             return result;
         }
+
+        public async Task<List<ProductByCategoryModel>> GetAllCategoriesAsync(int shopId)
+        {
+            var categories = await _categoryRepository.GetByShopId(shopId);
+            var result = categories.Select(x => new ProductByCategoryModel
+            {
+                CategoryId = x.Id,
+                Name = x.Name
+            }).ToList();
+            return result;
+        }
+
+        public async Task<ProductModel> GetByIdAsync(int id)
+        {
+            ProductModel result = null;
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product != null)
+            {
+                result = new ProductModel
+                {
+                    Name = product.ProductName,
+                    Description = product.Description,
+                    Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
+                    {
+                        SizeId = z.Id,
+                        Cost = z.Cost,
+                        Size = z.Size.Name
+                    }).ToList()
+                };
+            }
+            return result;
+        }
+
         #endregion
     }
 }

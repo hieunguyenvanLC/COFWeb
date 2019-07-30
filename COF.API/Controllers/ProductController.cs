@@ -33,9 +33,13 @@ namespace COF.API.Controllers
 
         #endregion
 
+        [Route("san-pham")]
         public async Task<ActionResult> Index()
         {
+            var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
             var result = await _productService.GetAllProductsAsync(7);
+            var shops = await _shopService.GetAllShopAsync(user.PartnerId.GetValueOrDefault());
+            TempData["Shops"] = shops;
             return View(result);
         }
 
@@ -43,9 +47,24 @@ namespace COF.API.Controllers
         public async Task<JsonResult> GetAllProducts(int shopId)
         {
             var result = await _productService.GetAllProductsAsync(shopId);
+           
             return HttpGetSuccessResponse(result);
         }
 
-        
+        [HttpGet]
+        public async Task<JsonResult> GetCategories(int shopId)
+        {
+            var result = await _productService.GetAllCategoriesAsync(shopId);
+
+            return HttpGetSuccessResponse(result);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetProductDetail(int productId)
+        {
+            var result = await _productService.GetByIdAsync(productId);
+            return HttpGetSuccessResponse(result);
+        }
+
     }
 }
