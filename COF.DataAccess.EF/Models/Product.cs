@@ -21,6 +21,8 @@ namespace COF.DataAccess.EF.Models
         public int PartnerId { get; set; }
         public int CategoryId { get; set; }
 
+        public bool IsActive { get; set; }
+
         public virtual Shop Shop { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductSize> ProductSizes { get; set; }

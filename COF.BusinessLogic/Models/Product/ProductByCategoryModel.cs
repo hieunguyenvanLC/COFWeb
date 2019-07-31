@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,10 @@ namespace COF.BusinessLogic.Models.Product
     }
     public class ProductModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool IsActive { get; set; }
         public List<ProductSize> Sizes { get; set;}
     }
 
@@ -45,6 +48,15 @@ namespace COF.BusinessLogic.Models.Product
     {
         public ProductFilterType filterType { get; set; }
         public string Value { get; set; }
+    }
+
+    public class ProductCreateModel
+    {
+        public string Name { get; set; }
+        public int CategoryId { get; set; }
+        public string Description { get; set; }
+        public int ShopId { get; set; }
+        public int PartnerId { get; set; }
     }
 
     public enum ProductFilterType

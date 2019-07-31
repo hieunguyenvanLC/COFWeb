@@ -26,8 +26,6 @@
             CreateSizes(context);
             CreateRoles(context);
             CreateUser(context);
-            CreateProduct(context);
-
         }
 
         private void CreateUser(EFContext context)
@@ -179,39 +177,6 @@
             
         }
 
-        private void CreateProduct(EFContext context)
-        {
-            var partner = context.Partners.FirstOrDefault();
-            var category = new Category
-            {
-                Name = "Cà phê truyền thống ",
-                ShopId = partner.Shops.FirstOrDefault().Id,
-                PartnerId = partner.Id,
-                Products = new List<Product>
-                {
-                    new Product
-                    {
-                        PartnerId = partner.Id,
-                        ShopId = partner.Shops.FirstOrDefault().Id,
-                        ProductName = "Cà phê truyền thống (đá/nóng)",
-                        ProductSizes = new List<ProductSize>
-                        {
-                            new ProductSize
-                            {
-                                SizeId = 1,
-                                Cost = 22
-                            },
-                            new ProductSize
-                            {
-                                SizeId = 2,
-                                Cost = 30
-                            }
-                        }
-                    }
-                }
-            };
-            context.Categories.Add(category);
-            context.SaveChanges();
-        }
+      
     }
 }

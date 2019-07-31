@@ -61,7 +61,7 @@ namespace COF.API.Controllers.Core
             });
         }
 
-        public JsonResult HttpGetErrorResponse(object data, string message)
+        public JsonResult HttpGetErrorResponse(string message)
         {
             return Json(new
             {
@@ -70,7 +70,7 @@ namespace COF.API.Controllers.Core
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult HttpPostErrorResponse(object data, string message)
+        public JsonResult HttpPostErrorResponse(string message)
         {
             return Json(new
             {
@@ -78,6 +78,21 @@ namespace COF.API.Controllers.Core
                 errorMessage = message
             });
         }   
+
+        protected string ModelStateErrorMessage()
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var key in ModelState.Keys.Where(key => ModelState[key].Errors.Count > 0))
+                {
+                   var errorMessage = (!string.IsNullOrEmpty(ModelState[key].Errors[0].ErrorMessage)
+                        ? ModelState[key].Errors[0].ErrorMessage
+                        : ModelState[key].Errors[0].Exception.Message);
+                    return errorMessage;
+                }
+            }
+            return "";
+        }
     }
     public static class CamelCaseResult
     {
@@ -87,4 +102,6 @@ namespace COF.API.Controllers.Core
             return JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(data, Formatting.Indented, jsonSerializerSettings));
         }
     }
+
+   
 }

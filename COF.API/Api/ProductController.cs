@@ -29,7 +29,7 @@ namespace COF.API.Api
         [Route("{shopId}/all")]
         public async Task<HttpResponseMessage> GetAllProductByIdAsync([FromUri] int shopId)
         {
-            var result = await _productService.GetAllProductsAsync(shopId);
+            var result = await _productService.GetAllProductsAsync(string.Empty,shopId);
             return SuccessResult(result);
         }
         #endregion

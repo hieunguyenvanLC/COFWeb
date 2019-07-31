@@ -21,7 +21,7 @@ var productController = {
         $('.shop-tab').off('click').on('click', function () {
             var dataId = $(this).data('id');
             homeconfig.shopId = dataId;
-            productController.loadData(dataId);
+            productController.loadData(homeconfig.shopId);
             productController.loadCategories(homeconfig.shopId);
         });
 
@@ -37,13 +37,35 @@ var productController = {
             $('#createUpdateSection').hide();
             $('#tableContent').show();
         });
+
+        $('#btnSave').off('click').on('click', function () {
+            var data = {
+                Id: parseInt($('#txtHiddenId').val()),
+                Name: $('#txtName').val(),
+                CategoryId: $('#ddlCategories').val(),
+                ShopId: homeconfig.shopId,
+                Description: $('#txtDescription').val()
+            };
+            console.log(data);
+            productController.saveData(data);
+        });
+
+        $('#txtKeySearch').off('keypress').on('keypress', function (e) {
+            if (e.keyCode == 13) {
+                productController.loadData(homeconfig.shopId);
+            }           
+        });
+
+        $('#btnSearch').off('click').on('click', function () {
+            productController.loadData(homeconfig.shopId);
+        });    
     },
     loadData: function (shopId) {
         $.ajax({
             url: '/product/getallproducts',
             type: 'get',
             dataType: 'json',
-            data: { shopId: shopId },
+            data: { keyword: $('#txtKeySearch').val(), shopId: shopId },
             success: function (res) {
                 if (res.status) {
                     var data = res.data;
@@ -52,14 +74,16 @@ var productController = {
                     {
                         var category = data[i];
                         html += '<tr>';
-                        html += '<td colspan="4" style="background-color:beige"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length  +' sản phẩm </td>';
+                        html += '<td colspan="5" style="background-color:beige"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length  +' sản phẩm </td>';
                         html += '/<tr>';
 
                         html += '<tr style="background-color:#ddd">';
                         html += '<td><b>Tên sản phẩm</b></td>';
+                        html += '<td><b>Trạng thái </b></td>';
                         html += '<td><b>Size</b></td>';
                         html += '<td><b>Giá tiền </b></td>';
-                        html += '<td>';
+
+                        html += '<td></td>';
                         html += '</tr>';
 
                         var products = category.Products;
@@ -72,9 +96,21 @@ var productController = {
                                     html += '<tr>';
                                     if (j === 0) {
                                         html += '<td rowspan=" ' + sizeCount + '" style="text-align:center">' + product.Name.toUpperCase() + '</td>';
+
+                                        if (product.IsActive) {
+                                            html += '<td  rowspan=" ' + sizeCount + '"><span class="label label-success">SẴN SÀNG</span></td>';
+                                        }
+                                        else {
+                                            html += '<td  rowspan=" ' + sizeCount + '"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                        }
+
                                     }
+
+                                  
                                     html += ' <td>' + size.Size + '</td>';
                                     html += ' <td>' + size.Cost + '</td>';
+                                   
+                                    
                                     html += '<td>';
                                     html += '<button class="btn btn-primary"><i class="fa fa-edit"></i></button>  &nbsp;';
                                     html += '<button class="btn btn-danger"><i class="fa fa-remove"></i></button>';
@@ -85,6 +121,14 @@ var productController = {
                              else {
                                 html += '<tr>';
                                 html += '<td style="text-align:center">' + product.Name.toUpperCase() + '</td>';
+                         
+
+                                if (product.IsActive) {
+                                    html += '<td><span class="label label-success">SẴN SÀNG</span></td>';
+                                }
+                                else {
+                                    html += '<td><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                }
                                 html += '<td></td>';
                                 html += '<td></td>';
                                 html += '<td>';
@@ -159,22 +203,22 @@ var productController = {
         })
     },
     saveData: function (data) {
-        if (data.Id == 0) {
+        if (data.Id === 0) {
             $.ajax({
-                url: '/Student/Create',
+                url: '/product/addproduct',
                 type: 'post',
                 dataType: 'json',
                 data: { model: data },
                 success: function (res) {
-                    if (res.Status) {
-                        studentController.loadData(true);
+                    if (res.status) {
+                        productController.loadData(homeconfig.shopId);
                         $('#btnCancel').click();
-                        toastr.success("Create successfully");
+                        toastr.success(res.message, "Kết quả");
                     } else {
-                        toastr.error(res.ErrorMessage);
+                        toastr.error(res.errorMessage, "Lỗi");
                     }
                 }
-            })
+            });
         } else {
             $.ajax({
                 url: '/Student/Edit',
@@ -192,36 +236,6 @@ var productController = {
                 }
             })
         }
-    },
-    loadDetail: function (id) {
-        $.ajax({
-            url: '/Student/Detail/' + id,
-            type: 'get',
-            dataType: 'json',
-            success: function (res) {
-                if (res.Status) {
-                    var data = res.Data;
-                    $('#txtHiddenId').val(data.Id);
-                    $('#txtName').val(data.Name);
-                    $('#txtAge').val(data.Age);
-                    $('#txtAddress').val(data.Address);
-                    $('#txtPhoneNumber').val(data.PhoneNumber);
-                    $('#txtEmail').val(data.Email);
-                    studentController.loadPartialView();
-                }
-                else {
-                    toastr.error(res.ErrorMessage);
-                }
-            }
-        })
-    },
-    loadPartialView: function () {
-        $('#searchListSection').hide();
-        $('#createUpdateSection').show();
-    },
-    loadSearchView: function () {
-        $('#searchListSection').show();
-        $('#createUpdateSection').hide();
     },
     resetParitalView: function () {
         $('#txtHiddenId').val(0);

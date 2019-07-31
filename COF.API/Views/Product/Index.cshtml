@@ -10,8 +10,6 @@
     var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
 </script>
 
-
-@model List<COF.BusinessLogic.Models.Product.ProductByCategoryModel>
 <section class="content-header">
     <h1>
         Quản lí sản phẩm
@@ -74,7 +72,25 @@
                         </div>
 
                         <div>
-                            <button id="btnAdd" class="btn btn-success">Thêm sản phẩm</button>
+
+                            <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                <div class="form-row col-md-12" style="margin-top:15px">
+                                    <div class="row-fluid col-md-3">
+                                        <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control ui-autocomplete-input" value="" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+
+                                        <div class="form-group">
+                                            <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                            &nbsp;
+                                            <button id="btnClearForm" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="btnAdd" class="btn bg-purple margin">Thêm sản phẩm</button>
                             <br />
                             <br />
                         </div>
