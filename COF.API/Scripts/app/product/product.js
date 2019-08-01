@@ -1,7 +1,8 @@
 ﻿var homeconfig = {
     pageSize: 10,
     pageIndex: 1,
-    allShops : []
+    allShops: [],
+    allSizes : []
 };
 
 var productController = {
@@ -12,6 +13,7 @@ var productController = {
         productController.loadData(homeconfig.shopId);
 
         productController.loadCategories(homeconfig.shopId);
+        productController.getAllSizes();
         productController.registerEvent();
     },
     // register event for elements
@@ -59,6 +61,14 @@ var productController = {
         $('#btnSearch').off('click').on('click', function () {
             productController.loadData(homeconfig.shopId);
         });    
+
+        $('#btnSaveDetailPrice').off('click').on('click', function () {
+            var productSize = {
+                Id =
+                SizeId =
+                ProductId = 
+            };
+        });
     },
     loadData: function (shopId) {
         $.ajax({
@@ -160,6 +170,26 @@ var productController = {
                         html += '<option value="' + item.CategoryId+'">' + item.Name + '</option>';
                     });
                     $('#ddlCategories').html(html);
+                }
+            }
+        });
+    },
+    getAllSizes: function () {
+        $.ajax({
+            url: '/common/getallsizes',
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                if (res.status) {
+                    var data = res.data;
+                    homeconfig.allSizes = data;
+                    var html = '';
+                    html += '<option value="0"> -- Chọn Size -- </option>';
+                    $.each(data, function (i, item) {
+                        html += '<option value="' + item.CategoryId + '">' + item.Name + '</option>';
+                    });
+                    $('#ddlSizes').html(html);
+                    console.log(data);
                 }
             }
         });

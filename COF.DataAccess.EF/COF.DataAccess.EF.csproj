@@ -155,6 +155,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IRepository.generated.tt</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\ShopRepository.cs" />
   </ItemGroup>
   <ItemGroup>

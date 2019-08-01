@@ -299,6 +299,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\Core\MvcControllerBase.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -7127,14 +7128,6 @@
     <None Include="Properties\PublishProfiles\phannhathoang - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\web-capstone - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\customize\accountPage.js" />
-    <Content Include="Scripts\customize\adminMngt-customerList.js" />
-    <Content Include="Scripts\customize\branchPage.js" />
-    <Content Include="Scripts\customize\feedbackPage.js" />
-    <Content Include="Scripts\customize\orderPage.js" />
-    <Content Include="Scripts\customize\promotionPage.js" />
-    <Content Include="Scripts\customize\servicePage.js" />
-    <Content Include="Scripts\customize\supplier.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -7170,6 +7163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Common\" />
     <Folder Include="Views\Supplier\" />
   </ItemGroup>
   <ItemGroup>

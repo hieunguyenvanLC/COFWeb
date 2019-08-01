@@ -5,6 +5,12 @@
 
     var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
 }
+<style>
+    .verticalText {
+        vertical-align: middle;
+        padding: 0 !important;
+    }
+</style>
 
 <script type="text/javascript">
     var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
