@@ -1,4 +1,5 @@
 ﻿using COF.BusinessLogic.Models.Common;
+using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,19 @@ using System.Threading.Tasks;
 
 namespace COF.BusinessLogic.Services
 {
-    public interface ICommonService
+    public interface ISizeService
     {
         Task<List<SizeModel>> GetAllSizesAsync();
+        Task<Size> GetByIdAsync(int id);
     }
-    public class CommonService : ICommonService
+    public class SizeService : ISizeService
     {
         #region fields
         private readonly ISizeRepository _sizeRepository;
         #endregion
 
         #region ctor
-        public CommonService(ISizeRepository sizeRepository)
+        public SizeService(ISizeRepository sizeRepository)
         {
             _sizeRepository = sizeRepository;
         }
@@ -36,6 +38,11 @@ namespace COF.BusinessLogic.Services
 
            }).ToList();
            return res;
+        }
+
+        public async Task<Size> GetByIdAsync(int id)
+        {
+            return await _sizeRepository.GetByIdAsync(id);
         }
 
         #endregion

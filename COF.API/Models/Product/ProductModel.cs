@@ -19,4 +19,15 @@ namespace COF.API.Models.Product
         public int ShopId { get; set; }
         public string Description { get; set; }
     }
+
+    public class ProductSizeCreateModel
+    {
+        
+        [Required(ErrorMessage = "Size là bắt buộc.")]
+        public int  SizeId{ get; set; }
+        [Required(ErrorMessage = "Sản phẩm là bắt buộc.")]
+        public int ProductId { get; set; }
+        [Required(ErrorMessage = "Giá tiền là bắt buộc")]
+        public Decimal Price { get; set; }
+    }
 }

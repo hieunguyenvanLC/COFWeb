@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFModels = COF.DataAccess.EF.Models;
 
 namespace COF.BusinessLogic.Services
 {
@@ -19,6 +20,8 @@ namespace COF.BusinessLogic.Services
         Task<List<ProductByCategoryModel>> GetAllCategoriesAsync(int shopId);
         Task<ProductModel> GetByIdAsync(int id);
         Task<BusinessLogicResult<Product>> AddProductAsync(ProductCreateModel model);
+
+        Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model);
     }
     public class ProductService : IProductService
     {
@@ -28,6 +31,8 @@ namespace COF.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IShopRepository _shopRepository;
+        private readonly ISizeRepository _sizeRepository;
+        private readonly IProductSizeRepository _productSizeRepository;
         #endregion
 
         #region ctor
@@ -36,13 +41,17 @@ namespace COF.BusinessLogic.Services
             IUnitOfWork unitOfWork,
             IProductRepository productRepository,
             ICategoryRepository categoryRepository,
-            IShopRepository shopRepository
+            IShopRepository shopRepository,
+            ISizeRepository sizeRepository,
+            IProductSizeRepository productSizeRepository
         )
         {
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _categoryRepository = categoryRepository;
             _shopRepository = shopRepository;
+            _sizeRepository = sizeRepository;
+            _productSizeRepository = productSizeRepository;
 
         }
         #endregion
@@ -62,6 +71,7 @@ namespace COF.BusinessLogic.Services
                     Name = y.ProductName,
                     Sizes = y.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
+                        Id = z.Id,
                         SizeId = z.Id,
                         Cost = z.Cost,
                         Size = z.Size.Name               
@@ -118,6 +128,7 @@ namespace COF.BusinessLogic.Services
                     Description = product.Description,
                     Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
+                        Id = z.Id,
                         SizeId = z.Id,
                         Cost = z.Cost,
                         Size = z.Size.Name
@@ -179,6 +190,56 @@ namespace COF.BusinessLogic.Services
             
 
 
+        }
+
+        public async Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model)
+        {
+            try
+            {
+                var product = await _productRepository.GetByIdAsync(model.ProductId);
+                if (product is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Sản phẩm", "Sản phẩm không tồn tại." )})
+                    };
+                }
+
+                var size = await _sizeRepository.GetByIdAsync(model.SizeId);
+
+                if (size is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size không tồn tại." )})
+                    };
+                }
+
+                var entity = new EFModels.ProductSize
+                {
+                    ProductId = model.ProductId,
+                    SizeId = model.SizeId,
+                    Cost = model.Price
+                };
+
+                _productSizeRepository.Add(entity);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Success = true,
+                    Result = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
         }
 
         #endregion

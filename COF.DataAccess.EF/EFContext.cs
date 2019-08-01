@@ -38,6 +38,7 @@
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Partner> Partners { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

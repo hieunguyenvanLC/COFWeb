@@ -28,6 +28,7 @@ var productController = {
         });
 
         $('#btnAdd').off('click').on('click', function () {
+            productController.resetParitalView();
             var shop = homeconfig.allShops.filter(x => x.Id === homeconfig.shopId);
             var title = shop[0].Name + ' -  Tạo mới sản phẩm';
             $('#lblTitle').text(title);
@@ -64,10 +65,12 @@ var productController = {
 
         $('#btnSaveDetailPrice').off('click').on('click', function () {
             var productSize = {
-                Id =
-                SizeId =
-                ProductId = 
+                Id : 0,
+                SizeId: $('#ddlSizes').val(),
+                ProductId: $('#txtHiddenId').val(),
+                Price: $('#txtProductSizePrice').val()
             };
+            productController.saveProductSize(productSize);
         });
     },
     loadData: function (shopId) {
@@ -186,7 +189,7 @@ var productController = {
                     var html = '';
                     html += '<option value="0"> -- Chọn Size -- </option>';
                     $.each(data, function (i, item) {
-                        html += '<option value="' + item.CategoryId + '">' + item.Name + '</option>';
+                        html += '<option value="' + item.Id + '">' + item.Name + '</option>';
                     });
                     $('#ddlSizes').html(html);
                     console.log(data);
@@ -241,8 +244,9 @@ var productController = {
                 data: { model: data },
                 success: function (res) {
                     if (res.status) {
+                        $('#txtHiddenId').val(res.data.Id);
+                        $('#priceFrm').show();
                         productController.loadData(homeconfig.shopId);
-                        $('#btnCancel').click();
                         toastr.success(res.message, "Kết quả");
                     } else {
                         toastr.error(res.errorMessage, "Lỗi");
@@ -270,10 +274,62 @@ var productController = {
     resetParitalView: function () {
         $('#txtHiddenId').val(0);
         $('#txtName').val('');
-        $('#txtAge').val('');
-        $('#txtAddress').val('');
-        $('#txtPhoneNumber').val('');
-        $('#txtEmail').val('');
+        $('#txtDescription').val('');
+        $('#priceFrm').hide('');
+    },
+    saveProductSize: function (data) {
+        if (data.Id === 0) {
+            $.ajax({
+                url: '/product/AddProductSize',
+                type: 'post',
+                dataType: 'json',
+                data: { model: data },
+                success: function (res) {
+                    if (res.status) {
+                        toastr.success(res.message, "Kết quả");
+                        productController.loadProductSizes(res.data);
+                    } else {
+                        toastr.error(res.errorMessage, "Lỗi");
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                url: '/Student/Edit',
+                type: 'post',
+                dataType: 'json',
+                data: { model: data },
+                success: function (res) {
+                    if (res.Status) {
+                        studentController.loadData(true);
+                        $('#btnCancel').click();
+                        toastr.success("Edit successfully");
+                    } else {
+                        toastr.error(res.ErrorMessage);
+                    }
+                }
+            });
+        }
+    },
+    loadProductSizes: function (sizes) {
+        var html = '';
+        html + '<tr>';
+
+        html + '<td> # </td>';
+        html + '<td>Size</td>';
+        html + '<td>Giá</td>';
+        html + '<td></td>';
+        html + '</tr>';
+        $.each(sizes, function (i, item) {
+            html + '<tr>';
+            html + '<td>' + (i + 1 ) + '</td>';
+            html + '<td>' + item.Size + '</td>';
+            html + '<td>' + item.Cost + '</td>';
+            html + '<td></td>';
+            html + '</tr>';
+
+        });
+        $('#tblProductSizes').html(html);
     }
 };
 productController.run();

@@ -42,7 +42,7 @@ namespace COF.API.Controllers.Core
 
         protected int? ShopId { get; set; }
 
-        public JsonResult HttpGetSuccessResponse(object data, string message = "")
+        public JsonResult HttpGetSuccessResponse(object data = null, string message = "")
         {
             return Json(new
             {
@@ -51,7 +51,7 @@ namespace COF.API.Controllers.Core
                 data = data
             }, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult HttpPostSuccessResponse(object data, string message)
+        public JsonResult HttpPostSuccessResponse(object data = null, string message = "")
         {
             return Json(new
             {

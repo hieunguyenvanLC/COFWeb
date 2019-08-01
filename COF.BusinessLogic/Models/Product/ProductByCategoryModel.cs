@@ -28,6 +28,7 @@ namespace COF.BusinessLogic.Models.Product
 
     public class ProductSize
     {
+        public int Id { get; set; }
         public int SizeId { get; set; }
         public string Size { get; set; }
         public decimal Cost { get; set; }
@@ -57,6 +58,14 @@ namespace COF.BusinessLogic.Models.Product
         public string Description { get; set; }
         public int ShopId { get; set; }
         public int PartnerId { get; set; }
+    }
+
+    public class ProductSizeCreateModel
+    {
+
+        public int SizeId { get; set; }
+        public int ProductId { get; set; }
+        public Decimal Price { get; set; }
     }
 
     public enum ProductFilterType

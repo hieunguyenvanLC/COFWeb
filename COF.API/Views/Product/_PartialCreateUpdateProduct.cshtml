@@ -37,7 +37,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="priceFrm" hidden>
                         <label>Giá tiền</label>
                         <br />
                         <button type="button" class="btn bg-purple margin" data-toggle="modal" data-target="#addPriceModal">
@@ -45,17 +45,8 @@
                         </button>
 
                         <table class="table table-striped">
-                            <tbody>
-                                <tr>
-                                    <td>Size</td>
-                                    <td>Giá tiền</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                            <tbody id="tblProductSizes">
+                               
                             </tbody>
                         </table>
                     </div>
@@ -103,8 +94,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="txtProductSizePrice" class="col-sm-2 control-label">Già tiền: </label>
-
+                            <label for="txtProductSizePrice" class="col-sm-2 control-label">Giá tiền: </label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="txtProductSizePrice" placeholder="Nhập giá tiền ....">
                             </div>
@@ -113,7 +103,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                 <button type="button" id="btnSaveDetailPrice" class="btn btn-primary">Lưu</button>
             </div>
         </div>

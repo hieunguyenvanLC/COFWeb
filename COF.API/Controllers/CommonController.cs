@@ -12,11 +12,11 @@ namespace COF.API.Controllers
     public class CommonController : MvcControllerBase
     {
         #region fields
-        private readonly ICommonService _commonService;
+        private readonly ISizeService _commonService;
         #endregion
 
         #region ctor
-        public CommonController(ICommonService commonService)
+        public CommonController(ISizeService commonService)
         {
             _commonService = commonService;
         }

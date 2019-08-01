@@ -18,6 +18,7 @@ namespace COF.API.Controllers
         private readonly IProductService _productService;
         private readonly IUserService _userService;
         private readonly IShopService _shopService;
+        private readonly ISizeService _sizeService;
         #endregion
 
 
@@ -25,11 +26,13 @@ namespace COF.API.Controllers
         public ProductController(
             IProductService productService, 
             IUserService userService,
-            IShopService shopService)
+            IShopService shopService,
+            ISizeService sizeService)
         {
             _productService = productService;
             _userService = userService;
             _shopService = shopService;
+            _sizeService = sizeService;
         }
 
         #endregion
@@ -114,5 +117,37 @@ namespace COF.API.Controllers
           
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddProductSize(ProductSizeCreateModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpPostErrorResponse(ModelStateErrorMessage());
+            }
+            try
+            {
+                var productSizeModel = new ServiceModels.Product.ProductSizeCreateModel
+                {
+                   Price = model.Price, 
+                   ProductId = model.ProductId,
+                   SizeId = model.SizeId
+                };
+
+                var logicResult = await _productService.AddProductSizeAsync(productSizeModel);
+                if (!logicResult.Success)
+                {
+                    return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
+                }
+
+                var product = await _productService.GetByIdAsync(model.ProductId);
+            
+                return HttpPostSuccessResponse(product.Sizes, message: "Tạo mới thành công");
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
+            }
+
+        }
     }
 }

@@ -33,6 +33,10 @@ namespace COF.DataAccess.EF.Repositories
 	
 	public partial class TableHasOrderRepository : EFRepository<Models.TableHasOrder>, ITableHasOrderRepository { public TableHasOrderRepository(EFContext context) : base(context){} }
 	
+	public partial interface IPartnerRepository : IRepository<Models.Partner> {}
+	
+	public partial class PartnerRepository : EFRepository<Models.Partner>, IPartnerRepository { public PartnerRepository(EFContext context) : base(context){} }
+	
 	public partial interface ITableRepository : IRepository<Models.Table> {}
 	
 	public partial class TableRepository : EFRepository<Models.Table>, ITableRepository { public TableRepository(EFContext context) : base(context){} }
@@ -40,6 +44,10 @@ namespace COF.DataAccess.EF.Repositories
 	public partial interface IProductRepository : IRepository<Models.Product> {}
 	
 	public partial class ProductRepository : EFRepository<Models.Product>, IProductRepository { public ProductRepository(EFContext context) : base(context){} }
+	
+	public partial interface IProductSizeRepository : IRepository<Models.ProductSize> {}
+	
+	public partial class ProductSizeRepository : EFRepository<Models.ProductSize>, IProductSizeRepository { public ProductSizeRepository(EFContext context) : base(context){} }
 	
 	public partial interface ISizeRepository : IRepository<Models.Size> {}
 	
