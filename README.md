@@ -2,6 +2,7 @@
 Web admin and web production for COF
 - Branch MASTER to deploy project
 - Branch HoangPN to dev web admin and web show product.
+- Branch NhiDT to dev front-end show product page.
 
 # RULE WITH GITHUB
 - Commit code before shutdown the computer. Message config "task do + task status _+ <user>  ". 
