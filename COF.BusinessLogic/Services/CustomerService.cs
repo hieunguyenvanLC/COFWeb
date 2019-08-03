@@ -17,7 +17,7 @@ namespace COF.BusinessLogic.Services
         /// </summary>
         /// <param name="keyword"></param>
         /// <returns></returns>
-        Task<List<CustomerModel>> GetAllCustomersAsync(string keyword);
+        Task<List<CustomerModel>> GetAllCustomersAsync(int partnerId, string keyword);
 
         /// <summary>
         /// Get customer by id async
@@ -41,12 +41,9 @@ namespace COF.BusinessLogic.Services
         #endregion
 
         #region public methods
-        public async Task<List<CustomerModel>> GetAllCustomersAsync(string keyword)
+        public async Task<List<CustomerModel>> GetAllCustomersAsync(int partnerId,string keyword)
         {
-            Func<Customer, bool> customerFunc = x => x.FullName.Contains(keyword) || x.PhoneNumber.Contains(keyword);
-            Expression<Func<Customer, bool>> customerFilter = a => customerFunc(a);
-
-            var allCustomers = await _customerRepository.GetByFilterAsync(customerFilter);
+            var allCustomers = await _customerRepository.GetAllCustomersAsync(partnerId, keyword);
             var result = allCustomers.Select(x => new CustomerModel
             {
                 Id = x.Id,

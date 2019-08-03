@@ -1,5 +1,6 @@
 ﻿using COF.API.Core;
 using COF.BusinessLogic.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,15 @@ namespace COF.API.Api
     {
         #region fileds
         private readonly ICustomerService _customerService;
+        private readonly IUserService _userService;
         #endregion
 
         #region ctor
 
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, IUserService userService)
         {
             _customerService = customerService;
+            _userService = userService;
         }
         #endregion
 
@@ -30,7 +33,8 @@ namespace COF.API.Api
         [HttpGet]
         public async Task<HttpResponseMessage> SearchCustomer(string keyword)
         {
-            var result = await _customerService.GetAllCustomersAsync(keyword);
+            var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            var result = await _customerService.GetAllCustomersAsync(user.PartnerId.GetValueOrDefault(),keyword);
             return SuccessResult(result);
         }
 

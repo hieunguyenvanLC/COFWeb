@@ -8,6 +8,8 @@ namespace COF.API.Models.Product
 {
    public class ProductCreateModel
    {
+        public int? Id { get; set; }
+
         [Required(ErrorMessage = "Tên sản phẩm là bắt buộc.")]
         [MaxLength(250,ErrorMessage ="Tên sản phẩm có độ dài tối đa là 250 kí tự.")]
         public string Name { get; set; }
@@ -18,6 +20,8 @@ namespace COF.API.Models.Product
         [Required(ErrorMessage = "Chi nhánh là bắt buộc.")]
         public int ShopId { get; set; }
         public string Description { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     public class ProductSizeCreateModel

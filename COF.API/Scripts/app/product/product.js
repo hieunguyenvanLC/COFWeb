@@ -2,7 +2,8 @@
     pageSize: 10,
     pageIndex: 1,
     allShops: [],
-    allSizes : []
+    allSizes: [],
+    allProducts : []
 };
 
 var productController = {
@@ -47,14 +48,15 @@ var productController = {
                 Name: $('#txtName').val(),
                 CategoryId: $('#ddlCategories').val(),
                 ShopId: homeconfig.shopId,
-                Description: $('#txtDescription').val()
+                Description: $('#txtDescription').val(),
+                IsActive: $('#chkActive').is(":checked")
             };
             console.log(data);
             productController.saveData(data);
         });
 
         $('#txtKeySearch').off('keypress').on('keypress', function (e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 productController.loadData(homeconfig.shopId);
             }           
         });
@@ -71,6 +73,42 @@ var productController = {
                 Price: $('#txtProductSizePrice').val()
             };
             productController.saveProductSize(productSize);
+        });
+
+        $('#btnAddProductSize').off('click').on('click', function () {
+            productController.clearProductSizeModel();
+            $('#addPriceModal').modal('hide');
+        });
+
+        $('.btnEditProduct').off('click').on('click', function () {
+
+            productController.resetParitalView();
+            var shop = homeconfig.allShops.filter(x => x.Id === homeconfig.shopId);
+            var title = shop[0].Name + ' - Chỉnh sửa sản phẩm';
+            $('#lblTitle').text(title);
+            $('#createUpdateSection').show();
+            $('#tableContent').hide();
+
+            $('#priceFrm').show();
+
+            var id = $(this).data('id');
+            var products = homeconfig.allProducts.filter(x => x.Id === id);
+            productController.loadProductDetail(products[0]);
+            $('#priceFrm').show();
+          
+        });
+
+        $('.btnEditProductSize').off('click').on('click', function () {
+
+            $('#addPriceModal').modal('show');
+            var id = $(this).data('id');
+            var sizeId = $(this).data('sizeid');
+            console.log(sizeId);
+            var cost = $(this).data('cost');
+            
+            $('#ddlSizes').val(sizeId).change();
+            $('#txtProductSizeId').val(id);
+            $('#txtProductSizePrice').val(cost);
         });
     },
     loadData: function (shopId) {
@@ -96,10 +134,17 @@ var productController = {
                         html += '<td><b>Size</b></td>';
                         html += '<td><b>Giá tiền </b></td>';
 
-                        html += '<td></td>';
+                        html += '<td><b>Thao tác</b></td>';
                         html += '</tr>';
 
                         var products = category.Products;
+
+                        $.each(products, function (i, item) {
+                            homeconfig.allProducts.push(item);
+                        });
+
+                        
+
                         $.each(products,function (i, product) {
                             var sizeCount = product.Sizes.length;
                             if (sizeCount > 0) {
@@ -108,13 +153,13 @@ var productController = {
                                     var size = product.Sizes[j];
                                     html += '<tr>';
                                     if (j === 0) {
-                                        html += '<td rowspan=" ' + sizeCount + '" style="text-align:center">' + product.Name.toUpperCase() + '</td>';
+                                        html += '<td rowspan=" ' + sizeCount + '" style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
 
                                         if (product.IsActive) {
-                                            html += '<td  rowspan=" ' + sizeCount + '"><span class="label label-success">SẴN SÀNG</span></td>';
+                                            html += '<td  style="text-align:center;vertical-align: middle;" rowspan=" ' + sizeCount + '"><span class="label label-success">SẴN SÀNG</span></td>';
                                         }
                                         else {
-                                            html += '<td  rowspan=" ' + sizeCount + '"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                            html += '<td style="text-align:center;vertical-align: middle;"  rowspan=" ' + sizeCount + '"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
                                         }
 
                                     }
@@ -122,31 +167,34 @@ var productController = {
                                   
                                     html += ' <td>' + size.Size + '</td>';
                                     html += ' <td>' + size.Cost + '</td>';
-                                   
+
+                                    if (j === 0) {
+                                        html += '<td rowspan=" ' + sizeCount + '">';
+                                        html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                        html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                        html += '</td>';
+                                    }
                                     
-                                    html += '<td>';
-                                    html += '<button class="btn btn-primary"><i class="fa fa-edit"></i></button>  &nbsp;';
-                                    html += '<button class="btn btn-danger"><i class="fa fa-remove"></i></button>';
-                                    html += '</td>';
+                                  
                                     html += '</tr>';
                                 }
                             }
                              else {
                                 html += '<tr>';
-                                html += '<td style="text-align:center">' + product.Name.toUpperCase() + '</td>';
+                                html += '<td style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
                          
 
                                 if (product.IsActive) {
-                                    html += '<td><span class="label label-success">SẴN SÀNG</span></td>';
+                                    html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-success">SẴN SÀNG</span></td>';
                                 }
                                 else {
-                                    html += '<td><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                    html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
                                 }
                                 html += '<td></td>';
                                 html += '<td></td>';
                                 html += '<td>';
-                                html += '<button class="btn btn-primary"><i class="fa fa-edit"></i></button> &nbsp;';
-                                html += '<button class="btn btn-danger"><i class="fa fa-remove"></i></button>';
+                                html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
                                 html += '</td>';
                                 html += '</tr>';
                             }
@@ -154,9 +202,11 @@ var productController = {
                         });
                     }
                     $('#tblData').html(html);
+                    productController.registerEvent();
                 }
             }
         });
+
     },
     loadCategories: function (shopId) {
         $.ajax({
@@ -255,17 +305,17 @@ var productController = {
             });
         } else {
             $.ajax({
-                url: '/Student/Edit',
+                url: '/product/updateproduct',
                 type: 'post',
                 dataType: 'json',
                 data: { model: data },
                 success: function (res) {
-                    if (res.Status) {
-                        studentController.loadData(true);
+                    if (res.status) {
+                        productController.loadData(homeconfig.shopId);
                         $('#btnCancel').click();
-                        toastr.success("Edit successfully");
+                        toastr.success(res.message, "Kết quả");
                     } else {
-                        toastr.error(res.ErrorMessage);
+                        toastr.error(res.errorMessage, "Lỗi");
                     }
                 }
             })
@@ -275,7 +325,9 @@ var productController = {
         $('#txtHiddenId').val(0);
         $('#txtName').val('');
         $('#txtDescription').val('');
-        $('#priceFrm').hide('');
+        $('#priceFrm').hide();
+        $('#chkActive').prop('checked', false);
+        productController.loadProductSizes([]);
     },
     saveProductSize: function (data) {
         if (data.Id === 0) {
@@ -287,7 +339,9 @@ var productController = {
                 success: function (res) {
                     if (res.status) {
                         toastr.success(res.message, "Kết quả");
+                        productController.loadData(homeconfig.shopId);
                         productController.loadProductSizes(res.data);
+                        $("#btnCancelPrice").click();
                     } else {
                         toastr.error(res.errorMessage, "Lỗi");
                     }
@@ -295,7 +349,7 @@ var productController = {
             });
         } else {
             $.ajax({
-                url: '/Student/Edit',
+                url: '/product/updateproduct',
                 type: 'post',
                 dataType: 'json',
                 data: { model: data },
@@ -313,23 +367,50 @@ var productController = {
     },
     loadProductSizes: function (sizes) {
         var html = '';
-        html + '<tr>';
+        html += '<tr>';
 
-        html + '<td> # </td>';
-        html + '<td>Size</td>';
-        html + '<td>Giá</td>';
-        html + '<td></td>';
-        html + '</tr>';
+        html += '<td> # </td>';
+        html += '<td>Size</td>';
+        html += '<td>Giá</td>';
+        html += '<td></td>';
+        html += '</tr>';
         $.each(sizes, function (i, item) {
-            html + '<tr>';
-            html + '<td>' + (i + 1 ) + '</td>';
-            html + '<td>' + item.Size + '</td>';
-            html + '<td>' + item.Cost + '</td>';
-            html + '<td></td>';
-            html + '</tr>';
+            var size = JSON.stringify(item);
+            console.log(item);
+            html += '<tr>';
+            html += '<td>' + (i + 1 ) + '</td>';
+            html += '<td>' + item.Size + '</td>';
+            html += '<td>' + item.Cost + '</td>';
+            html += '<td>';
+            html += '<button data-id="' + item.Id + '" data-cost= "' + item.Cost + '" data-sizeid ="' + item.SizeId + '" class="btn btn-primary btnEditProductSize"><i class="fa fa-edit"></i></button> &nbsp;';
+            html += '<button class="btn btn-danger btnRemoveProductSize"><i class="fa fa-remove"></i></button>';
+            html += '</td > ';
+            html += '</tr>';
 
         });
         $('#tblProductSizes').html(html);
+        productController.registerEvent();
+       
+
+       
+    }
+    ,
+    clearProductSizeModel: function () {
+        $('#ddlSizes').val('0').change();
+        $('#txtProductSizeId').val('0');
+        $('#txtProductSizePrice').val('');
+        
+    },
+    editProductSize: function () {
+        
+    },
+    loadProductDetail: function (row) {
+        $('#txtName').val(row.Name);
+        $('#txtHiddenId').val(row.Id);
+        $('#txtDescription').val(row.Description);
+        $('#chkActive').prop('checked', row.IsActive);
+        productController.loadProductSizes(row.Sizes);
+        
     }
 };
 productController.run();

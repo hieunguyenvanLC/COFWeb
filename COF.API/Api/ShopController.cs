@@ -11,7 +11,7 @@ using System.Web.Http;
 
 namespace COF.API.Api
 {
-    [Authorize]
+    //[Authorize]
     [RoutePrefix("api/shop")]
     public class ShopController : ApiControllerBase
     {

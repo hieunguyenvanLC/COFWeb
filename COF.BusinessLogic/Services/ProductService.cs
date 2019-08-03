@@ -20,8 +20,8 @@ namespace COF.BusinessLogic.Services
         Task<List<ProductByCategoryModel>> GetAllCategoriesAsync(int shopId);
         Task<ProductModel> GetByIdAsync(int id);
         Task<BusinessLogicResult<Product>> AddProductAsync(ProductCreateModel model);
-
         Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model);
+        Task<BusinessLogicResult<Product>> UpdatProductAsync(int productId, ProductCreateModel model);
     }
     public class ProductService : IProductService
     {
@@ -69,10 +69,11 @@ namespace COF.BusinessLogic.Services
                 {
                     Id = y.Id,
                     Name = y.ProductName,
+                    Description = y.Description,
                     Sizes = y.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
-                        SizeId = z.Id,
+                        SizeId = z.SizeId,
                         Cost = z.Cost,
                         Size = z.Size.Name               
                     }).ToList(),
@@ -187,8 +188,6 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
                 };
             }
-            
-
 
         }
 
@@ -217,6 +216,15 @@ namespace COF.BusinessLogic.Services
                     };
                 }
 
+                if (product.ProductSizes.Any(x  => x.SizeId == size.Id))
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size đã tồn tại.") })
+                    };
+                }
+
                 var entity = new EFModels.ProductSize
                 {
                     ProductId = model.ProductId,
@@ -240,6 +248,72 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
                 };
             }
+        }
+
+        public async Task<BusinessLogicResult<Product>> UpdatProductAsync(int productId, ProductCreateModel model)
+        {
+            try
+            {
+                var product = _productRepository.GetById(productId);
+
+                if (product is null)
+                {
+                    return new BusinessLogicResult<Product>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Sản phẩm", "Sản phẩm không tồn tại.") })
+                    };
+
+                }
+
+                var category = await _categoryRepository.GetByIdAsync(model.CategoryId);
+                if (category is null)
+                {
+                    return new BusinessLogicResult<Product>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Danh mục", "Danh mục không tồn tại.") })
+                    };
+                }
+
+                var duplicatedProduct = await _productRepository.GetSingleAsync((x) => x.ShopId == model.ShopId && x.ProductName == model.Name);
+                if (duplicatedProduct != null && duplicatedProduct.Id != product.Id)
+                {
+                    return new BusinessLogicResult<Product>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Tên sản phẩm", "Tên sản phẩm đã tồn tại.") })
+                    };
+                }
+
+                if (model.IsActive && !product.ProductSizes.Any())
+                {
+                    return new BusinessLogicResult<Product>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Giá", "Bạn phải thêm giá mới có thể Active được sản phẩm.") })
+                    };
+                }
+
+                product.ProductName = model.Name;
+                product.Description = model.Description;
+                product.IsActive = model.IsActive;
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<Product>
+                {
+                    Success = true,
+                    Result = product
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<Product>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
+
         }
 
         #endregion

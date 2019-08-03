@@ -149,5 +149,44 @@ namespace COF.API.Controllers
             }
 
         }
+
+        public async Task<ActionResult> UpdateProduct(ProductCreateModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpPostErrorResponse(ModelStateErrorMessage());
+            }
+            try
+            {
+                var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                var shops = await _shopService.GetAllShopAsync(user.PartnerId.GetValueOrDefault());
+
+                if (!shops.Any(x => x.Id == model.ShopId))
+                {
+                    return HttpPostErrorResponse($"Chi nhánh với # {model.ShopId} không thuộc hệ thống");
+                }
+
+                var productModel = new ServiceModels.Product.ProductCreateModel
+                {
+                    Name = model.Name,
+                    CategoryId = model.CategoryId,
+                    Description = model.Description,
+                    ShopId = model.ShopId,
+                    IsActive = model.IsActive,
+                    PartnerId = user.PartnerId.GetValueOrDefault()
+                };
+
+                var logicResult = await _productService.UpdatProductAsync(model.Id.GetValueOrDefault(), productModel);
+                if (!logicResult.Success)
+                {
+                    return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
+                }
+                return HttpPostSuccessResponse(null, "Cập nhập  thành công");
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
+            }
+        }
     }
 }

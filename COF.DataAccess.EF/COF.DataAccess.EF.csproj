@@ -150,6 +150,7 @@
     <Compile Include="Models\UserWorkingTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
+    <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Repositories\IRepository.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace COF.API.Api
 {
     [RoutePrefix("api/product")]
-    [Authorize]
+    //[Authorize]
     public class ProductController : ApiControllerBase
     {
         #region fields
