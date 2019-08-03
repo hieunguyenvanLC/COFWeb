@@ -70,6 +70,7 @@ namespace COF.BusinessLogic.Services
                     Id = y.Id,
                     Name = y.ProductName,
                     Description = y.Description,
+                    CategoryId = y.CategoryId,
                     Sizes = y.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
@@ -127,6 +128,7 @@ namespace COF.BusinessLogic.Services
                     Id = product.Id,
                     Name = product.ProductName,
                     Description = product.Description,
+                    CategoryId = product.CategoryId,
                     Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,

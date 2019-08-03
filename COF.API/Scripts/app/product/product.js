@@ -112,6 +112,7 @@ var productController = {
         });
     },
     loadData: function (shopId) {
+        homeconfig.allProducts = [];
         $.ajax({
             url: '/product/getallproducts',
             type: 'get',
@@ -312,7 +313,7 @@ var productController = {
                 success: function (res) {
                     if (res.status) {
                         productController.loadData(homeconfig.shopId);
-                        $('#btnCancel').click();
+                       // $('#btnCancel').click();
                         toastr.success(res.message, "Kết quả");
                     } else {
                         toastr.error(res.errorMessage, "Lỗi");
@@ -409,6 +410,7 @@ var productController = {
         $('#txtHiddenId').val(row.Id);
         $('#txtDescription').val(row.Description);
         $('#chkActive').prop('checked', row.IsActive);
+        $('#ddlCategories').val(row.CategoryId).change();
         productController.loadProductSizes(row.Sizes);
         
     }
