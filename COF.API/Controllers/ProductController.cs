@@ -126,7 +126,7 @@ namespace COF.API.Controllers
             }
             try
             {
-                var productSizeModel = new ServiceModels.Product.ProductSizeCreateModel
+                var productSizeModel = new ServiceModels.Product.ProductSizeRequestModel
                 {
                    Price = model.Price, 
                    ProductId = model.ProductId,
@@ -139,9 +139,8 @@ namespace COF.API.Controllers
                     return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
                 }
 
-                var product = await _productService.GetByIdAsync(model.ProductId);
             
-                return HttpPostSuccessResponse(product.Sizes, message: "Tạo mới thành công");
+                return HttpPostSuccessResponse(message: "Tạo mới thành công");
             }
             catch (Exception ex)
             {
@@ -190,7 +189,7 @@ namespace COF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateProductSize(ProductSizeCreateModel model)
+        public async Task<ActionResult> UpdateProductSize(ProductSizeUpdateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -198,22 +197,21 @@ namespace COF.API.Controllers
             }
             try
             {
-                var productSizeModel = new ServiceModels.Product.ProductSizeCreateModel
+                var productSizeModel = new ServiceModels.Product.ProductSizeRequestModel
                 {
                     Price = model.Price,
                     ProductId = model.ProductId,
                     SizeId = model.SizeId
                 };
 
-                var logicResult = await _productService.AddProductSizeAsync(productSizeModel);
+                var logicResult = await _productService.UpdateProductSizeAsync(model.Id , productSizeModel);
                 if (!logicResult.Success)
                 {
                     return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
                 }
 
-                var product = await _productService.GetByIdAsync(model.ProductId);
 
-                return HttpPostSuccessResponse(product.Sizes, message: "Tạo mới thành công");
+                return HttpPostSuccessResponse(message: "Cập nhật thành công");
             }
             catch (Exception ex)
             {

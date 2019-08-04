@@ -16,6 +16,9 @@ var productController = {
         productController.loadCategories(homeconfig.shopId);
         productController.getAllSizes();
         productController.registerEvent();
+
+        $('#txtProductSizePrice').mask('000.000.000.000.000', { reverse: true });
+
     },
     // register event for elements
     registerEvent: function () {
@@ -51,7 +54,6 @@ var productController = {
                 Description: $('#txtDescription').val(),
                 IsActive: $('#chkActive').is(":checked")
             };
-            console.log(data);
             productController.saveData(data);
         });
 
@@ -72,10 +74,10 @@ var productController = {
 
         $('#btnSaveDetailPrice').off('click').on('click', function () {
             var productSize = {
-                Id : 0,
+                Id: $('#txtProductSizeId').val(),
                 SizeId: $('#ddlSizes').val(),
                 ProductId: $('#txtHiddenId').val(),
-                Price: $('#txtProductSizePrice').val()
+                Price: $('#txtProductSizePrice').val().split('.').join('')
             };
             productController.saveProductSize(productSize);
         });
@@ -83,6 +85,7 @@ var productController = {
         $('#btnAddProductSize').off('click').on('click', function () {
             productController.clearProductSizeModel();
             $('#addPriceModal').modal('hide');
+           
         });
 
         $('.btnEditProduct').off('click').on('click', function () {
@@ -107,16 +110,15 @@ var productController = {
         });
 
         $('.btnEditProductSize').off('click').on('click', function () {
-
+            productController.clearProductSizeModel();
             $('#addPriceModal').modal('show');
             var id = $(this).data('id');
             var sizeId = $(this).data('sizeid');
-            console.log(sizeId);
             var cost = $(this).data('cost');
             
             $('#ddlSizes').val(sizeId).change();
             $('#txtProductSizeId').val(id);
-            $('#txtProductSizePrice').val(cost);
+            $('#txtProductSizePrice').val(cost).trigger('keyup');
         });
 
         $('.btnRemoveProductSize').off('click').on('click', function () {
@@ -144,6 +146,8 @@ var productController = {
 
          
         });
+
+       
     },
     loadData: function (shopId) {
         homeconfig.allProducts = [];
@@ -200,7 +204,7 @@ var productController = {
 
 
                                         html += ' <td>' + size.Size + '</td>';
-                                        html += ' <td>' + size.Cost + '</td>';
+                                        html += ' <td>' + productController.formatMoney(size.Cost) + '</td>';
 
                                         if (j === 0) {
                                             html += '<td rowspan=" ' + sizeCount + '">';
@@ -283,7 +287,6 @@ var productController = {
                         html += '<option value="' + item.Id + '">' + item.Name + '</option>';
                     });
                     $('#ddlSizes').html(html);
-                    console.log(data);
                 }
             }
         });
@@ -371,9 +374,9 @@ var productController = {
         productController.loadProductSizes([]);
     },
     saveProductSize: function (data) {
-        if (data.Id === 0) {
+        if (data.Id == 0) {
             $.ajax({
-                url: '/product/AddProductSize',
+                url: '/product/addproductsize',
                 type: 'post',
                 dataType: 'json',
                 data: { model: data },
@@ -391,7 +394,7 @@ var productController = {
             });
         } else {
             $.ajax({
-                url: '/product/updateproduct',
+                url: '/product/updateproductsize',
                 type: 'post',
                 dataType: 'json',
                 data: { model: data },
@@ -403,7 +406,7 @@ var productController = {
                         productController.loadData(homeconfig.shopId);
 
                     } else {
-                        toastr.error(res.ErrorMessage);
+                        toastr.error(res.errorMessage);
                     }
                 }
             });
@@ -419,12 +422,10 @@ var productController = {
         html += '<td></td>';
         html += '</tr>';
         $.each(sizes, function (i, item) {
-            var size = JSON.stringify(item);
-            console.log(item);
             html += '<tr>';
             html += '<td>' + (i + 1 ) + '</td>';
             html += '<td>' + item.Size + '</td>';
-            html += '<td>' + item.Cost + '</td>';
+            html += '<td>' + productController.formatMoney(item.Cost) + '</td>';
             html += '<td>';
             html += '<button data-id="' + item.Id + '" data-cost= "' + item.Cost + '" data-sizeid ="' + item.SizeId + '" class="btn btn-primary btnEditProductSize"><i class="fa fa-edit"></i></button> &nbsp;';
             html += '<button  data-id="' + item.Id + '" class="btn btn-danger btnRemoveProductSize"><i class="fa fa-remove"></i></button>';
@@ -481,8 +482,6 @@ var productController = {
                             $('#chkActive').prop('checked', row.IsActive);
                             $('#ddlCategories').val(row.CategoryId).change();
                             productController.loadProductSizes(row.Sizes);
-
-                            productController.loadData(homeconfig.shopId);
                         } else {
                             toastr.error(res.errorMessage, "Lỗi");
                         }
@@ -490,6 +489,10 @@ var productController = {
                 });
         
         
+    },
+    formatMoney: function (value) {
+        var ressult = accounting.formatMoney(value, "", 0, ".", ","); // €4.999,99
+        return ressult;
     }
 };
 productController.run();

@@ -34,4 +34,16 @@ namespace COF.API.Models.Product
         [Required(ErrorMessage = "Giá tiền là bắt buộc")]
         public Decimal Price { get; set; }
     }
+
+    public class ProductSizeUpdateModel
+    {
+        [Required]
+        public int Id { get; set; }
+        [Required(ErrorMessage = "Size là bắt buộc.")]
+        public int SizeId { get; set; }
+        [Required(ErrorMessage = "Sản phẩm là bắt buộc.")]
+        public int ProductId { get; set; }
+        [Required(ErrorMessage = "Giá tiền là bắt buộc")]
+        public Decimal Price { get; set; }
+    }
 }

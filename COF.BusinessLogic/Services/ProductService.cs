@@ -20,9 +20,10 @@ namespace COF.BusinessLogic.Services
         Task<List<ProductByCategoryModel>> GetAllCategoriesAsync(int shopId);
         Task<ProductModel> GetByIdAsync(int id);
         Task<BusinessLogicResult<Product>> AddProductAsync(ProductCreateModel model);
-        Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model);
+        Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeRequestModel model);
         Task<BusinessLogicResult<Product>> UpdatProductAsync(int productId, ProductCreateModel model);
         Task<BusinessLogicResult<bool>> RemoveProductSize(int id);
+        Task<BusinessLogicResult<bool>> UpdateProductSizeAsync(int id, ProductSizeRequestModel model);
     }
     public class ProductService : IProductService
     {
@@ -195,7 +196,7 @@ namespace COF.BusinessLogic.Services
 
         }
 
-        public async Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model)
+        public async Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeRequestModel model)
         {
             try
             {
@@ -334,6 +335,59 @@ namespace COF.BusinessLogic.Services
                     };
                 }
                 _productSizeRepository.MarkAsRemove(productSize);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Success = true,
+                    Result = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<bool>> UpdateProductSizeAsync(int id, ProductSizeRequestModel model)
+        {
+            try
+            {
+                var productSize = await _productSizeRepository.GetByIdAsync(id);
+                if (productSize is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size không tồn tại.") })
+                    };
+                }
+
+                var size = await _sizeRepository.GetByIdAsync(model.SizeId);
+
+                if (size is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size không tồn tại.") })
+                    };
+                }
+
+                if (productSize.SizeId != model.SizeId && productSize.Product.ProductSizes.Any(x => x.SizeId == size.Id))
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size đã tồn tại.") })
+                    };
+                }
+                productSize.SizeId = model.SizeId;
+                productSize.Cost = model.Price;
+                _productSizeRepository.Update(productSize);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<bool>
                 {
