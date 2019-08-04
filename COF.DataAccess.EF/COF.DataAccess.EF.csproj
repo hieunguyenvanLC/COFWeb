@@ -113,6 +113,10 @@
     <Compile Include="Migrations\201907311710065_AddActiveFlagForProducTable.Designer.cs">
       <DependentUpon>201907311710065_AddActiveFlagForProducTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908040701313_AddGlobalFilter.cs" />
+    <Compile Include="Migrations\201908040701313_AddGlobalFilter.Designer.cs">
+      <DependentUpon>201908040701313_AddGlobalFilter.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -198,6 +202,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907311710065_AddActiveFlagForProducTable.resx">
       <DependentUpon>201907311710065_AddActiveFlagForProducTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908040701313_AddGlobalFilter.resx">
+      <DependentUpon>201908040701313_AddGlobalFilter.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

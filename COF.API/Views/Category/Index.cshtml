@@ -1,25 +1,17 @@
 ﻿
 @{
-    ViewBag.Title = "Sản phẩm";
+    ViewBag.Title = "Danh mục sản phẩm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
 }
-<style>
-    #tblData td {
-        vertical-align: middle;
-        text-align: center;
-        border: 1px solid #ccc;
-    }
-</style>
-
 <script type="text/javascript">
     var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
 </script>
 
 <section class="content-header">
     <h1>
-        Quản lí sản phẩm
+        Quản lí danh mục sản phẩm
 
     </h1>
     @*<ol class="breadcrumb">
@@ -97,7 +89,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="btnAdd" class="btn bg-purple margin">Thêm sản phẩm</button>
+                            <button id="btnAdd" class="btn bg-purple margin">Thêm danh mục</button>
                             <br />
                             <br />
                         </div>
@@ -107,7 +99,7 @@
 
                     </div>
                     @{
-                        Html.RenderPartial("_PartialCreateUpdateProduct");
+                        Html.RenderPartial("_PartialCreateUpdateCategory");
                     }
                 </div>
                 <!-- ./box-body -->
@@ -119,4 +111,4 @@
     </div>
 </section>
 
-<script src="~/Scripts/app/product/product.js"></script>
+<script src="~/Scripts/app/category/category.js"></script>

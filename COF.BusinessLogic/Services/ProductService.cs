@@ -130,10 +130,11 @@ namespace COF.BusinessLogic.Services
                     Name = product.ProductName,
                     Description = product.Description,
                     CategoryId = product.CategoryId,
+                    IsActive = product.IsActive,
                     Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
-                        SizeId = z.Id,
+                        SizeId = z.SizeId,
                         Cost = z.Cost,
                         Size = z.Size.Name
                     }).ToList()
@@ -219,7 +220,7 @@ namespace COF.BusinessLogic.Services
                     };
                 }
 
-                if (product.ProductSizes.Any(x  => x.SizeId == size.Id))
+                if (product.ProductSizes.Any(x  => x.SizeId == size.Id ))
                 {
                     return new BusinessLogicResult<bool>
                     {

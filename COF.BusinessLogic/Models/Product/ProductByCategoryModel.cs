@@ -75,4 +75,6 @@ namespace COF.BusinessLogic.Models.Product
         Shop = 1,
         Keyword = 2
     }
+
+   
 }

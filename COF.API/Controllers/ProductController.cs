@@ -190,6 +190,39 @@ namespace COF.API.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> UpdateProductSize(ProductSizeCreateModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpPostErrorResponse(ModelStateErrorMessage());
+            }
+            try
+            {
+                var productSizeModel = new ServiceModels.Product.ProductSizeCreateModel
+                {
+                    Price = model.Price,
+                    ProductId = model.ProductId,
+                    SizeId = model.SizeId
+                };
+
+                var logicResult = await _productService.AddProductSizeAsync(productSizeModel);
+                if (!logicResult.Success)
+                {
+                    return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
+                }
+
+                var product = await _productService.GetByIdAsync(model.ProductId);
+
+                return HttpPostSuccessResponse(product.Sizes, message: "Tạo mới thành công");
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
+            }
+
+        }
+
+        [HttpPost]
         public async Task<ActionResult> RemoveProductSize(int productId,int id)
         {
             try
@@ -200,8 +233,7 @@ namespace COF.API.Controllers
                     return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
                 }
 
-                var product = await _productService.GetByIdAsync(productId);
-                return HttpPostSuccessResponse(product.Sizes, "Xóa thành công");
+                return HttpPostSuccessResponse(null, "Xóa thành công");
             }
             catch (Exception ex) 
             {

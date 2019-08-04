@@ -61,6 +61,11 @@ var productController = {
             }           
         });
 
+        $('#btnResetFilter').off('click').on('click', function () {
+            $('#txtKeySearch').val('');
+            productController.loadData(homeconfig.shopId);
+        });
+
         $('#btnSearch').off('click').on('click', function () {
             productController.loadData(homeconfig.shopId);
         });    
@@ -86,15 +91,18 @@ var productController = {
             var shop = homeconfig.allShops.filter(x => x.Id === homeconfig.shopId);
             var title = shop[0].Name + ' - Chỉnh sửa sản phẩm';
             $('#lblTitle').text(title);
-            $('#createUpdateSection').show();
-            $('#tableContent').hide();
+
 
             $('#priceFrm').show();
 
             var id = $(this).data('id');
-            var products = homeconfig.allProducts.filter(x => x.Id === id);
-            productController.loadProductDetail(products[0]);
+            productController.loadProductDetail(id);
             $('#priceFrm').show();
+
+            setTimeout(function () {
+                $('#createUpdateSection').show();
+                $('#tableContent').hide();
+            }, 100);
           
         });
 
@@ -148,88 +156,94 @@ var productController = {
                 if (res.status) {
                     var data = res.data;
                     var html = '';
-                    for (var i = 0; i < data.length; i++)
-                    {
-                        var category = data[i];
-                        html += '<tr>';
-                        html += '<td colspan="5" style="background-color:beige"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length  +' sản phẩm </td>';
-                        html += '/<tr>';
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            var category = data[i];
+                            html += '<tr>';
+                            html += '<td colspan="5" style="background-color:beige;"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length + ' sản phẩm </td>';
+                            html += '/<tr>';
 
-                        html += '<tr style="background-color:#ddd">';
-                        html += '<td><b>Tên sản phẩm</b></td>';
-                        html += '<td><b>Trạng thái </b></td>';
-                        html += '<td><b>Size</b></td>';
-                        html += '<td><b>Giá tiền </b></td>';
+                            html += '<tr style="background-color:#ddd">';
+                            html += '<td><b>Tên sản phẩm</b></td>';
+                            html += '<td><b>Trạng thái </b></td>';
+                            html += '<td><b>Size</b></td>';
+                            html += '<td><b>Giá tiền </b></td>';
 
-                        html += '<td><b>Thao tác</b></td>';
-                        html += '</tr>';
+                            html += '<td><b>Thao tác</b></td>';
+                            html += '</tr>';
 
-                        var products = category.Products;
+                            var products = category.Products;
 
-                        $.each(products, function (i, item) {
-                            homeconfig.allProducts.push(item);
-                        });
+                            $.each(products, function (i, item) {
+                                homeconfig.allProducts.push(item);
+                            });
 
-                        
 
-                        $.each(products,function (i, product) {
-                            var sizeCount = product.Sizes.length;
-                            if (sizeCount > 0) {
-                                for (var j = 0; j < sizeCount; j++)
-                                {
-                                    var size = product.Sizes[j];
-                                    html += '<tr>';
-                                    if (j === 0) {
-                                        html += '<td rowspan=" ' + sizeCount + '" style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
 
-                                        if (product.IsActive) {
-                                            html += '<td  style="text-align:center;vertical-align: middle;" rowspan=" ' + sizeCount + '"><span class="label label-success">SẴN SÀNG</span></td>';
+                            $.each(products, function (i, product) {
+                                var sizeCount = product.Sizes.length;
+                                if (sizeCount > 0) {
+                                    for (var j = 0; j < sizeCount; j++) {
+                                        var size = product.Sizes[j];
+                                        html += '<tr>';
+                                        if (j === 0) {
+                                            html += '<td rowspan=" ' + sizeCount + '" style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
+
+                                            if (product.IsActive) {
+                                                html += '<td  style="text-align:center;vertical-align: middle;" rowspan=" ' + sizeCount + '"><span class="label label-success">SẴN SÀNG</span></td>';
+                                            }
+                                            else {
+                                                html += '<td style="text-align:center;vertical-align: middle;"  rowspan=" ' + sizeCount + '"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                            }
+
                                         }
-                                        else {
-                                            html += '<td style="text-align:center;vertical-align: middle;"  rowspan=" ' + sizeCount + '"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+
+
+                                        html += ' <td>' + size.Size + '</td>';
+                                        html += ' <td>' + size.Cost + '</td>';
+
+                                        if (j === 0) {
+                                            html += '<td rowspan=" ' + sizeCount + '">';
+                                            html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                            html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                            html += '</td>';
                                         }
 
+
+                                        html += '</tr>';
                                     }
-
-                                  
-                                    html += ' <td>' + size.Size + '</td>';
-                                    html += ' <td>' + size.Cost + '</td>';
-
-                                    if (j === 0) {
-                                        html += '<td rowspan=" ' + sizeCount + '">';
-                                        html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                        html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
-                                        html += '</td>';
-                                    }
-                                    
-                                  
-                                    html += '</tr>';
-                                }
-                            }
-                             else {
-                                html += '<tr>';
-                                html += '<td style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
-                         
-
-                                if (product.IsActive) {
-                                    html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-success">SẴN SÀNG</span></td>';
                                 }
                                 else {
-                                    html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                    html += '<tr>';
+                                    html += '<td style="text-align:center;vertical-align: middle;">' + product.Name.toUpperCase() + '</td>';
+
+
+                                    if (product.IsActive) {
+                                        html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-success">SẴN SÀNG</span></td>';
+                                    }
+                                    else {
+                                        html += '<td style="text-align:center;vertical-align: middle;"><span class="label label-warning">CHƯA SẴN SÀNG</span></td>';
+                                    }
+                                    html += '<td></td>';
+                                    html += '<td></td>';
+                                    html += '<td>';
+                                    html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                    html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                    html += '</td>';
+                                    html += '</tr>';
                                 }
-                                html += '<td></td>';
-                                html += '<td></td>';
-                                html += '<td>';
-                                html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
-                                html += '</td>';
-                                html += '</tr>';
-                            }
-                            
-                        });
+
+                            });
+                        }                      
+                    }
+                    else {
+                        html += '<tr>';
+                        html += '<td style="text-align:left">Không tìm thấy kết quả nào</.td>';
+                        html += '</tr>';
                     }
                     $('#tblData').html(html);
                     productController.registerEvent();
+                    
                 }
             }
         });
@@ -365,11 +379,11 @@ var productController = {
                 data: { model: data },
                 success: function (res) {
                     if (res.status) {
+                        $("#btnCancelPrice").click();
                         toastr.success(res.message, "Kết quả");
                         productController.loadData(homeconfig.shopId);
-                        productController.loadProductSizes(res.data);
-
-                        $("#btnCancelPrice").click();
+                        productController.loadProductDetail(data.ProductId);
+                        
                     } else {
                         toastr.error(res.errorMessage, "Lỗi");
                     }
@@ -382,10 +396,12 @@ var productController = {
                 dataType: 'json',
                 data: { model: data },
                 success: function (res) {
-                    if (res.Status) {
-                        studentController.loadData(true);
-                        $('#btnCancel').click();
-                        toastr.success("Edit successfully");
+                    if (res.status) {
+                        $("#btnCancelPrice").click();
+                        toastr.success(res.message, "Kết quả");
+                        productController.loadProductDetail(data.ProductId);
+                        productController.loadData(homeconfig.shopId);
+
                     } else {
                         toastr.error(res.ErrorMessage);
                     }
@@ -441,7 +457,7 @@ var productController = {
             success: function (res) {
                 if (res.status) {
                     toastr.success(res.message, "Kết quả");
-                    productController.loadProductSizes(res.data);
+                    productController.loadProductDetail(productId);
                     productController.loadData(homeconfig.shopId);
                 } else {
                     toastr.error(res.errorMessage, "Lỗi");
@@ -449,13 +465,30 @@ var productController = {
             }
         });
     },
-    loadProductDetail: function (row) {
-        $('#txtName').val(row.Name);
-        $('#txtHiddenId').val(row.Id);
-        $('#txtDescription').val(row.Description);
-        $('#chkActive').prop('checked', row.IsActive);
-        $('#ddlCategories').val(row.CategoryId).change();
-        productController.loadProductSizes(row.Sizes);
+    loadProductDetail: function (id) {
+
+         $.ajax({
+             url: '/product/getProductDetail',
+                    type: 'get',
+                    dataType: 'json',
+                    data: { productId: id },
+                    success: function (res) {
+                        if (res.status) {
+                            var row = res.data;
+                            $('#txtName').val(row.Name);
+                            $('#txtHiddenId').val(row.Id);
+                            $('#txtDescription').val(row.Description);
+                            $('#chkActive').prop('checked', row.IsActive);
+                            $('#ddlCategories').val(row.CategoryId).change();
+                            productController.loadProductSizes(row.Sizes);
+
+                            productController.loadData(homeconfig.shopId);
+                        } else {
+                            toastr.error(res.errorMessage, "Lỗi");
+                        }
+                    }
+                });
+        
         
     }
 };

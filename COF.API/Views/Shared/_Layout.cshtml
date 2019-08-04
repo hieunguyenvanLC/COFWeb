@@ -45,6 +45,11 @@
     <script src="~/Content/bower_components/toastr/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
 
+    <style>
+        td {
+            border: 1px solid #ccc !important;
+        }
+    </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
@@ -307,12 +312,31 @@
                             <i class="fa fa-list-alt"></i> <span>Đơn hàng</span>
                         </a>
                     </li>
-
-                    <li>
-                        <a href="/san-pham">
-                            <i class="fa fa-list-alt"></i> <span>Sản phẩm</span>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-book"></i>
+                            <span>Sản phẩm</span>
+                            <span class="pull-right-container">
+                                <span class="label label-primary pull-right">2</span>
+                            </span>
                         </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="/danh-muc-san-pham">
+                                    <i class="fa fa-list-alt"></i> <span>Danh mục sản phẩm</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/san-pham">
+                                    <i class="fa fa-list-alt"></i> <span>Sản phẩm</span>
+                                </a>
+                            </li>
+                            
+                        </ul>
                     </li>
+
+
+                  
 
                     <li>
                         <a href="/bang-dieu-khien">
@@ -390,8 +414,7 @@
             <div class="pull-right hidden-xs">
                 <b>Version</b> 2.4.13
             </div>
-            <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE</a>.</strong> All rights
-            reserved.
+            <strong>Copyright &copy; 2019 <a href="https://adminlte.io">COF</a>.</strong> 
         </footer>
 
         <!-- Control Sidebar -->

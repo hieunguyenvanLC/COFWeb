@@ -18,15 +18,15 @@
         public EFContext()
             : base("name=COFContext")
         {
-            
+            //this.InitializeDynamicFilters();
+            //this.EnableFilter("SoftDelete");         
         }
 
         public EFContext(IPartnerContext partnerContext, String connectionString) : base(connectionString)
         {
-            this.InitializeDynamicFilters();
-            if (partnerContext.PartnerId > 0) SetPartnerId(partnerContext.PartnerId);
-
-            this.SetFilterScopedParameterValue("IsDeleted", "IsDeleted", false);
+            //this.InitializeDynamicFilters();
+            //if (partnerContext.PartnerId > 0) SetPartnerId(partnerContext.PartnerId);
+            //this.EnableFilter("SoftDelete");
 
         }
 
@@ -49,7 +49,9 @@
             modelBuilder.Entity<IdentityUserRole>().HasKey(i => new { i.UserId, i.RoleId }).ToTable("UserRole");
             modelBuilder.Entity<IdentityUserLogin>().HasKey(i => i.UserId).ToTable("UserLogin");
             modelBuilder.Entity<IdentityUserClaim>().HasKey<int>(i => i.Id).ToTable("UserClaim");
-            ConfigureEntities(modelBuilder);    
+            ConfigureEntities(modelBuilder);
+            modelBuilder.Filter("SoftDelete", (BaseEntity d) => d.IsDeleted, false);
+
         }
 
 
