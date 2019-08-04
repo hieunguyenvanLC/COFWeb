@@ -110,6 +110,32 @@ var productController = {
             $('#txtProductSizeId').val(id);
             $('#txtProductSizePrice').val(cost);
         });
+
+        $('.btnRemoveProductSize').off('click').on('click', function () {
+            var id = $(this).data('id');
+            var productId = parseInt($('#txtHiddenId').val());
+            bootbox.confirm({
+                message: "Bạn có chắc chắn xóa size trên không ",
+                buttons: {
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        productController.removeProductSize(productId,id);
+                    }
+                }
+            });
+
+
+         
+        });
     },
     loadData: function (shopId) {
         homeconfig.allProducts = [];
@@ -342,6 +368,7 @@ var productController = {
                         toastr.success(res.message, "Kết quả");
                         productController.loadData(homeconfig.shopId);
                         productController.loadProductSizes(res.data);
+
                         $("#btnCancelPrice").click();
                     } else {
                         toastr.error(res.errorMessage, "Lỗi");
@@ -384,7 +411,7 @@ var productController = {
             html += '<td>' + item.Cost + '</td>';
             html += '<td>';
             html += '<button data-id="' + item.Id + '" data-cost= "' + item.Cost + '" data-sizeid ="' + item.SizeId + '" class="btn btn-primary btnEditProductSize"><i class="fa fa-edit"></i></button> &nbsp;';
-            html += '<button class="btn btn-danger btnRemoveProductSize"><i class="fa fa-remove"></i></button>';
+            html += '<button  data-id="' + item.Id + '" class="btn btn-danger btnRemoveProductSize"><i class="fa fa-remove"></i></button>';
             html += '</td > ';
             html += '</tr>';
 
@@ -404,6 +431,23 @@ var productController = {
     },
     editProductSize: function () {
         
+    },
+    removeProductSize: function (productId,id) {
+        $.ajax({
+            url: '/product/removeProductSize',
+            type: 'post',
+            dataType: 'json',
+            data: { productId: productId, id: id },
+            success: function (res) {
+                if (res.status) {
+                    toastr.success(res.message, "Kết quả");
+                    productController.loadProductSizes(res.data);
+                    productController.loadData(homeconfig.shopId);
+                } else {
+                    toastr.error(res.errorMessage, "Lỗi");
+                }
+            }
+        });
     },
     loadProductDetail: function (row) {
         $('#txtName').val(row.Name);

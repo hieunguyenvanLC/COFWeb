@@ -22,6 +22,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<Product>> AddProductAsync(ProductCreateModel model);
         Task<BusinessLogicResult<bool>> AddProductSizeAsync(ProductSizeCreateModel model);
         Task<BusinessLogicResult<Product>> UpdatProductAsync(int productId, ProductCreateModel model);
+        Task<BusinessLogicResult<bool>> RemoveProductSize(int id);
     }
     public class ProductService : IProductService
     {
@@ -316,6 +317,37 @@ namespace COF.BusinessLogic.Services
                 };
             }
 
+        }
+
+        public async Task<BusinessLogicResult<bool>> RemoveProductSize(int id)
+        {
+            try
+            {
+                var productSize = await _productSizeRepository.GetByIdAsync(id);
+                if (productSize is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Size", "Size không tồn tại.") })
+                    };
+                }
+                _productSizeRepository.MarkAsRemove(productSize);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Success = true,
+                    Result = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
         }
 
         #endregion

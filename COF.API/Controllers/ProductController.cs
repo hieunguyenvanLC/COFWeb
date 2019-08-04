@@ -188,5 +188,25 @@ namespace COF.API.Controllers
                 return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<ActionResult> RemoveProductSize(int productId,int id)
+        {
+            try
+            { 
+                var logicResult = await _productService.RemoveProductSize(id);
+                if (!logicResult.Success)
+                {
+                    return HttpPostErrorResponse(logicResult.Validations.Errors.First().ErrorMessage);
+                }
+
+                var product = await _productService.GetByIdAsync(productId);
+                return HttpPostSuccessResponse(product.Sizes, "Xóa thành công");
+            }
+            catch (Exception ex) 
+            {
+                return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
+            }
+        }
     }
 }

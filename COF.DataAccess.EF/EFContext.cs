@@ -25,6 +25,9 @@
         {
             this.InitializeDynamicFilters();
             if (partnerContext.PartnerId > 0) SetPartnerId(partnerContext.PartnerId);
+
+            this.SetFilterScopedParameterValue("IsDeleted", "IsDeleted", false);
+
         }
 
         public DbSet<Shop> Shops { get; set; }
@@ -46,8 +49,7 @@
             modelBuilder.Entity<IdentityUserRole>().HasKey(i => new { i.UserId, i.RoleId }).ToTable("UserRole");
             modelBuilder.Entity<IdentityUserLogin>().HasKey(i => i.UserId).ToTable("UserLogin");
             modelBuilder.Entity<IdentityUserClaim>().HasKey<int>(i => i.Id).ToTable("UserClaim");
-            ConfigureEntities(modelBuilder);
-            //base.OnModelCreating(modelBuilder);
+            ConfigureEntities(modelBuilder);    
         }
 
 
