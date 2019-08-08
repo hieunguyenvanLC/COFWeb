@@ -283,6 +283,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\AccountController.cs" />
     <Compile Include="Api\Core\ApiControllerBase.cs" />
     <Compile Include="Api\CustomerController.cs" />
     <Compile Include="Api\Core\PaginationSet.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ShopController.cs" />
+    <Compile Include="Filter\Api\ValidateRolePermissionAttribute.cs" />
     <Compile Include="Ioc\AutofacWebapiConfig.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

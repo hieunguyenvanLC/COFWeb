@@ -6,6 +6,7 @@ using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 namespace COF.API.Providers
@@ -49,13 +50,17 @@ namespace COF.API.Providers
                 identity.AddClaim(new Claim("email", email));
                 identity.AddClaim(new Claim("username", user.UserName));
                 identity.AddClaim(new Claim("roles", JsonConvert.SerializeObject(roles)));
+
+                var allShops = user.ShopHasUsers.Select(x => new { Id = x.ShopId, Name = x.Shop.ShopName }).ToList();
                 var props = new AuthenticationProperties(new Dictionary<string, string>
                     {
                         {"fullName", user.FullName},
                         {"avatar", avatar },
                         {"email", email},
                         {"username", user.UserName},
-                        {"roles",JsonConvert.SerializeObject(roles) }
+                        {"roles",JsonConvert.SerializeObject(roles) },
+                        {"parnterId", user.PartnerId.GetValueOrDefault().ToString()},
+                        {"shopIds", JsonConvert.SerializeObject(allShops)}
 
                     });
                 context.Validated(new AuthenticationTicket(identity, props));
