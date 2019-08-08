@@ -25,33 +25,20 @@ namespace COF.BusinessLogic.Services
         {
             _context = context;
             _dbSet = _context.Set<AppUser>();
-            _roleDbSet = context.Set<AppRole>();
+            _roleDbSet = _context.Set<AppRole>();
         }
 
         public async Task<BusinessLogicResult<List<UserRoleModel>>> GetAppUsersByPartnerId(int partnerId)
         {
-            var usersWithRoles = await (from user in _dbSet
-                                  where user.PartnerId == partnerId
-                                  select new
-                                  {
-                                      UserId = user.Id,
-                                      Username = user.UserName,
-                                      Email = user.Email,
-                                      RoleNames = (from userRole in user.Roles
-                                                   join role in _roleDbSet on userRole.RoleId
-                                                   equals role.Id
-                                                   select role.Name).ToList()
-                                  }).ToListAsync();
+            var sql = @"select u.Id as UserId, u.FullName, u.Email,
+                        u.PasswordHash, u.userName, u.Phonenumber,
+                        (select STRING_AGG(r.Name, ',') from[Role] r join[UserRole] ur
+                        on r.Id = ur.RoleId
+                        where ur.UserId = u.Id ) as Roles
+                        from[User] u
+                        where PartnerId = @p0";
 
-            var result = usersWithRoles
-            .Select(p => new UserRoleModel()
-
-             {
-                 UserId = p.UserId,
-                 Username = p.Username,
-                 Email = p.Email,
-                 Roles = string.Join(",", p.RoleNames)
-             }).ToList();
+            var result  =  await _context.Database.SqlQuery<UserRoleModel>(sql, partnerId).ToListAsync();
 
             return new BusinessLogicResult<List<UserRoleModel>>
             {

@@ -41,7 +41,7 @@ namespace COF.API.Api
                 {
                     return ErrorResult("Đối tác không tồn tại");
                 }
-                var allUsers =  _userService.GetAppUsersByPartnerId(partnerId);
+                var allUsers = await _userService.GetAppUsersByPartnerId(partnerId);
                 return SuccessResult(allUsers.Result);
             }
             catch (Exception ex)
