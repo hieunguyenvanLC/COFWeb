@@ -61,6 +61,7 @@ namespace COF.BusinessLogic.Services
                     CustomerId = model.CustomerId,
                     PartnerId = shop.PartnerId,
                     UserId = _workContext.CurrentUserId,
+                    ShopId = shop.Id
                 };
 
                 order.OrderDetails = model.OrderDetails.Select(x => new OrderDetail

@@ -21,6 +21,7 @@ namespace COF.API.Core
 
         public ApiControllerBase()
         {
+            
         }
 
         //Code removed from brevity

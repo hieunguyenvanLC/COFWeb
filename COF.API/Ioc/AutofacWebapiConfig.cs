@@ -47,10 +47,11 @@ namespace COF.API.Ioc
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
-            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();
+            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerLifetimeScope();
             builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
             builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
+            builder.RegisterModule(new AutofacWebTypesModule());
             builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
 
 
@@ -64,8 +65,7 @@ namespace COF.API.Ioc
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces().InstancePerRequest();
 
-
-            builder.RegisterModule(new AutofacWebTypesModule());
+           
             Container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(Container));
 

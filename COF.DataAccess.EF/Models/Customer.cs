@@ -15,7 +15,7 @@ namespace COF.DataAccess.EF.Models
         public string Address { get; set; }
         public string City { get; set; }
         public int PartnerId { get; set; }
-        public int BonusLevelId { get; set; }
+        public int? BonusLevelId { get; set; }
         public virtual BonusLevel BonusLevel { get; set; }
         public decimal TotalBonusPoint { get; set; }
         public decimal ActiveBonusPoint { get; set; }

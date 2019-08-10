@@ -9,7 +9,7 @@ namespace COF.DataAccess.EF.Configurations
         public CustomerMapping()
         {
             ToTable("Customer");
-            HasRequired(x => x.BonusLevel).WithMany(x => x.Customers).HasForeignKey(x => x.BonusLevelId).WillCascadeOnDelete(false);
+            HasOptional(x => x.BonusLevel).WithMany(x => x.Customers).HasForeignKey(x => x.BonusLevelId).WillCascadeOnDelete(false);
         }
     }
 }

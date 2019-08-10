@@ -18,7 +18,8 @@ namespace COF.API.Api.Core
 {
     public class WorkContext : IWorkContext
     {
-        private readonly IPrincipal _principal;
+        private readonly HttpContextBase _httpContext;
+        private readonly IOwinContext _owinContext;
         private readonly DbSet<AppUser> _appUsers;
 
         /// <summary>
@@ -26,9 +27,10 @@ namespace COF.API.Api.Core
         /// </summary>
         /// <param name="owinContext"></param>
         /// <param name="userService"></param>(
-        public WorkContext( EFContext eFContext)
+        public WorkContext(HttpContextBase httpContext, EFContext eFContext)
         {
-            _principal = DependencyResolver.Current.GetService<IPrincipal>();
+            _httpContext = httpContext;
+            _owinContext = httpContext.GetOwinContext();
             _appUsers = eFContext.Set<AppUser>();
         }
 
@@ -36,7 +38,12 @@ namespace COF.API.Api.Core
         {
             get
             {
-                return _principal.Identity.GetUserId();
+                if (_owinContext.Authentication != null && _owinContext.Authentication.User.Identity.IsAuthenticated)
+                {
+                    var currentUserId = _owinContext.Authentication.User.Identity.GetUserId();
+                    return currentUserId;
+                }
+                return "";
             }
         }
 
@@ -48,10 +55,10 @@ namespace COF.API.Api.Core
         {
             get
             {
-                var isAuth = _principal.Identity.IsAuthenticated;
+                var isAuth = _owinContext.Authentication.User.Identity.IsAuthenticated;
                 if (!isAuth)
                     return null;
-                var currentUsername = _principal.Identity.GetUserName();
+                var currentUsername = _owinContext.Authentication.User.Identity.GetUserName();
 
                 var user = _appUsers.FirstOrDefault(x => x.UserName == currentUsername);
                 _currentUser = user;
@@ -59,42 +66,5 @@ namespace COF.API.Api.Core
             }
 
         }
-    }
-    /// Static class for getting principal
-    /// </summary>
-    public static class GenericPrincipalExtensions
-    {
-        /// <summary>
-        /// Get value of claim
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="claimName"></param>
-        /// <returns></returns>
-        public static string GetValueOfClaim(this IPrincipal user, string claimName)
-        {
-            if (user.Identity.IsAuthenticated)
-            {
-                var claimsIdentity = user.Identity as ClaimsIdentity;
-                if (claimsIdentity == null) return "";
-                foreach (var claim in claimsIdentity.Claims)
-                {
-                    if (claim.Type == claimName)
-                        return claim.Value;
-                }
-                return "";
-            }
-            else
-                return "";
-        }
-    }
-
-
-    public static class ClaimName
-    {
-        public static string RefreshTokenKey = "refresh_token_Id";
-        public static string UserNameKey = "Username";
-        public static string UserIdKey = "UserId";
-        public static string EmailKey = "Email";
-
     }
 }
