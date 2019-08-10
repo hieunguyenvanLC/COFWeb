@@ -25,6 +25,7 @@ namespace COF.BusinessLogic.Services
         private readonly IShopRepository _shopRepository;
        private readonly IWorkContext _workContext;
         private readonly IProductSizeRepository _productSizeRepository;
+        private readonly ICustomerRepository _customerRepository;
         #endregion
 
         #region ctor
@@ -33,7 +34,8 @@ namespace COF.BusinessLogic.Services
             IUnitOfWork unitOfWork,
             IShopRepository shopRepository,
             IWorkContext workContext,
-            IProductSizeRepository productSizeRepository
+            IProductSizeRepository productSizeRepository,
+            ICustomerRepository customerRepository
            )
         {
             _orderRepository = orderRepository;
@@ -41,6 +43,7 @@ namespace COF.BusinessLogic.Services
             _shopRepository = shopRepository;
             _workContext = workContext;
             _productSizeRepository = productSizeRepository;
+            _customerRepository = customerRepository;
         }
 
         #endregion
@@ -59,6 +62,18 @@ namespace COF.BusinessLogic.Services
                         Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Shop", "Shop Id không tồn tại.") })
                     };
                  }
+
+                var customer = await _customerRepository.GetByIdAsync(model.CustomerId);
+
+                if (customer is null)
+                {
+                    return new BusinessLogicResult<Order>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Khách hàng không tồn tại.") })
+                    };
+                }
+
                 var order = new Order
                 {
                     CustomerId = model.CustomerId,
@@ -67,10 +82,18 @@ namespace COF.BusinessLogic.Services
                     ShopId = shop.Id
                 };
 
-
+                order.OrderDetails = new List<OrderDetail>();
                 foreach (var item in model.OrderDetails)
                 {
                     var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
+                    if (productSize is null)
+                    {
+                        return new BusinessLogicResult<Order>
+                        {
+                            Success = false,
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Sản phẩm với Id {item.ProductSizeId} không tồn tại. ") })
+                        };
+                    }
                     order.OrderDetails.Add(new OrderDetail
                     {
                         PartnerId = shop.PartnerId,
