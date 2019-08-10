@@ -1,6 +1,7 @@
 ﻿using COF.API.Core;
 using COF.API.Models.Order;
 using COF.BusinessLogic.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

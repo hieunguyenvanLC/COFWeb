@@ -9,35 +9,34 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
+using Microsoft.AspNet.Identity;
+using COF.DataAccess.EF;
+using System.Data.Entity;
+using System.Web.Mvc;
 
 namespace COF.API.Api.Core
 {
     public class WorkContext : IWorkContext
     {
-        private readonly IOwinContext _owinContext;
-        private readonly IUserService _userService;
+        private readonly IPrincipal _principal;
+        private readonly DbSet<AppUser> _appUsers;
 
         /// <summary>
         /// WorkContext
         /// </summary>
         /// <param name="owinContext"></param>
-        /// <param name="userService"></param>
-        public WorkContext(IOwinContext owinContext, IUserService userService)
+        /// <param name="userService"></param>(
+        public WorkContext( EFContext eFContext)
         {
-            _owinContext = owinContext;
-            _userService = userService;
+            _principal = DependencyResolver.Current.GetService<IPrincipal>();
+            _appUsers = eFContext.Set<AppUser>();
         }
 
         public string CurrentUserId
         {
             get
             {
-                if (_owinContext.Authentication != null && _owinContext.Authentication.User.Identity.IsAuthenticated)
-                {
-                    var currentUserId = _owinContext.Authentication.User.GetValueOfClaim(ClaimName.UserIdKey);
-                    return currentUserId;
-                }
-                return "";
+                return _principal.Identity.GetUserId();
             }
         }
 
@@ -49,12 +48,12 @@ namespace COF.API.Api.Core
         {
             get
             {
-                var isAuth = _owinContext.Authentication.User.Identity.IsAuthenticated;
+                var isAuth = _principal.Identity.IsAuthenticated;
                 if (!isAuth)
                     return null;
-                var currentUsername = _owinContext.Authentication.User.GetValueOfClaim(ClaimName.UserNameKey);
+                var currentUsername = _principal.Identity.GetUserName();
 
-                var user =  _userService.GetByUserName(currentUsername);
+                var user = _appUsers.FirstOrDefault(x => x.UserName == currentUsername);
                 _currentUser = user;
                 return user;
             }

@@ -3,6 +3,7 @@ using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using COF.API.Api.Core;
 using COF.BusinessLogic.Services;
+using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
@@ -50,7 +51,7 @@ namespace COF.API.Ioc
             builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
             builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
-            //builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
 
 
             // Repositories
@@ -62,8 +63,6 @@ namespace COF.API.Ioc
             builder.RegisterAssemblyTypes(typeof(ShopService).Assembly)
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces().InstancePerRequest();
-
-            builder.RegisterType<OrderSerivce>().As<IOrderService>().InstancePerRequest();
 
 
             builder.RegisterModule(new AutofacWebTypesModule());
