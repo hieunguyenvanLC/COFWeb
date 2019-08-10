@@ -17,27 +17,27 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
     }
 
-    public class OrderSerivce : IOrderService
+    public class OrderService : IOrderService
     {
         #region fields
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
-       // private readonly IWorkContext _workContext;
+        private readonly IWorkContext _workContext;
         #endregion
 
         #region ctor
-        public OrderSerivce(
+        public OrderService(
             IOrderRepository orderRepository,
             IUnitOfWork unitOfWork,
-            IShopRepository shopRepository
-           // IWorkContext workContext
+            IShopRepository shopRepository,
+           IWorkContext workContext
            )
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _shopRepository = shopRepository;
-          //  _workContext = workContext;
+            _workContext = workContext;
         }
 
         #endregion
@@ -70,8 +70,8 @@ namespace COF.BusinessLogic.Services
                    Quantity = x.Quantity               
                 }).ToList();
 
-               // _orderRepository.Add(order, _workContext.CurrentUser.FullName);
-                _orderRepository.Add(order, "");
+                _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                 //_orderRepository.Add(order, "");
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
                 {

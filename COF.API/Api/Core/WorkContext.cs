@@ -1,31 +1,34 @@
 ﻿using COF.BusinessLogic.Services;
 using COF.BusinessLogic.Settings;
+using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Http;
 
 namespace COF.API.Api.Core
 {
     public class WorkContext : IWorkContext
     {
         private readonly IOwinContext _owinContext;
-        private readonly IUserService _userService;
+        private readonly DbSet<AppUser> _userDbSet;
 
         /// <summary>
         /// WorkContext
         /// </summary>
         /// <param name="owinContext"></param>
         /// <param name="userService"></param>
-        public WorkContext(IOwinContext owinContext, IUserService userService)
+        public WorkContext(EFContext context)
         {
-            _owinContext = owinContext;
-            _userService = userService;
+            _owinContext = (IOwinContext) GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IOwinContext));
+            _userDbSet = context.Set<AppUser>();
         }
 
         public string CurrentUserId
@@ -54,7 +57,7 @@ namespace COF.API.Api.Core
                     return null;
                 var currentUsername = _owinContext.Authentication.User.GetValueOfClaim(ClaimName.UserNameKey);
 
-                var user =  _userService.GetByUserName(currentUsername);
+                var user = _userDbSet.FirstOrDefault(x => x.UserName == currentUsername);
                 _currentUser = user;
                 return user;
             }

@@ -3,6 +3,7 @@ using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using COF.API.Api.Core;
 using COF.BusinessLogic.Services;
+using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
@@ -34,7 +35,7 @@ namespace COF.API.Ioc
         }
 
 
-        private static IContainer RegisterServices(ContainerBuilder builder)
+        public static IContainer RegisterServices(ContainerBuilder builder)
         {
 
 
@@ -46,11 +47,13 @@ namespace COF.API.Ioc
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
-            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();
+
+            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerLifetimeScope();
             builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
             builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
-            //builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+
 
 
             // Repositories
@@ -63,8 +66,11 @@ namespace COF.API.Ioc
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces().InstancePerRequest();
 
-            builder.RegisterType<OrderSerivce>().As<IOrderService>().InstancePerRequest();
+            //builder.RegisterType<UserService>().As<UserService>().InstancePerRequest();
+            
+            //builder.RegisterType<OrderSerivce>().As<IOrderService>().InstancePerRequest();
 
+           
 
             builder.RegisterModule(new AutofacWebTypesModule());
             Container = builder.Build();

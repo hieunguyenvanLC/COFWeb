@@ -1,6 +1,7 @@
 ﻿using COF.API.Core;
 using COF.API.Models.Order;
 using COF.BusinessLogic.Services;
+using COF.BusinessLogic.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,14 @@ namespace COF.API.Api
     {
         #region fields
         private readonly IOrderService _orderService;
+        private readonly IWorkContext _workContext;
         #endregion
 
         #region ctor
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IWorkContext workContext)
         {
             _orderService = orderService;
+            _workContext = workContext;
         }
         #endregion
 
