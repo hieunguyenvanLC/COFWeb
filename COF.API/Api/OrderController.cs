@@ -27,6 +27,8 @@ namespace COF.API.Api
         #endregion
 
         #region public methods
+        [HttpPost]
+        [Route("create")]
         public async Task<HttpResponseMessage> CreateOrderAsync([FromBody] OrderCreateModel model)
         {
             try
@@ -45,13 +47,16 @@ namespace COF.API.Api
                         Quantity = x.Quantity
                     }).ToList()
                 };
-               var logicResult = await _orderService.CreateOrderAsync(model.ShopId, orderCreateModel);
-                return SuccessResult(null);
+                var logicResult = await _orderService.CreateOrderAsync(model.ShopId, orderCreateModel);
+                if (logicResult.Validations != null)
+                {
+                    return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+                return SuccessResult();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return ErrorResult(ex.Message);
             }
         }
         #endregion

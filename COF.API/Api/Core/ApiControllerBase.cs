@@ -42,7 +42,7 @@ namespace COF.API.Core
         }
 
         [NonAction]
-        public HttpResponseMessage SuccessResult(object result)
+        public HttpResponseMessage SuccessResult(object result = null)
         {
             var formatter = GetFormatter();
             var resp = Request.CreateResponse(HttpStatusCode.OK, new OkResponseModel

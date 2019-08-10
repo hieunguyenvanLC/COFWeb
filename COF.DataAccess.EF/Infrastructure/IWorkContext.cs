@@ -7,9 +7,5 @@ using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF.Infrastructure
 {
-    public interface IWorkContext
-    {
-        string CurrentUserId { get; }
-        AppUser CurrentUser { get; }
-    }
+    
 }

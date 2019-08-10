@@ -1,4 +1,5 @@
 ﻿using COF.BusinessLogic.Services;
+using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using Microsoft.Owin;

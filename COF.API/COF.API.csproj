@@ -307,6 +307,7 @@
     <Compile Include="Controllers\Core\MvcControllerBase.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ShopController.cs" />
     <Compile Include="Filter\Api\ValidateRolePermissionAttribute.cs" />
@@ -7177,6 +7178,7 @@
   <ItemGroup>
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Common\" />
+    <Folder Include="Views\Order\" />
     <Folder Include="Views\Supplier\" />
   </ItemGroup>
   <ItemGroup>
