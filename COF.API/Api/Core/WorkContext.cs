@@ -21,6 +21,7 @@ namespace COF.API.Api.Core
         private readonly HttpContextBase _httpContext;
         private readonly IOwinContext _owinContext;
         private readonly DbSet<AppUser> _appUsers;
+        private readonly DbSet<Partner> _partners;
 
         /// <summary>
         /// WorkContext
@@ -32,6 +33,7 @@ namespace COF.API.Api.Core
             _httpContext = httpContext;
             _owinContext = httpContext.GetOwinContext();
             _appUsers = eFContext.Set<AppUser>();
+            _partners = eFContext.Set<Partner>();
         }
 
         public string CurrentUserId

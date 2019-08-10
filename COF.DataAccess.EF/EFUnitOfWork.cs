@@ -1,6 +1,7 @@
 ﻿using COF.DataAccess.EF.Infrastructure;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Threading.Tasks;
 
 namespace COF.DataAccess.EF
@@ -9,9 +10,12 @@ namespace COF.DataAccess.EF
     {
         private readonly EFContext _context;
 
+        public DbContext Context { get; set; }
+
         public EFUnitOfWork(EFContext context)
         {
             _context = context;
+            Context = context;
         }
 
         public EFTransaction BeginTransaction()

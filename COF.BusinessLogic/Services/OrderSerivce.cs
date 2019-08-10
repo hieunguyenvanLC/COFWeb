@@ -15,6 +15,7 @@ namespace COF.BusinessLogic.Services
     public interface IOrderService
     {
         Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
+        Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter);
     }
 
     public class OrderService : IOrderService
@@ -99,11 +100,11 @@ namespace COF.BusinessLogic.Services
                         PartnerId = shop.PartnerId,
                         ProductSizeId = productSize.Id,
                         Quantity = item.Quantity,
-                        UnitPrice = productSize.Cost
+                        UnitPrice = productSize.Cost,
+                        CreatedBy = _workContext.CurrentUser.FullName
                     });
                 }
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
-                //_orderRepository.Add(order, "");
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
                 {
@@ -119,6 +120,29 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
                 };
             }
+        }
+
+        public async Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter)
+        {
+            try
+            {
+                var sql = "exec [dbo].[AllOrderByShopWithPaging] @p0, @p1, @p2, @p3";
+                var queryRes = await _unitOfWork.Context.Database.SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, "").ToListAsync();
+                return new BusinessLogicResult<List<OrderModel>>
+                {
+                    Result = queryRes,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<OrderModel>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+            
         }
         #endregion
 

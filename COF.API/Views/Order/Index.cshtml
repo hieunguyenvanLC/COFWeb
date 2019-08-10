@@ -1,0 +1,335 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@{
+    ViewBag.Title = "Danh mục hóa đơn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
+}
+<script type="text/javascript">
+    var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
+</script>
+
+<section class="content-header">
+    <h1>
+        Quản lí đơn hàng
+
+    </h1>
+    @*<ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
+            <li><a href="#">Tables</a></li>
+            <li class="active">Simple</li>
+        </ol>*@
+</section>
+
+<section class="content">
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="tableContent" class="box-body table-responsive">
+
+                        <div class="nav-tabs-custom">
+
+
+                            <ul class="nav nav-tabs">
+                                @{
+                                    for (int i = 0; i < allShops.Count; i++)
+                                    {
+                                        var shop = allShops[i];
+                                        if (i == 0)
+                                        {
+                                            <li class="active"><a href="#tab_@shop.Id" data-id="@shop.Id" class="shop-tab" data-toggle="tab" aria-expanded="true">@shop.Name</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="#tab_@shop.Id" data-toggle="tab" data-id="@shop.Id" class="shop-tab" aria-expanded="true">@shop.Name</a></li>
+                                        }
+                                    }
+                                }
+                            </ul>
+
+
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_1">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_2">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_3">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div>
+
+                        <div>
+
+                            <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                <div class="form-row col-md-12" style="margin-top:15px">
+                                    <div class="col-md-3 col-xs-12">
+                                        <div class="form-group">
+                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control ui-autocomplete-input" value="" autocomplete="off">
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-9 col-xs-12">
+                                        <div class="form-group">
+                                            <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                            &nbsp;
+                                            <button id="btnResetFilter" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <br />
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#ddd">
+                                    <td><b>#</b></td>
+                                    <td><b>Tên khách hàng</b></td>
+                                    <td><b>Tổng số tiền</b></td>
+                                    <td><b>Ngày tạo</b></td>
+                                    <td><b>Nhân viên</b></td>
+                                    <td><b></b></td>
+                                </tr>
+                            </thead>
+                            <tbody id="tblData"></tbody>
+                        </table>
+                        <div style="" id="pagination" class="pagination">
+                        </div>
+                    </div>
+                  
+                </div>
+                <!-- ./box-body -->
+
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr>
+        <td>{{Id}}</td>
+        <td>{{CustomerName}}</td>
+        <td>{{Total}}</td>
+        <td>{{CreatedDate}}</td>
+        <td>{{CreatedBy}}</td>
+        <td>
+            <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-edit"></i></button>
+        </td>
+    </tr>
+
+    <tr id="detail_{{Id}}" hidden>
+        <td colspan="6">
+        <table class="table table-bordered">
+            <thead >
+                <tr style="background-color:#ffd800">
+                    <th><b>Tên sản phẩm</b></th>
+                    <th><b>Size</b></th>
+                    <th><b>Thành tiền</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cà phê đá</td>
+                    <td>C</td>
+                    <td>25.000</td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"><b>Tổng</b></td>
+                    <td><b>25.000</b></td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        <button type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
+        </td>
+        
+    </tr>
+</script>
+
+<script>
+    var homeconfig = {
+        pageSize: 10,
+        pageIndex: 1,
+        allShops: [],
+    };
+
+    var orderController = {
+
+        run: function () {
+            homeconfig.allShops = allShop;
+            homeconfig.shopId = allShop[0].Id;
+            orderController.loadData(homeconfig.shopId);
+            orderController.registerEvent();
+        },
+        // register event for elements
+        registerEvent: function () {
+            // event for search button,
+
+            $('.shop-tab').off('click').on('click', function () {
+                var dataId = $(this).data('id');
+                homeconfig.shopId = dataId;
+                homeconfig.pageIndex = 1;
+                orderController.loadData(homeconfig.shopId,true);
+            });
+
+        
+            $('#txtKeySearch').off('keypress').on('keypress', function (e) {
+                if (e.keyCode === 13) {
+                    homeconfig.pageIndex = 1;
+                    orderController.loadData(homeconfig.shopId,true);
+                }
+            });
+
+            $('#btnSearch').off('click').on('click', function () {
+                homeconfig.pageIndex = 1;
+                orderController.loadData(homeconfig.shopId,true);
+            });
+
+            $('#btnResetFilter').off('click').on('click', function () {
+                $('#txtKeySearch').val('');
+                homeconfig.pageIndex = 1;
+                orderController.loadData(homeconfig.shopId,true);
+            });
+
+            $('.btnDetail').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#detail_' + id).show();
+            });
+
+            $('.btnCloseDetail').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#detail_' + id).hide();
+            });
+
+        },
+        loadData: function (shopId,changePageSize) {
+            homeconfig.allCategories = [];
+            $.ajax({
+                url: '/order/getallorderwithpaging',
+                type: 'get',
+                dataType: 'json',
+                data: { shopId: shopId, pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex },
+                success: function (res) {
+                    if (res.status) {
+                        var data = res.data;
+                        var html = '';
+                        var template = $('#data-template').html();
+                        $.each(data.Items, function (i, item) {
+                            html += Mustache.render(template, {
+                                Id: item.Id,
+                                CustomerName: item.CustomerName,
+                                PhoneNumber: item.PhoneNumber,
+                                Address: item.Address,
+                                CreatedBy: item.StaffName,
+                                CreatedDate: item.CreateDateTime,
+                            });
+
+                        });
+                        $('#tblData').html(html);
+                        orderController.paging(data.TotalRows, function () {
+                            orderController.loadData(shopId);
+                        }, changePageSize);
+                        orderController.registerEvent();
+                    }
+                }
+            });
+
+        },
+        saveData: function (data) {
+            if (data.Id === 0) {
+                $.ajax({
+                    url: '/category/addcategory',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { model: data },
+                    success: function (res) {
+                        if (res.status) {
+                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            toastr.success(res.message, "Kết quả");
+                            orderController.loadData(homeconfig.shopId);
+
+                        } else {
+                            toastr.error(res.errorMessage, "Lỗi");
+                        }
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '/category/updatecategory',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { model: data },
+                    success: function (res) {
+                        if (res.status) {
+                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            toastr.success(res.message, "Kết quả");
+                            orderController.loadData(homeconfig.shopId);
+                        } else {
+                            toastr.error(res.errorMessage, "Lỗi");
+                        }
+                    }
+                })
+            }
+        },
+        resetParitalView: function () {
+            $('#txtHiddenId').val(0);
+            $('#txtName').val('');
+        },
+        loadDetail: function (row) {
+            $('#txtHiddenId').val(row.Id);
+            $('#txtName').val(row.Name.trim());
+        },
+        paging: function (totalRow, callback, changePageSize) {
+            var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
+            console.log(totalPage);
+
+            //Unbind pagination if it existed or click change pagesize
+            if ($('#pagination a').length === 0 || changePageSize === true) {
+                $('#pagination').empty();
+                $('#pagination').removeData("twbs-pagination");
+                $('#pagination').unbind("page");
+            }
+            console.log(totalPage);
+            $('#pagination').twbsPagination({
+                totalPages: totalPage,
+                first: "Đầu",
+                next: "Tiếp",
+                last: "Cuối",
+                prev: "Trước",
+                visiblePages: 10,
+                onPageClick: function (event, page) {
+                    homeconfig.pageIndex = page;
+                    setTimeout(callback, 200);
+                }
+            });
+        },
+    };
+    orderController.run();
+
+
+</script>
