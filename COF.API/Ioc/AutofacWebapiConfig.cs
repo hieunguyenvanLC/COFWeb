@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
+using COF.API.Api.Core;
 using COF.BusinessLogic.Services;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Infrastructure;
@@ -39,20 +40,17 @@ namespace COF.API.Ioc
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-
             builder.RegisterType<RoleStore<AppRole>>().As<IRoleStore<AppRole, string>>();
             //Asp.net Identity
             builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerRequest();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
-
             builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
-
             builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();
-
-            builder.RegisterType<EFTransaction>().As<ITransaction>();
+            builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
             builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
 
 
             // Repositories

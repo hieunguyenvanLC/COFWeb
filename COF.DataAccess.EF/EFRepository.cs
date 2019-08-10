@@ -100,9 +100,10 @@ namespace COF.DataAccess.EF
         }
 
         //insert
-        public void Add(T entity)
+        public void Add(T entity, string createdBy = "")
         {
             entity.CreatedOnUtc = DateTime.UtcNow;
+            entity.CreatedBy = createdBy;
             _dbSet.Add(entity);
         }
 
@@ -116,9 +117,10 @@ namespace COF.DataAccess.EF
         }
 
         //update 
-        public void Update(T entity)
+        public void Update(T entity, string updatedBy = "")
         {
             entity.UpdatedOnUtc = DateTime.UtcNow;
+            entity.UpdatedBy = updatedBy;
             _context.Entry(entity).State = EntityState.Modified;
         }
 

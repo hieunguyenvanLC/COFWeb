@@ -21,11 +21,11 @@ namespace COF.DataAccess.EF.Infrastructure
         List<T> GetByFilter(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Expression<Func<T, object>>[] includeProperties = null, int? countSkip = null, int? countTake = null);
 
         //insert
-        void Add(T entity);
+        void Add(T entity, string createdBy = "");
         void AddMultiple(List<T> entities);
 
         //update
-        void Update(T entity);
+        void Update(T entity,string updatedBy = "");
         void UpdateMultiple(List<T> entities);
 
         //delete

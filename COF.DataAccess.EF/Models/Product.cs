@@ -26,7 +26,6 @@ namespace COF.DataAccess.EF.Models
         public virtual Shop Shop { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductSize> ProductSizes { get; set; }
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<ProductHasRawMaterial> ProductHasRawMaterials { get; set; }
     }
 
@@ -37,6 +36,7 @@ namespace COF.DataAccess.EF.Models
         public virtual Product Product { get; set; }
         public virtual Size Size { get; set; }
         public decimal Cost { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 
     public class Size : BaseEntity

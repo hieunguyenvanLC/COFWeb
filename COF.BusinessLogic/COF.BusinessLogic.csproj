@@ -112,10 +112,12 @@
     <Compile Include="Models\Category\CategoryModel.cs" />
     <Compile Include="Models\Common\SizeModel.cs" />
     <Compile Include="Models\Customer\CustomerModel.cs" />
+    <Compile Include="Models\Order\OrderModel.cs" />
     <Compile Include="Models\Product\ProductByCategoryModel.cs" />
     <Compile Include="Models\Shop\ShopModel.cs" />
     <Compile Include="Models\User\UserRoleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\OrderSerivce.cs" />
     <Compile Include="Services\PartnerService.cs" />
     <Compile Include="Services\ProductCategoryService.cs" />
     <Compile Include="Services\SizeService.cs" />

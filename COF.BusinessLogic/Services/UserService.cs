@@ -13,21 +13,29 @@ namespace COF.BusinessLogic.Services
 {
     public interface IUserService
     {
+        #region async methods
         Task<AppUser> GetByIdAsync(string userId);
         Task<BusinessLogicResult<List<UserRoleModel>>> GetAppUsersByPartnerId(int partnerId);
+        AppUser GetByUserName(string username);
+        #endregion
     }
     public class UserService : IUserService
     {
+        #region fields
         private readonly EFContext _context;
         private readonly DbSet<AppUser> _dbSet;
-        private readonly DbSet<AppRole> _roleDbSet;
+
+        #endregion
+
+        #region ctor
         public UserService(EFContext context)
         {
             _context = context;
             _dbSet = _context.Set<AppUser>();
-            _roleDbSet = _context.Set<AppRole>();
         }
+        #endregion
 
+        #region public methods
         public async Task<BusinessLogicResult<List<UserRoleModel>>> GetAppUsersByPartnerId(int partnerId)
         {
             var sql = @"select u.Id as UserId, u.FullName, u.Email,
@@ -51,5 +59,11 @@ namespace COF.BusinessLogic.Services
         {
             return await _dbSet.SingleOrDefaultAsync(x => x.Id == userId);
         }
+
+        public AppUser GetByUserName(string username)
+        {
+            return  _dbSet.FirstOrDefault(x => x.UserName == username);
+        }
+        #endregion
     }
 }

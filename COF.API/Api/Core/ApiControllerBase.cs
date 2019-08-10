@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -93,6 +94,21 @@ namespace COF.API.Core
                     NullValueHandling = NullValueHandling.Ignore
                 }
             };
+        }
+
+        protected string ModelStateErrorMessage()
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var key in ModelState.Keys.Where(key => ModelState[key].Errors.Count > 0))
+                {
+                    var errorMessage = (!string.IsNullOrEmpty(ModelState[key].Errors[0].ErrorMessage)
+                         ? ModelState[key].Errors[0].ErrorMessage
+                         : ModelState[key].Errors[0].Exception.Message);
+                    return errorMessage;
+                }
+            }
+            return "";
         }
     }
 

@@ -80,6 +80,7 @@
     <Compile Include="Configurations\ShopHasUserMapping.cs" />
     <Compile Include="Configurations\SizeMapping.cs" />
     <Compile Include="Configurations\UserWorkingTimeMapping.cs" />
+    <Compile Include="Infrastructure\IWorkContext.cs" />
     <Compile Include="Infrastructure\PartnerContext.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.cs" />
     <Compile Include="Migrations\201907231649489_InitDb.Designer.cs">

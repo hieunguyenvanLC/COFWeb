@@ -1,0 +1,92 @@
+﻿using COF.BusinessLogic.Models.Order;
+using COF.BusinessLogic.Settings;
+using COF.DataAccess.EF.Infrastructure;
+using COF.DataAccess.EF.Models;
+using COF.DataAccess.EF.Repositories;
+using FluentValidation.Results;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace COF.BusinessLogic.Services
+{
+    public interface IOrderService
+    {
+        Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
+    }
+
+    public class OrderSerivce : IOrderService
+    {
+        #region fields
+        private readonly IOrderRepository _orderRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IShopRepository _shopRepository;
+        private readonly IWorkContext _workContext;
+        #endregion
+
+        #region ctor
+        public OrderSerivce(
+            IOrderRepository orderRepository,
+            IUnitOfWork unitOfWork,
+            IShopRepository shopRepository,
+            IWorkContext workContext)
+        {
+            _orderRepository = orderRepository;
+            _unitOfWork = unitOfWork;
+            _shopRepository = shopRepository;
+            _workContext = workContext;
+        }
+
+        #endregion
+
+        #region public methods
+        public async Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model)
+        {
+            try
+            {
+                 var shop = await _shopRepository.GetByIdAsync(shopId);
+                 if (shop is null)
+                 {
+                    return new BusinessLogicResult<Order>
+                    {
+                        Success = false, 
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Shop", "Shop Id không tồn tại.") })
+                    };
+                 }
+                var order = new Order
+                {
+                    CustomerId = model.CustomerId,
+                    PartnerId = shop.PartnerId,
+                    UserId = _workContext.CurrentUserId,
+                };
+
+                order.OrderDetails = model.OrderDetails.Select(x => new OrderDetail
+                {
+                   PartnerId = shop.PartnerId,
+                   ProductSizeId = x.ProductSizeId,
+                   Quantity = x.Quantity               
+                }).ToList();
+
+                _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<Order>
+                {
+                    Result = order,
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<Order>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+        #endregion
+
+    }
+}
