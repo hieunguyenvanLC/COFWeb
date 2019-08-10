@@ -24,6 +24,7 @@ namespace COF.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
        private readonly IWorkContext _workContext;
+        private readonly IProductSizeRepository _productSizeRepository;
         #endregion
 
         #region ctor
@@ -31,13 +32,15 @@ namespace COF.BusinessLogic.Services
             IOrderRepository orderRepository,
             IUnitOfWork unitOfWork,
             IShopRepository shopRepository,
-            IWorkContext workContext
+            IWorkContext workContext,
+            IProductSizeRepository productSizeRepository
            )
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _shopRepository = shopRepository;
             _workContext = workContext;
+            _productSizeRepository = productSizeRepository;
         }
 
         #endregion
@@ -64,13 +67,18 @@ namespace COF.BusinessLogic.Services
                     ShopId = shop.Id
                 };
 
-                order.OrderDetails = model.OrderDetails.Select(x => new OrderDetail
-                {
-                   PartnerId = shop.PartnerId,
-                   ProductSizeId = x.ProductSizeId,
-                   Quantity = x.Quantity               
-                }).ToList();
 
+                foreach (var item in model.OrderDetails)
+                {
+                    var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
+                    order.OrderDetails.Add(new OrderDetail
+                    {
+                        PartnerId = shop.PartnerId,
+                        ProductSizeId = productSize.Id,
+                        Quantity = item.Quantity,
+                        UnitPrice = productSize.Cost
+                    });
+                }
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
                 //_orderRepository.Add(order, "");
                 await _unitOfWork.SaveChangesAsync();
