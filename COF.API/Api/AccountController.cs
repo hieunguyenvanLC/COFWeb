@@ -12,6 +12,7 @@ using System.Web.Http;
 namespace COF.API.Api
 {
     [RoutePrefix("api/account")]
+    [Authorize]
     public class AccountController : ApiControllerBase
     {
         #region fields
