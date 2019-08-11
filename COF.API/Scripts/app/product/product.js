@@ -160,11 +160,12 @@ var productController = {
                 if (res.status) {
                     var data = res.data;
                     var html = '';
+                    
                     if (data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
                             var category = data[i];
                             html += '<tr>';
-                            html += '<td colspan="5" style="background-color:beige;"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length + ' sản phẩm </td>';
+                            html += '<td colspan="' +( (isAdmin == 'True') ?5 : 4 )+ '" style="background-color:beige;"><b>' + category.Name.toUpperCase() + '</b> - ' + category.Products.length + ' sản phẩm </td>';
                             html += '/<tr>';
 
                             html += '<tr style="background-color:#ddd">';
@@ -173,7 +174,11 @@ var productController = {
                             html += '<td><b>Size</b></td>';
                             html += '<td><b>Giá tiền </b></td>';
 
-                            html += '<td><b>Thao tác</b></td>';
+                            if (isAdmin == 'True') {
+                                html += '<td><b>Thao tác</b></td>';
+                            }
+
+                            
                             html += '</tr>';
 
                             var products = category.Products;
@@ -207,10 +212,14 @@ var productController = {
                                         html += ' <td>' + productController.formatMoney(size.Cost) + '</td>';
 
                                         if (j === 0) {
-                                            html += '<td rowspan=" ' + sizeCount + '">';
-                                            html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                            html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
-                                            html += '</td>';
+
+                                            if (isAdmin == 'True') {
+                                                html += '<td rowspan=" ' + sizeCount + '">';
+                                                html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                                html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                                html += '</td>';
+                                            }
+                                           
                                         }
 
 
@@ -230,10 +239,16 @@ var productController = {
                                     }
                                     html += '<td></td>';
                                     html += '<td></td>';
-                                    html += '<td>';
-                                    html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                    html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
-                                    html += '</td>';
+                                   
+
+                                    if (isAdmin == 'True') {
+                                        html += '<td>';
+                                        html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
+                                        html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                        html += '</td>';
+                                    }
+                                    
+                                    
                                     html += '</tr>';
                                 }
 

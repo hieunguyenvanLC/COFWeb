@@ -41,7 +41,14 @@ namespace COF.API.Controllers
         public async Task<ActionResult> Index()
         {
             var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            var isAdmin =  UserManager.IsInRole(user.Id, "PartnerAdmin");
             var shops = await _shopService.GetAllShopAsync(user.PartnerId.GetValueOrDefault());
+            if (!isAdmin)
+            {
+                var shopIds = user.ShopHasUsers.Select(x => x.ShopId).ToList();
+                shops = shops.Where(x => shopIds.Contains(x.Id)).ToList();
+            }
+            TempData["IsPartnerAdmin"] = isAdmin;
             TempData["Shops"] = shops;
             return View();
         }

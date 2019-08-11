@@ -49,7 +49,6 @@ namespace COF.API.Api
                         Quantity = x.Quantity
                     }).ToList()
                 };
-                var test = Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated;
                 var logicResult = await _orderService.CreateOrderAsync(model.ShopId, orderCreateModel);
                 if (logicResult.Validations != null)
                 {

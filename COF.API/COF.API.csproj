@@ -326,6 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\databaseUpgradeByCodeFirst.txt" />
+    <Content Include="App_Data\Functions\nop_splitstring_to_table.sql" />
     <Content Include="App_Data\StoredProcedures\AllOrderByShopWithPaging.sql" />
     <Content Include="ConfirmSuccess.html" />
     <Content Include="Content\bower_components\bootstrap-colorpicker\dist\css\bootstrap-colorpicker.css" />

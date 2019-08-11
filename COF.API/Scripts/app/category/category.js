@@ -87,7 +87,10 @@ var categoryController = {
                     html += '<td><b>#</b></td>';
                     html += '<td><b>Tên danh mục</b></td>';
 
-                    html += '<td><b>Thao tác</b></td>';
+                    if (isAdmin == 'True') {
+                        html += '<td><b>Thao tác</b></td>';
+                    }
+                    
                     html += '</tr>';
                     if (data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
@@ -96,10 +99,13 @@ var categoryController = {
 
                             html += ' <td>' + (i + 1) + '</td>';
                             html += ' <td>' + (category.Name) + '</td>';
-                            html += '<td>';
-                            html += '<button data-id="' + category.Id + '" class="btn btn-primary btnEdit"><i class="fa fa-edit"></i></button> &nbsp;';
-                            html += '<button  data-id="' + category.Id + '"  class="btn btn-danger btnRemove"><i class="fa fa-remove"></i></button>';
-                            html += '</td>';
+
+                            if (isAdmin == 'True') {
+                                html += '<td>';
+                                html += '<button data-id="' + category.Id + '" class="btn btn-primary btnEdit"><i class="fa fa-edit"></i></button> &nbsp;';
+                                html += '<button  data-id="' + category.Id + '"  class="btn btn-danger btnRemove"><i class="fa fa-remove"></i></button>';
+                                html += '</td>';
+                            }
                             html += '</tr>';
                         }
                     }

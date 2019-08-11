@@ -1,8 +1,10 @@
 ﻿using COF.API.Controllers.Core;
 using COF.API.Core;
 using COF.API.Models.Shared;
+using COF.BusinessLogic.Models.Order;
 using COF.BusinessLogic.Services;
 using COF.BusinessLogic.Settings;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,7 @@ namespace COF.API.Controllers
         private readonly IWorkContext _workContext;
         private readonly IShopService _shopService;
         private readonly IOrderService _orderService;
+        private readonly IUserService _userService;
 
         #endregion
 
@@ -27,18 +30,28 @@ namespace COF.API.Controllers
         public OrderController(
             IWorkContext workContext,
             IShopService shopService,
-            IOrderService orderService)
+            IOrderService orderService,
+            IUserService userService)
         {
             _workContext = workContext;
             _shopService = shopService;
             _orderService = orderService;
+            _userService = userService;
         }
         #endregion
 
         [Route("hoa-don")]
         public async Task<ActionResult> Index()
         {
-            var shops = await _shopService.GetAllShopAsync(_workContext.CurrentUser.PartnerId.GetValueOrDefault());
+            var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            var shops = await _shopService.GetAllShopAsync(user.PartnerId.GetValueOrDefault());
+
+            var isAdmin = UserManager.IsInRole(user.Id, "PartnerAdmin");
+            if (!isAdmin)
+            {
+                var shopIds = user.ShopHasUsers.Select(x => x.ShopId).ToList();
+                shops = shops.Where(x => shopIds.Contains(x.Id)).ToList();
+            }
             TempData["Shops"] = shops;
             return View();
         }
@@ -76,5 +89,9 @@ namespace COF.API.Controllers
                 throw;
             }
         }
+
+        #region private methods 
+        
+        #endregion
     }
 }

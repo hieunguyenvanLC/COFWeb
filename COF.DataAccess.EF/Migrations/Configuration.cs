@@ -100,6 +100,32 @@
                     manager.AddToRoles(cashier.Id, new string[] { "Cashier" });
                 }
             }
+            
+
+            var shopAdmin = new AppUser()
+            {
+                UserName = "shopadmin",
+                Email = "hoang.phannhat1996@gmail.com",
+                EmailConfirmed = true,
+                BirthDay = DateTime.Now,
+                FullName = "Nguyễn Văn Hiếu",
+                Avatar = "",
+                Gender = true,
+                PartnerId = partner.Id,
+                ShopHasUsers = new List<ShopHasUser>
+                    {
+                        new ShopHasUser
+                        {
+                            PartnerId = partner.Id,
+                            ShopId = partner.Shops.FirstOrDefault().Id,
+                        }
+                    }
+            };
+            manager.Create(shopAdmin, "123456");
+
+            var shopAdminUser = manager.FindByName(shopAdmin.UserName);
+
+            manager.AddToRoles(shopAdminUser.Id, new string[] { "ShopManager" });
         }
         private void CreateSizes(EFContext context)
         {

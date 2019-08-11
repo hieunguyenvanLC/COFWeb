@@ -132,11 +132,11 @@
     <tr>
         <td>{{Id}}</td>
         <td>{{CustomerName}}</td>
-        <td>{{Total}}</td>
+        <td>{{TotalCost}}</td>
         <td>{{CreatedDate}}</td>
         <td>{{CreatedBy}}</td>
         <td>
-            <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-edit"></i></button>
+            <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-eye"></i></button>
         </td>
     </tr>
 
@@ -147,19 +147,16 @@
                 <tr style="background-color:#ffd800">
                     <th><b>Tên sản phẩm</b></th>
                     <th><b>Size</b></th>
+                    <th><b>Số lượng</b></th>
+                    <th><b>Đơn giá</b></th>
                     <th><b>Thành tiền</b></th>
                 </tr>
             </thead>
             <tbody>
+                {{{OrderDetails}}}
                 <tr>
-                    <td>Cà phê đá</td>
-                    <td>C</td>
-                    <td>25.000</td>
-                </tr>
-
-                <tr>
-                    <td colspan="2"><b>Tổng</b></td>
-                    <td><b>25.000</b></td>
+                    <td colspan="4"><b>Tổng</b></td>
+                    <td><b>{{TotalCost}}</b></td>
                 </tr>
 
 
@@ -247,6 +244,8 @@
                                 Address: item.Address,
                                 CreatedBy: item.StaffName,
                                 CreatedDate: item.CreateDateTime,
+                                OrderDetails: orderController.renderOrderDetails(item.OrderDetails),
+                                TotalCost: commonController.formatMoney(item.TotalCost)
                             });
 
                         });
@@ -306,15 +305,12 @@
         },
         paging: function (totalRow, callback, changePageSize) {
             var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
-            console.log(totalPage);
-
             //Unbind pagination if it existed or click change pagesize
             if ($('#pagination a').length === 0 || changePageSize === true) {
                 $('#pagination').empty();
                 $('#pagination').removeData("twbs-pagination");
                 $('#pagination').unbind("page");
             }
-            console.log(totalPage);
             $('#pagination').twbsPagination({
                 totalPages: totalPage,
                 first: "Đầu",
@@ -328,6 +324,19 @@
                 }
             });
         },
+        renderOrderDetails: function (data) {
+            var html = '';
+            $.each(data, function (i, item) {
+                html += '<tr>';
+                html += '<td>' + item.ProductName + '</td>';
+                html += '<td>' + item.Size + '</td>';
+                html += '<td>' + item.Quantity + '</td>';
+                html += '<td>' + commonController.formatMoney(item.Cost) + '</td>';
+                html += '<td>' + commonController.formatMoney(item.Total) + '</td>';
+                html += '</tr>';
+            });
+            return html;
+        }
     };
     orderController.run();
 

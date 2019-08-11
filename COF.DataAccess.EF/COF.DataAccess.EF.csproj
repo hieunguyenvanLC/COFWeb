@@ -126,6 +126,10 @@
     <Compile Include="Migrations\201908101235296_RemoveRequired.Designer.cs">
       <DependentUpon>201908101235296_RemoveRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908110533427_TotalCost.cs" />
+    <Compile Include="Migrations\201908110533427_TotalCost.Designer.cs">
+      <DependentUpon>201908110533427_TotalCost.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -220,6 +224,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908101235296_RemoveRequired.resx">
       <DependentUpon>201908101235296_RemoveRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908110533427_TotalCost.resx">
+      <DependentUpon>201908110533427_TotalCost.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

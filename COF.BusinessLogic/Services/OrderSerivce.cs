@@ -84,6 +84,7 @@ namespace COF.BusinessLogic.Services
                 };
 
                 order.OrderDetails = new List<OrderDetail>();
+                decimal totalPrice = 0;
                 foreach (var item in model.OrderDetails)
                 {
                     var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
@@ -103,7 +104,10 @@ namespace COF.BusinessLogic.Services
                         UnitPrice = productSize.Cost,
                         CreatedBy = _workContext.CurrentUser.FullName
                     });
+                    totalPrice += productSize.Cost;
                 }
+
+                order.TotalCost = totalPrice;
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
@@ -128,6 +132,16 @@ namespace COF.BusinessLogic.Services
             {
                 var sql = "exec [dbo].[AllOrderByShopWithPaging] @p0, @p1, @p2, @p3";
                 var queryRes = await _unitOfWork.Context.Database.SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, "").ToListAsync();
+
+                if (queryRes.Any())
+                {
+                    var allOrderDetails = await GetAllOrderDetailsWithOrderIds(queryRes.Select(x => x.Id).ToList());
+                    queryRes.ForEach(order =>
+                    {
+                        order.OrderDetails = allOrderDetails.Where(x => x.OrderId == order.Id).ToList();
+                    });
+                }
+
                 return new BusinessLogicResult<List<OrderModel>>
                 {
                     Result = queryRes,
@@ -145,6 +159,24 @@ namespace COF.BusinessLogic.Services
             
         }
         #endregion
+
+        public async Task<List<OrderDetailModelVm>> GetAllOrderDetailsWithOrderIds(List<int> orderIds)
+        {
+            var sql = @"select od.Id,
+                               od.OrderId,
+                               size.Name as Size,
+							   od.UnitPrice as Cost,
+							   od.Quantity,
+							   p.ProductName
+                        from OrderDetail od
+                        join ProductSize pd on od.ProductSizeId = pd.Id
+                        join Product p on p.Id = pd.ProductId
+                        join Size size on size.Id = pd.SizeId
+                        where od.OrderId in (select data from [dbo].[nop_splitstring_to_table](@p0,','))                          
+                    ";
+            var result = await _unitOfWork.Context.Database.SqlQuery<OrderDetailModelVm>(sql, string.Join(",", orderIds)).ToListAsync();
+            return result;
+        }
 
     }
 }

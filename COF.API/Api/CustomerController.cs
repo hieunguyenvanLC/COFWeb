@@ -12,6 +12,7 @@ using System.Web.Http;
 namespace COF.API.Api
 {
     [RoutePrefix("api/customer")]
+    [Authorize]
     public class CustomerController : ApiControllerBase
     {
         #region fileds
@@ -31,7 +32,7 @@ namespace COF.API.Api
         #region public methods
         [Route("search")]
         [HttpGet]
-        public async Task<HttpResponseMessage> SearchCustomer(string keyword)
+        public async Task<HttpResponseMessage> SearchCustomer(string keyword = "")
         {
             var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
             var result = await _customerService.GetAllCustomersAsync(user.PartnerId.GetValueOrDefault(),keyword);

@@ -43,5 +43,6 @@ namespace COF.DataAccess.EF.Models
         public virtual ICollection<TableHasOrder> TableHasOrders { get; set; }
         public virtual ICollection<BonusPointHistory> BonusPointHistories { get; set; }
         public int PartnerId { get; set; }
+        public decimal TotalCost { get; set; }
     }
 }

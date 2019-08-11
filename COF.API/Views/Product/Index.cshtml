@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
+    var isAdmin = TempData["IsPartnerAdmin"] as bool?;
 }
 <style>
     #tblData td {
@@ -12,9 +13,9 @@
         border: 1px solid #ccc;
     }
 </style>
-
 <script type="text/javascript">
     var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
+    var isAdmin = '@isAdmin.Value';
 </script>
 
 <section class="content-header">
@@ -87,7 +88,7 @@
                                         <div class="form-group">
                                             <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control ui-autocomplete-input" value="" autocomplete="off">
                                         </div>
-                                       
+
                                     </div>
                                     <div class="col-md-9 col-xs-12">
                                         <div class="form-group">
@@ -99,7 +100,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="btnAdd" class="btn bg-purple margin">Thêm sản phẩm</button>
+                            @{
+                                if (isAdmin.Value)
+                                {
+                                    <button id="btnAdd" class="btn bg-purple margin">Thêm sản phẩm</button>
+                                }
+                            }
+
                             <br />
                             <br />
                         </div>
@@ -120,6 +127,6 @@
         </div>
     </div>
 </section>
-<script src="~/Scripts/plugin/accounting.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.12.0/jquery.mask.min.js"></script>
 <script src="~/Scripts/app/product/product.js"></script>

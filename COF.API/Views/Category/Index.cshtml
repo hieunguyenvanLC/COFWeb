@@ -4,9 +4,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
+    var isAdmin = TempData["IsPartnerAdmin"] as bool?;
 }
 <script type="text/javascript">
     var allShop = JSON.parse('@Html.Raw(Json.Encode(allShops))');
+     var isAdmin = '@isAdmin.Value';
+
 </script>
 
 <section class="content-header">
@@ -91,7 +94,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="btnAdd" class="btn bg-purple margin">Thêm danh mục</button>
+                            @{
+                                if (isAdmin.Value)
+                                {
+                                    <button id="btnAdd" class="btn bg-purple margin">Thêm danh mục</button>
+                                }
+                            }
+
                             <br />
                             <br />
                         </div>
