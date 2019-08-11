@@ -1,0 +1,51 @@
+//VARIABLES
+
+/// Regular font
+/// @type List;
+$text-font-stack: 'Open Sans', sans-serif !default;
+
+$display-font: 'Dancing Script', cursive;
+
+// $heading-font: 'Noto Serif', serif;
+/// Code font
+/// @type List;
+$code-font-stack: 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Monaco', monospace !default;
+
+
+/// Color
+/// @type Color
+$text-color: rgb(34, 34, 34) !default;
+
+/// Brand color
+/// @type Color
+$primary-color: rgb(13, 114, 185);
+$primary-color-pale: rgba(13, 114, 185, 0.5);
+
+/// @type Color
+$secondary-color: rgb(0, 0, 0);
+
+/// @type Color
+$accent-color: rgb(13, 114, 185);
+
+/// Font weight
+$weight-light: 300;
+$weight-regular: 400;
+$weight-medium: 600;
+$weight-bold: 700;
+$weight-black: 900;
+
+/// Transition
+$transition-cubic: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+
+/// Shadow
+$shadow-basic: 0 10px 40px 0 rgba(62, 57, 107, .07), 0 2px 9px 0 rgba(62, 57, 107, .06);
+$shadow-strong: 0 30px 30px 0 rgba(0, 0, 0, .15), 0 10px 10px 0 rgba(0, 0, 0, .1);
+$shadow-light: 0 2px 8px 0 rgba(50, 50, 50, .08);
+
+
+//BREAKPOINT
+
+$old-mobile: 500px;
+$mobile: 700px;
+$tablet: 1080px;
+$desktop: 1120px;

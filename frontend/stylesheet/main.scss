@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css?family=Dancing+Script:400,700|Open+Sans:300,400,600,700,800&display=swap&subset=vietnamese');
+
+@font-face {
+    font-family: "Pestapora";
+    src: url("../fonts/Pestapora.otf") format("otf")
+}
+
+//1. Utils
+@import 'util/variables';
+@import 'util/functions';
+
+//2. Vendors
+@import 'vendors/normalize';
+//3. Base
+
+//4. Layout
+@import 'layout/grid';
+@import 'layout/header';
+@import 'layout/footer';
+
+//5. Components
+@import 'components/buttons';
+@import 'components/dropdown';
+@import 'components/nav';
+@import 'components/table';
+@import 'components/modal';
+@import 'components/carousel';
+@import 'components/pagination';
+
+//6. Pages
+@import 'pages/home';
+@import 'pages/profile';
+
+//7. Themes
+
+
