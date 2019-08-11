@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using ServiceModels = COF.BusinessLogic.Models;
 namespace COF.API.Controllers
 {
+    [Authorize]
     public class CategoryController : MvcControllerBase
     {
 

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace COF.API.Controllers
 {
+    [Authorize]
     public class CommonController : MvcControllerBase
     {
         #region fields
