@@ -42,6 +42,7 @@
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
+        public DbSet<ScheduleTask> ScheduleTasks { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
