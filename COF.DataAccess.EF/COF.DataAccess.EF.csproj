@@ -77,6 +77,7 @@
     <Compile Include="Configurations\RawMaterialMapping.cs" />
     <Compile Include="Configurations\RawMaterialUnitMapping.cs" />
     <Compile Include="Configurations\RolePermissionMapping.cs" />
+    <Compile Include="Configurations\ScheduleTaskMapping.cs" />
     <Compile Include="Configurations\ShopHasUserMapping.cs" />
     <Compile Include="Configurations\SizeMapping.cs" />
     <Compile Include="Configurations\UserWorkingTimeMapping.cs" />
@@ -130,6 +131,10 @@
     <Compile Include="Migrations\201908110533427_TotalCost.Designer.cs">
       <DependentUpon>201908110533427_TotalCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908121437563_AddScheduleTask.cs" />
+    <Compile Include="Migrations\201908121437563_AddScheduleTask.Designer.cs">
+      <DependentUpon>201908121437563_AddScheduleTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -160,6 +165,7 @@
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\RolePermission.cs" />
+    <Compile Include="Models\ScheduleTask.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\ShopHasUser.cs" />
     <Compile Include="Models\Table.cs" />
@@ -227,6 +233,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908110533427_TotalCost.resx">
       <DependentUpon>201908110533427_TotalCost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908121437563_AddScheduleTask.resx">
+      <DependentUpon>201908121437563_AddScheduleTask.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

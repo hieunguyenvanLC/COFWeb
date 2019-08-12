@@ -10,6 +10,7 @@ using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Owin;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -21,23 +22,11 @@ namespace COF.API.Ioc
 {
     public class AutofacWebapiConfig
     {
-        public static IContainer Container;
+       
 
-        public static void Initialize(HttpConfiguration config)
+        public static ContainerBuilder Configuration(IAppBuilder app)
         {
-            Initialize(config, RegisterServices(new ContainerBuilder()));
-        }
-
-
-        public static void Initialize(HttpConfiguration config, IContainer container)
-        {
-            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-        }
-
-
-        private static IContainer RegisterServices(ContainerBuilder builder)
-        {
-
+            var builder = new ContainerBuilder();
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
@@ -65,11 +54,8 @@ namespace COF.API.Ioc
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces().InstancePerRequest();
 
-           
-            Container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(Container));
 
-            return Container;
+            return builder;
 
         }
 
