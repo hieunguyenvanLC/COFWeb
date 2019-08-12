@@ -24,6 +24,10 @@ namespace COF.BusinessLogic.Models.Order
         public int ShopId { get; set; }
         public int UserId { get; set; }
         public List<OrderDetailModel> OrderDetails { get; set; }
+        public string OrderCode { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal FinalAmount { get; set; }
+        public OrderType OrderType { get; set; }
     }
 
     public class OrderDetailModel
@@ -41,5 +45,11 @@ namespace COF.BusinessLogic.Models.Order
         public string  ProductName { get; set; }
         public int Quantity { get; set; }
         public decimal Total => Cost * Quantity;
+    }
+
+    public enum OrderType
+    {
+         AtShop = 1,
+         Online = 2
     }
 }

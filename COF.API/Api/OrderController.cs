@@ -47,7 +47,11 @@ namespace COF.API.Api
                     {
                         ProductSizeId = x.ProductSizeId,
                         Quantity = x.Quantity
-                    }).ToList()
+                    }).ToList(),
+                    FinalAmount = model.FinalAmount,
+                    OrderCode = model.OrderCode,
+                    OrderType = model.OrderType,
+                    TotalAmount = model.TotalAmount
                 };
                 var logicResult = await _orderService.CreateOrderAsync(model.ShopId, orderCreateModel);
                 if (logicResult.Validations != null)

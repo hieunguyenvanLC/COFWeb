@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COF.BusinessLogic.Models.Order;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,7 +18,16 @@ namespace COF.API.Models.Order
         [Required]
         public int CustomerId { get; set; }
         [Required]
+        public DateTime PaymentDate { get; set; }
+        [Required]
+        public string OrderCode { get; set; }
+        [Required]
         public List<OrderDetailModel> OrderDetails { get; set; }
+
+        public decimal TotalAmount { get; set; }
+        public decimal FinalAmount { get; set; }
+        public OrderType OrderType { get; set; }
+
     }
     public class OrderDetailModel
     {

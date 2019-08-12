@@ -80,11 +80,12 @@ namespace COF.BusinessLogic.Services
                     CustomerId = model.CustomerId,
                     PartnerId = shop.PartnerId,
                     UserId = _workContext.CurrentUserId,
-                    ShopId = shop.Id
+                    ShopId = shop.Id,
+                    OrderNumber = model.OrderCode,
+                    TotalCost = model.TotalAmount
                 };
 
                 order.OrderDetails = new List<OrderDetail>();
-                decimal totalPrice = 0;
                 foreach (var item in model.OrderDetails)
                 {
                     var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
@@ -104,10 +105,8 @@ namespace COF.BusinessLogic.Services
                         UnitPrice = productSize.Cost,
                         CreatedBy = _workContext.CurrentUser.FullName
                     });
-                    totalPrice += productSize.Cost;
                 }
 
-                order.TotalCost = totalPrice;
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
@@ -160,7 +159,8 @@ namespace COF.BusinessLogic.Services
         }
         #endregion
 
-        public async Task<List<OrderDetailModelVm>> GetAllOrderDetailsWithOrderIds(List<int> orderIds)
+        #region private methods
+        private async Task<List<OrderDetailModelVm>> GetAllOrderDetailsWithOrderIds(List<int> orderIds)
         {
             var sql = @"select od.Id,
                                od.OrderId,
@@ -177,6 +177,7 @@ namespace COF.BusinessLogic.Services
             var result = await _unitOfWork.Context.Database.SqlQuery<OrderDetailModelVm>(sql, string.Join(",", orderIds)).ToListAsync();
             return result;
         }
+        #endregion
 
     }
 }
