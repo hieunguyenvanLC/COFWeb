@@ -26,7 +26,7 @@ namespace COF.DataAccess.EF.Models
 
     public static class ScheduleTaskName
     {
-        public static string TestTask => "A2000 Import Task";
+        public static string DailyOrderReport => "DailyOrderReport";
     }
 }
 

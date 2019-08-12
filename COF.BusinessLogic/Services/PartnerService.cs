@@ -12,6 +12,9 @@ namespace COF.BusinessLogic.Services
     public interface IPartnerService
     {
         Task<BusinessLogicResult<Partner>> GetByIdAsync(int id);
+        BusinessLogicResult<Partner> GetById(int id);
+        Task<BusinessLogicResult<List<Partner>>> GetAllAsync();
+        BusinessLogicResult<List<Partner>> GetAll();
     }
     public class PartnerService : IPartnerService
     {
@@ -30,7 +33,36 @@ namespace COF.BusinessLogic.Services
                 Result = result,
                 Success = true
             };
+        }
 
+        public async Task<BusinessLogicResult<List<Partner>>> GetAllAsync()
+        {
+            var result = await _partnerRepository.GetAllAsync();
+            return new BusinessLogicResult<List<Partner>>
+            {
+                Result = result,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<List<Partner>> GetAll()
+        {
+            var result = _partnerRepository.GetAll();
+            return new BusinessLogicResult<List<Partner>>
+            {
+                Result = result,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<Partner> GetById(int id)
+        {
+            var result =  _partnerRepository.GetById(id);
+            return new BusinessLogicResult<Partner>
+            {
+                Result = result,
+                Success = true
+            };
         }
     }
 }

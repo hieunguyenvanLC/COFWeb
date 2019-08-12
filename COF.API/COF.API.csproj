@@ -306,6 +306,7 @@
     <Compile Include="Api\Core\WorkContext.cs" />
     <Compile Include="Api\CustomerController.cs" />
     <Compile Include="Filter\Hangfire\HangfireAuthFilter.cs" />
+    <Compile Include="Models\Customer\CustomerCreateModel.cs" />
     <Compile Include="Models\Shared\PaginationSet.cs" />
     <Compile Include="Api\Core\ServiceFactory.cs" />
     <Compile Include="Api\OrderController.cs" />

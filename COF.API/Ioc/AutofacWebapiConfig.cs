@@ -47,12 +47,13 @@ namespace COF.API.Ioc
             // Repositories
             builder.RegisterAssemblyTypes(typeof(ProductRepository).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
-                .AsImplementedInterfaces().InstancePerRequest();
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // Services
+
             builder.RegisterAssemblyTypes(typeof(ShopService).Assembly)
                .Where(t => t.Name.EndsWith("Service"))
-               .AsImplementedInterfaces().InstancePerRequest();
+               .AsImplementedInterfaces().InstancePerLifetimeScope();
 
 
             return builder;

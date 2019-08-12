@@ -1,4 +1,5 @@
 ﻿using COF.BusinessLogic.Models.Order;
+using COF.BusinessLogic.Models.Report;
 using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
@@ -16,6 +17,7 @@ namespace COF.BusinessLogic.Services
     {
         Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
         Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter);
+        BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId);
     }
 
     public class OrderService : IOrderService
@@ -24,9 +26,10 @@ namespace COF.BusinessLogic.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
-       private readonly IWorkContext _workContext;
+        private readonly IWorkContext _workContext;
         private readonly IProductSizeRepository _productSizeRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IPartnerService _partnerService;
         #endregion
 
         #region ctor
@@ -36,7 +39,8 @@ namespace COF.BusinessLogic.Services
             IShopRepository shopRepository,
             IWorkContext workContext,
             IProductSizeRepository productSizeRepository,
-            ICustomerRepository customerRepository
+            ICustomerRepository customerRepository,
+            IPartnerService partnerService
            )
         {
             _orderRepository = orderRepository;
@@ -45,6 +49,7 @@ namespace COF.BusinessLogic.Services
             _workContext = workContext;
             _productSizeRepository = productSizeRepository;
             _customerRepository = customerRepository;
+            _partnerService = partnerService;
         }
 
         #endregion
@@ -156,6 +161,43 @@ namespace COF.BusinessLogic.Services
                 };
             }
             
+        }
+
+        public BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId)
+        {
+            var orders = _orderRepository.GetDailyOrders(partnerId);
+            var shops = orders.GroupBy(x => x.Shop).ToList();
+            var dailyOrderReport = new PartnerDailyOrderReport();
+
+            var partnerQuery = _partnerService.GetById(partnerId);
+            
+            dailyOrderReport.PartnerId = partnerQuery.Result.Id;
+            dailyOrderReport.PartnerName = partnerQuery.Result.Name;
+
+
+            dailyOrderReport.Shops = shops.Select(x => new ShopDailyReportModel
+            {
+               Id = x.Key.Id,
+               Name = x.Key.ShopName,
+               Address = x.Key.Address,
+               PhoneNumber = x.Key.PhoneNumber,
+               Orders = x.Select(y => new OrdersInDayModel
+               {
+                   Id = y.Id,
+                   CreatedDate = y.CreatedOnUtc,
+                   CustomerName = y.Customer.FullName,
+                   Address = y.Customer.Address,
+                   PhoneNumber = y.Customer.PhoneNumber,
+                   StaffName = y.User.FullName,
+                   TotalCost = y.TotalCost
+               }).ToList()
+            }).ToList();
+
+            return new BusinessLogicResult<PartnerDailyOrderReport>
+            {
+                Result = dailyOrderReport,
+                Success = true
+            };
         }
         #endregion
 

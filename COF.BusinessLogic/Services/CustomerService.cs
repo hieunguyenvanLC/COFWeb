@@ -1,6 +1,9 @@
 ﻿using COF.BusinessLogic.Models.Customer;
+using COF.BusinessLogic.Settings;
+using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,18 +29,32 @@ namespace COF.BusinessLogic.Services
         /// <returns></returns>
         Task<CustomerModel> GetByIdAsync(int id);
 
+        Task<BusinessLogicResult<Customer>> CreateAsync(int partnerId, CustomerCreateModel model);
+
     }
     public class CustomerService : ICustomerService
     {
         #region fields
         private readonly ICustomerRepository _customerRepository;
+        private readonly IShopRepository _shopRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWorkContext _workContext;
         #endregion
 
         #region ctor
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(
+            ICustomerRepository customerRepository,
+            IShopRepository shopRepository,
+            IUnitOfWork unitOfWork,
+            IWorkContext workContext)
         {
             _customerRepository = customerRepository;
+            _shopRepository = shopRepository;
+            _unitOfWork = unitOfWork;
+            _workContext = workContext;
         }
+
+        
         #endregion
 
         #region public methods
@@ -67,6 +84,36 @@ namespace COF.BusinessLogic.Services
                 };
             }
             return resut;
+        }
+
+        public async Task<BusinessLogicResult<Customer>> CreateAsync(int partnerId, CustomerCreateModel model)
+        {
+            try
+            {
+                var customer = new Customer
+                {
+                    FullName = model.FullName,
+                    Address = model.Address,
+                    PhoneNumber = model.PhoneNumber,
+                    PartnerId = partnerId,
+
+                };
+                _customerRepository.Add(customer, _workContext.CurrentUser.FullName);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<Customer>
+                {
+                    Result = customer,
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<Customer>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
         }
 
 

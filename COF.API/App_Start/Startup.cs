@@ -15,6 +15,7 @@ using System.Web.Mvc;
 using Hangfire;
 using Hangfire.SqlServer;
 using COF.API.Filter.Hangfire;
+using COF.BusinessLogic.Services.Hangfire;
 
 [assembly: OwinStartup(typeof(COF.API.App_Start.Startup))]
 
@@ -26,21 +27,16 @@ namespace COF.API.App_Start
         public void Configuration(IAppBuilder app)
         {
             var httpConfig = new HttpConfiguration();
-            //register DI here
             var builder = AutofacWebapiConfig.Configuration(app);
 
             container = builder.Build();
-            // System.Web.Http.GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-            var resolver = new AutofacWebApiDependencyResolver(container);
-            httpConfig.DependencyResolver = resolver;
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            //var resolver = new AutofacWebApiDependencyResolver(container);
+            //httpConfig.DependencyResolver = resolver;
             ConfigureAuth(app);
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
-            System.Web.Http.GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver((IContainer)container); //Set the WebApi DependencyResolver
+            System.Web.Http.GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver((IContainer)container); 
 
-            // Web API configuration and services
-            // Configure Web API to use only bearer token authentication.
             httpConfig.SuppressDefaultHostAuthentication();
             httpConfig.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             Hangfire.GlobalConfiguration.Configuration.UseSqlServerStorage("HangFireContext")
@@ -52,10 +48,11 @@ namespace COF.API.App_Start
                 Authorization = new[] { new HangfireAuthFilter() }
             });
 
-            
 
-
-
+            if (DependencyResolver.Current.GetService(typeof(IHangfireService)) is IHangfireService hangfireService)
+            {
+                hangfireService.Start();
+            }
         }
 
     }
