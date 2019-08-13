@@ -178,6 +178,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\COF.Common\COF.Common.csproj">
+      <Project>{AEA3713D-4335-4B95-A0B3-17BE0FACE969}</Project>
+      <Name>COF.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\COF.DataAccess.EF\COF.DataAccess.EF.csproj">
       <Project>{35293b2d-4c59-41db-bc50-1a4713eb4b6e}</Project>
       <Name>COF.DataAccess.EF</Name>

@@ -11,6 +11,10 @@ namespace COF.BusinessLogic.Models.Report
         public int PartnerId { get; set; }
         public string PartnerName { get; set; }
         public List<ShopDailyReportModel> Shops { get; set; }
+        public PartnerDailyOrderReport()
+        {
+            Shops = new List<ShopDailyReportModel>();
+        }
     }
     public class ShopDailyReportModel
     {

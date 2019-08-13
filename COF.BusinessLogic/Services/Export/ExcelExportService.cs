@@ -55,7 +55,7 @@ namespace COF.BusinessLogic.Services.Export
                         "Tổng tiền"
                     };
             int maxCol = properties.Count;
-            worksheet.Row(row).Height = 50;
+            
 
             for (int i = 0; i < maxCol; i++)
             {

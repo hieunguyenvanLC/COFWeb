@@ -166,32 +166,36 @@ namespace COF.BusinessLogic.Services
         public BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId)
         {
             var orders = _orderRepository.GetDailyOrders(partnerId);
-            var shops = orders.GroupBy(x => x.Shop).ToList();
-            var dailyOrderReport = new PartnerDailyOrderReport();
 
+            var dailyOrderReport = new PartnerDailyOrderReport();
             var partnerQuery = _partnerService.GetById(partnerId);
             
             dailyOrderReport.PartnerId = partnerQuery.Result.Id;
             dailyOrderReport.PartnerName = partnerQuery.Result.Name;
 
+            var shops = partnerQuery.Result.Shops.ToList();
 
-            dailyOrderReport.Shops = shops.Select(x => new ShopDailyReportModel
+            foreach (var shop in shops)
             {
-               Id = x.Key.Id,
-               Name = x.Key.ShopName,
-               Address = x.Key.Address,
-               PhoneNumber = x.Key.PhoneNumber,
-               Orders = x.Select(y => new OrdersInDayModel
-               {
-                   Id = y.Id,
-                   CreatedDate = y.CreatedOnUtc,
-                   CustomerName = y.Customer.FullName,
-                   Address = y.Customer.Address,
-                   PhoneNumber = y.Customer.PhoneNumber,
-                   StaffName = y.User.FullName,
-                   TotalCost = y.TotalCost
-               }).ToList()
-            }).ToList();
+                var tempData = new ShopDailyReportModel
+                {
+                    Id = shop.Id,
+                    Name = shop.ShopName,
+                    Address = shop.Address,
+                    PhoneNumber = shop.PhoneNumber,
+                    Orders = orders.Where(x => x.ShopId == shop.Id).Select(y => new OrdersInDayModel
+                    {
+                        Id = y.Id,
+                        CreatedDate = y.CreatedOnUtc,
+                        CustomerName = y.Customer.FullName,
+                        Address = y.Customer.Address,
+                        PhoneNumber = y.Customer.PhoneNumber,
+                        StaffName = y.User.FullName,
+                        TotalCost = y.TotalCost
+                    }).ToList()
+                };
+                dailyOrderReport.Shops.Add(tempData);
+            }
 
             return new BusinessLogicResult<PartnerDailyOrderReport>
             {

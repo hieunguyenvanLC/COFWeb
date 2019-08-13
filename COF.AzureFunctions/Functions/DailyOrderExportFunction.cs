@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using COF.AzureFunctions.Ioc;
 using COF.BusinessLogic.Services.Reports;
 using CommonServiceLocator;
@@ -14,13 +15,13 @@ namespace COF.AzureFunctions.Functions
             .Build();
 
         [FunctionName("DailyOrderExportFunction")]
-        public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public async static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             try
             {
                 log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
-                var reportService = ServiceLocator.GetInstance<IReportService>();
-                reportService.ExportDailyOrderReport();
+                var client = new HttpClient();
+               var result = await client.GetAsync("http://cof-dev.azurewebsites.net/api/export/daily-order");
             }
             catch (Exception ex)
             {
