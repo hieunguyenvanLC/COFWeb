@@ -17,7 +17,7 @@ using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-
+using Hangfire;
 namespace COF.API.Ioc
 {
     public class AutofacWebapiConfig
@@ -30,30 +30,30 @@ namespace COF.API.Ioc
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterType<RoleStore<AppRole>>().As<IRoleStore<AppRole, string>>();
+            builder.RegisterType<RoleStore<AppRole>>().As<IRoleStore<AppRole, string>>().InstancePerBackgroundJob().SingleInstance();
             //Asp.net Identity
-            builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerRequest();
-            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
-            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
-            builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
-            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerLifetimeScope();
-            builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
-            builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
-            builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerBackgroundJob().SingleInstance();
+            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerBackgroundJob().SingleInstance();
+            builder.RegisterType<EFContext>().AsSelf().InstancePerBackgroundJob().SingleInstance();
             builder.RegisterModule(new AutofacWebTypesModule());
-            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerBackgroundJob().SingleInstance();
 
 
             // Repositories
             builder.RegisterAssemblyTypes(typeof(ProductRepository).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
+                .AsImplementedInterfaces().InstancePerBackgroundJob().SingleInstance();
 
             // Services
 
             builder.RegisterAssemblyTypes(typeof(ShopService).Assembly)
                .Where(t => t.Name.EndsWith("Service"))
-               .AsImplementedInterfaces().InstancePerLifetimeScope();
+               .AsImplementedInterfaces().InstancePerBackgroundJob().SingleInstance();
 
 
             return builder;
