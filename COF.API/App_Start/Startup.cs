@@ -39,20 +39,7 @@ namespace COF.API.App_Start
 
             httpConfig.SuppressDefaultHostAuthentication();
             httpConfig.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
-            Hangfire.GlobalConfiguration.Configuration.UseSqlServerStorage("HangFireContext")
-               .UseAutofacActivator(container, false);
-            var options = new BackgroundJobServerOptions { WorkerCount = Environment.ProcessorCount * 5 };
-            app.UseHangfireServer(options);
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                Authorization = new[] { new HangfireAuthFilter() }
-            });
-
-
-            if (DependencyResolver.Current.GetService(typeof(IHangfireService)) is IHangfireService hangfireService)
-            {
-                hangfireService.Start();
-            }
+            
         }
 
     }
