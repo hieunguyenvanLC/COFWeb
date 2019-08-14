@@ -150,6 +150,7 @@
     <Compile Include="Models\Order\OrderModel.cs" />
     <Compile Include="Models\Product\ProductByCategoryModel.cs" />
     <Compile Include="Models\Report\PartnerDailyOrderReport.cs" />
+    <Compile Include="Models\Report\PartnerRevenueMonthlyReport.cs" />
     <Compile Include="Models\Shop\ShopModel.cs" />
     <Compile Include="Models\User\UserRoleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

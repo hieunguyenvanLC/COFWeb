@@ -12,6 +12,7 @@ namespace COF.DataAccess.EF.Repositories
     public partial interface IOrderRepository : IRepository<Order>
     {
         List<Order> GetDailyOrders(int partnerId);
+        List<Order> GetAllOrdersInCurrentMonth(int partnerId);
     }
 
     public partial class OrderRepository : EFRepository<Order>, IOrderRepository
@@ -24,6 +25,17 @@ namespace COF.DataAccess.EF.Repositories
                 .Include(x => x.User)
                 .Include(x => x.Shop)
                 .Where(x => x.PartnerId == partnerId && DbFunctions.TruncateTime(x.CreatedOnUtc) == today).ToList();
+            return result;
+        }
+
+        public List<Order> GetAllOrdersInCurrentMonth(int partnerId)
+        {
+            var today = DateTime.UtcNow.Date;
+            var result = _dbSet
+                .Include(x => x.Shop)
+                .Where(x => x.PartnerId == partnerId && 
+                x.CreatedOnUtc.Month == today.Month && x.CreatedOnUtc.Year == today.Year
+                ).ToList();
             return result;
         }
     }

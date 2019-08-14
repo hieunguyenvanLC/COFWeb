@@ -1,4 +1,5 @@
-﻿using COF.BusinessLogic.Services.AzureBlob;
+﻿using COF.BusinessLogic.Models.Report;
+using COF.BusinessLogic.Services.AzureBlob;
 using COF.BusinessLogic.Services.Export;
 using COF.Common.Helper;
 using System;
@@ -12,6 +13,8 @@ namespace COF.BusinessLogic.Services.Reports
     public interface IReportService
     {
         void ExportDailyOrderReport();
+        List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId);
+
     }
     public class ReportService : IReportService
     {
@@ -48,6 +51,23 @@ namespace COF.BusinessLogic.Services.Reports
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 _azureBlobSavingService.SavingFileToAzureBlob(bytes, fileName, contentType, AzureHelper.DailyOrderExportContainer);
             }
+        }
+
+        public List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            var shops = partner.Result.Shops.ToList();
+            var allOrders = _orderService.GetOrdersInMonth(partnerId);
+            var result = shops.Select(shop => new ShopRevenueMonthlyReport
+            {
+                Shop = shop.ShopName,
+                Total = allOrders.Result
+                                .Where(x => x.ShopId == shop.Id)
+                                .Select(x => x.TotalCost).DefaultIfEmpty(0).Sum()
+                                
+            }).ToList();
+            return result;
+
         }
     }
 }

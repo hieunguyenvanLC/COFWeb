@@ -18,6 +18,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
         Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter);
         BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId);
+        BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId);
     }
 
     public class OrderService : IOrderService
@@ -200,6 +201,16 @@ namespace COF.BusinessLogic.Services
             return new BusinessLogicResult<PartnerDailyOrderReport>
             {
                 Result = dailyOrderReport,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId)
+        {
+            var allOrders = _orderRepository.GetAllOrdersInCurrentMonth(partnerId);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Result = allOrders,
                 Success = true
             };
         }
