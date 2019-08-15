@@ -9,6 +9,7 @@ namespace COF.BusinessLogic.Models.Report
     public class ShopRevenueMonthlyReport
     {
         public string Shop { get; set; }
-        public decimal Total { get; set; }
+        public int TotalOrder { get; set; }
+        public decimal TotalMoney { get; set; }
     }
 }

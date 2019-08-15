@@ -250,9 +250,14 @@
 
                         });
                         $('#tblData').html(html);
-                        orderController.paging(data.TotalRows, function () {
-                            orderController.loadData(shopId);
-                        }, changePageSize);
+                        try {
+                            orderController.paging(data.TotalRows, function () {
+                                orderController.loadData(shopId);
+                            }, changePageSize);
+                        } catch (e) {
+
+                        }
+                        
                         orderController.registerEvent();
                     }
                 }

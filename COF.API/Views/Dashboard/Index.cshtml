@@ -96,10 +96,10 @@
 
                     <h3 class="box-title">
                         Doanh thu chi nhánh
-                        <button type="button" class="btn btn-default" onclick="loadShopRevenue()" >
+                        <button type="button" class="btn btn-default" onclick="loadShopRevenue()">
                             <i aria-hidden="true" class="fa fa-refresh action-btn m-l-10"></i>
                         </button>
-                        
+
                     </h3>
 
                     <div class="box-tools pull-right">
@@ -112,34 +112,56 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    <div class="col-md-8" id="bar-chart" 
+                    <div class="col-md-7" id="bar-chart"
                          style="height: 300px; padding: 0px; position: relative;">
                     </div>
-                  
-                    <div class="col-md-4">
-                        <ul class="nav nav-pills nav-stacked" id="partnerRevenue">
-                            
-                        </ul>
+
+                    <div class="col-md-5">
+                        <br />
+                        <table class="table table-responsive">
+                            <tbody>
+                                <tr>
+                                    <th><b>Chi nhánh</b></th>
+                                    <th><b>Tổng đơn hàng</b></th>
+                                    <th><b>Tổng tiền</b></th>
+                                </tr>
+                            </tbody>
+                            <tbody id="inMonthRevenueDetail"></tbody>
+                        </table>
+                        <script id="data-inMonthRevenue" type="x-tmpl-mustache">
+                            <tr>
+                                <td>{{Shop}}</td>
+                                <td>{{TotalOrder}}</td>
+                                <td>{{TotalMoney}}</td>
+                            </tr>
+                        </script>
+
+                        <script id="data-inMonthRevenue-summary" type="x-tmpl-mustache">
+                            <tr>
+                                <td><b>Tổng</b></td>
+                                <td>{{TotalOrderSummary}}</td>
+                                <td>{{TotalMoneySummary}}</td>
+                            </tr>
+                        </script>
 
                     </div>
                 </div>
-               
+
                 <!-- /.box-body-->
             </div>
             <!-- /.box -->
             <!-- Donut chart -->
-            
             <!-- /.box -->
         </div>
-        
 
+    
     </div>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Monthly Recap Report</h3>
+                    <h3 class="box-title">Doanh thu theo ngày</h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -921,42 +943,54 @@
                 var listData = [];
                 var html = '';
                 var totalRevenue = 0;
+                var totalOrder = 0;
+                var detailTemplate = $('#data-inMonthRevenue').html();
+                var summaryTemplate = $('#data-inMonthRevenue-summary').html();
+                var colorCodes = ['#FFC300', '#FF5733', '#C70039', '#581845']
                 $.each(res.data, function (i, item) {
-                    listData.push(['<b>' + item.Shop + '</b>', item.Total])
-                    var shopDetailHtml = '<li>' + '<a href = "#" ><b>' + item.Shop +
-                        '</b><span class="pull-right">'
-                        + '' +
-                        commonController.formatMoney(item.Total) + '</span></a ></li> ';
-                    html += shopDetailHtml;
 
-                    totalRevenue += item.Total;
+                    html += Mustache.render(detailTemplate, {
+ 
+                        Shop: item.Shop,
+                        TotalOrder: commonController.formatMoney(item.TotalOrder),
+                        Address: item.Address,
+                        TotalMoney: commonController.formatMoney(item.TotalMoney)
+                    });
+
+                    listData.push({ data: [['<b>' + item.Shop + '</b>', item.TotalMoney]], color: colorCodes[i] })
+                    totalRevenue += item.TotalMoney;
+                    totalOrder += item.TotalOrder;
                 });
-                var totalSummary = '<li>' + '<a href = "#" ><b>Tổng: </b><span class="pull-right">'+ commonController.formatMoney(totalRevenue) + '</span></a ></li> ';
-                html += totalSummary;
-                console.log(html);
-                $('#partnerRevenue').html(html);
 
+                html += Mustache.render(summaryTemplate, {
+                    TotalOrderSummary: commonController.formatMoney(totalOrder),
+                    TotalMoneySummary: commonController.formatMoney(totalRevenue)
+                });
+                $('#inMonthRevenueDetail').html(html);
                 var shop_data = {
                     data: listData,
                     color: '#3c8dbc'
                 }
                 console.log(shop_data);
-                $.plot('#bar-chart', [shop_data], {
+                $.plot('#bar-chart', listData, {
                     grid: {
-                        borderWidth: 1,
+                        borderWidth: 2,
                         borderColor: '#f3f3f3',
                         tickColor: '#f3f3f3'
                     },
                     series: {
                         bars: {
                             show: true,
-                            barWidth: 0.5,
-                            align: 'center'
+                            align: "center",
+                            barWidth: 0.8,
+                            fill: true,
+                           // horizontal: false
                         }
                     },
                     xaxis: {
                         mode: 'categories',
-                        tickLength: 0
+                        tickLength: 0,
+                        autoscaleMargin: .02
                     },
                     yaxis: {
                         tickFormatter: function (v, axis) {

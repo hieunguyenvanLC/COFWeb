@@ -61,10 +61,11 @@ namespace COF.BusinessLogic.Services.Reports
             var result = shops.Select(shop => new ShopRevenueMonthlyReport
             {
                 Shop = shop.ShopName,
-                Total = allOrders.Result
+                TotalMoney = allOrders.Result
                                 .Where(x => x.ShopId == shop.Id)
-                                .Select(x => x.TotalCost).DefaultIfEmpty(0).Sum()
-                                
+                                .Select(x => x.TotalCost).DefaultIfEmpty(0).Sum(),
+                TotalOrder = allOrders.Result
+                                .Count(x => x.ShopId == shop.Id)
             }).ToList();
             return result;
 
