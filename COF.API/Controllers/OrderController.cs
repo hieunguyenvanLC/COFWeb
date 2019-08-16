@@ -61,11 +61,12 @@ namespace COF.API.Controllers
             int shopId,
             int pageIndex = 1,
             int pageSize = 10,
+            string keyword = "",
             string filter = "")
         {
             try
             {
-                var queryRes = await _orderService.GetAllOrderWithPaging(shopId, pageIndex, pageSize, filter);
+                var queryRes = await _orderService.GetAllOrderWithPaging(shopId, pageIndex, pageSize, keyword);
                 if (!queryRes.Success)
                 {
                     return HttpGetErrorResponse(queryRes.Validations.Errors[0].ToString());

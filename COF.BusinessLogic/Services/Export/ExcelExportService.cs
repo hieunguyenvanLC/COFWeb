@@ -70,7 +70,7 @@ namespace COF.BusinessLogic.Services.Export
             worksheet.Cells[row, 1, row, maxCol].Style.Font.Name = "Calibri";
             worksheet.Cells[row, 1, row, maxCol].Style.Border.Top.Style = ExcelBorderStyle.Thin;
             worksheet.Cells[row, 1, row, maxCol].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            worksheet.View.FreezePanes(2, 1);
+            //worksheet.View.FreezePanes(2, 1);
 
             var column = 0;
             for (int i = 0; i < shopDaily.Orders.Count; i++)

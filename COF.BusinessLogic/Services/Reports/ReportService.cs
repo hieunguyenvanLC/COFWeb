@@ -63,7 +63,7 @@ namespace COF.BusinessLogic.Services.Reports
                 Shop = shop.ShopName,
                 TotalMoney = allOrders.Result
                                 .Where(x => x.ShopId == shop.Id)
-                                .Select(x => x.TotalCost).DefaultIfEmpty(0).Sum(),
+                                .Select(x => x.FinalAmount).DefaultIfEmpty(0).Sum(),
                 TotalOrder = allOrders.Result
                                 .Count(x => x.ShopId == shop.Id)
             }).ToList();

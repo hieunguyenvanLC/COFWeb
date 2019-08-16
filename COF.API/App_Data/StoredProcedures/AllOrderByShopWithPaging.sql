@@ -17,17 +17,23 @@ DECLARE @query NVARCHAR(MAX) ='
 		Select 
 		ROW_NUMBER() OVER (ORDER BY ' + @orderBy + ') as RowCounts,
 		o.Id,
+		o.OrderCode,
 		customer.FullName as CustomerName,
 		customer.PhoneNumber,
 		customer.Address,
 		u.FullName as StaffName,
 		o.CreatedOnUtc as CreatedDate,
-		o.TotalCost
+		o.FinalAmount as TotalCost
 		from [Order] o
 		inner join [Customer] customer on o.CustomerId = customer.Id
 		inner join [User] u on o.UserId = u.Id
 			WHERE 1=1 '
 		 
+	IF NULLIF(@keyword, '') IS NOT NULL
+	Begin
+	set @query = @query + ' and o.OrderCode like ''%' + @keyword  + '%'''  
+	End
+
 	--IF NULLIF(@keyword, '') IS NOT NULL
 	--Begin
 	set @query = @query + ' and o.ShopId = ' + CONVERT(NVARCHAR(10), @shopId) 
@@ -35,6 +41,7 @@ DECLARE @query NVARCHAR(MAX) ='
 	--filter by bin type
 	set @query = @query + ') select max(p.RowCounts) RowCounts, 
 		0 Id,
+		null OrderCode,
 		null CustomerName,
 		null PhoneNumber,
 		null Address,

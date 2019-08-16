@@ -16,7 +16,7 @@ namespace COF.BusinessLogic.Services
     public interface IOrderService
     {
         Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
-        Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter);
+        Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string keyword);
         BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId);
         BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId);
     }
@@ -87,12 +87,41 @@ namespace COF.BusinessLogic.Services
                     PartnerId = shop.PartnerId,
                     UserId = _workContext.CurrentUserId,
                     ShopId = shop.Id,
-                    OrderNumber = model.OrderCode,
-                    TotalCost = model.TotalAmount
+                    OrderCode = model.OrderCode,
+                    TotalAmount = model.TotalAmount,
+                    CheckInDate = model.CheckInDate,
+                    ApproveDate = model.ApproveDate,
+                    FinalAmount = model.FinalAmount,
+                    OrderStatus = model.OrderStatus,
+                    Notes = model.Notes,
+                    FeeDescription = model.FeeDescription,
+                    CheckInPerson = model.CheckInPerson,
+                    ApprovePerson = model.ApprovePerson,
+                    SourceId = model.SourceID,
+                    TableId = model.TableId,
+                    IsFixedPrice = model.IsFixedPrice,
+                    SourceType = model.SourceType,
+                    LastRecordDate = model.LastRecordDate,
+                    ServedPerson = model.ServedPerson,
+                    DeliveryAddress = model.DeliveryAddress,
+                    DeliveryStatus = model.DeliveryStatus,
+                    DeliveryCustomer = model.DeliveryCustomer,
+                    TotalInvoicePrint = model.TotalInvoicePrint,
+                    VAT = model.VAT,
+                    VATAmount = model.VATAmount,
+                    NumberOfGuest = model.NumberOfGuest,
+                    Att1 = model.Att1,
+                    Att2 = model.Att2,
+                    Att3 = model.Att3,
+                    Att4 = model.Att4,
+                    Att5 = model.Att5,
+                    GroupPaymentStatus = model.GroupPaymentStatus,
+                    LastModifiedOrderDetail = model.LastModifiedOrderDetail,
+                    LastModifiedPayment = model.LastModifiedPayment
                 };
 
                 order.OrderDetails = new List<OrderDetail>();
-                foreach (var item in model.OrderDetails)
+                foreach (var item in model.OrderDetailViewModels)
                 {
                     var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
                     if (productSize is null)
@@ -131,12 +160,12 @@ namespace COF.BusinessLogic.Services
             }
         }
 
-        public async Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string filter)
+        public async Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string keyword)
         {
             try
             {
                 var sql = "exec [dbo].[AllOrderByShopWithPaging] @p0, @p1, @p2, @p3";
-                var queryRes = await _unitOfWork.Context.Database.SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, "").ToListAsync();
+                var queryRes = await _unitOfWork.Context.Database.SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, keyword).ToListAsync();
 
                 if (queryRes.Any())
                 {
@@ -192,7 +221,7 @@ namespace COF.BusinessLogic.Services
                         Address = y.Customer.Address,
                         PhoneNumber = y.Customer.PhoneNumber,
                         StaffName = y.User.FullName,
-                        TotalCost = y.TotalCost
+                        TotalCost = y.FinalAmount
                     }).ToList()
                 };
                 dailyOrderReport.Shops.Add(tempData);

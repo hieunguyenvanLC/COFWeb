@@ -135,6 +135,14 @@
     <Compile Include="Migrations\201908121437563_AddScheduleTask.Designer.cs">
       <DependentUpon>201908121437563_AddScheduleTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908151616300_ChangeDb.cs" />
+    <Compile Include="Migrations\201908151616300_ChangeDb.Designer.cs">
+      <DependentUpon>201908151616300_ChangeDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908151619526_ChangeCustomerNotRequired.cs" />
+    <Compile Include="Migrations\201908151619526_ChangeCustomerNotRequired.Designer.cs">
+      <DependentUpon>201908151619526_ChangeCustomerNotRequired.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -237,6 +245,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908121437563_AddScheduleTask.resx">
       <DependentUpon>201908121437563_AddScheduleTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908151616300_ChangeDb.resx">
+      <DependentUpon>201908151616300_ChangeDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908151619526_ChangeCustomerNotRequired.resx">
+      <DependentUpon>201908151619526_ChangeCustomerNotRequired.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

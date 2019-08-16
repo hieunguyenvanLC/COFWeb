@@ -102,7 +102,7 @@ namespace COF.DataAccess.EF
         //insert
         public void Add(T entity, string createdBy = "")
         {
-            entity.CreatedOnUtc = DateTime.UtcNow;
+            entity.CreatedOnUtc = DateTime.UtcNow.AddHours(7);
             entity.CreatedBy = createdBy;
             _dbSet.Add(entity);
         }
@@ -111,7 +111,7 @@ namespace COF.DataAccess.EF
         {
             entities.ForEach(x =>
             {
-                x.CreatedOnUtc = DateTime.UtcNow;
+                x.CreatedOnUtc = DateTime.UtcNow.AddHours(7);
             });
             _dbSet.AddRange(entities);
         }
@@ -119,7 +119,7 @@ namespace COF.DataAccess.EF
         //update 
         public void Update(T entity, string updatedBy = "")
         {
-            entity.UpdatedOnUtc = DateTime.UtcNow;
+            entity.UpdatedOnUtc = DateTime.UtcNow.AddHours(7);
             entity.UpdatedBy = updatedBy;
             _context.Entry(entity).State = EntityState.Modified;
         }
@@ -128,7 +128,7 @@ namespace COF.DataAccess.EF
         {
             entities.ForEach(x =>
             {
-                x.UpdatedOnUtc = DateTime.UtcNow;
+                x.UpdatedOnUtc = DateTime.UtcNow.AddHours(7);
                 _context.Entry(x).State = EntityState.Modified;
             });
         }

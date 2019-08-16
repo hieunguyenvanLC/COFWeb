@@ -32,7 +32,7 @@ namespace COF.BusinessLogic.Models.Report
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string StaffName { get; set; }
-        public decimal TotalCost { get; set; }
+        public double TotalCost { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreateDateTime => CreatedDate.HasValue ? CreatedDate.Value.ToString("dd-MM-yyyy HH:mm ") : "";
     }

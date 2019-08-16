@@ -31,7 +31,7 @@ namespace COF.API.Api
         #region public methods
         [HttpPost]
         [Route("create")]
-        public async Task<HttpResponseMessage> CreateOrderAsync([FromBody] OrderCreateModel model)
+        public async Task<HttpResponseMessage> CreateOrderAsync([FromBody] ServiceModels.Order.OrderCreateModel model)
         {
             try
             {
@@ -39,21 +39,8 @@ namespace COF.API.Api
                 {
                     return ErrorResult(ModelStateErrorMessage());
                 }
-                var orderCreateModel = new ServiceModels.Order.OrderCreateModel
-                {
-                    CustomerId = model.CustomerId,
-                    ShopId = model.ShopId,
-                    OrderDetails = model.OrderDetails.Select(x => new ServiceModels.Order.OrderDetailModel
-                    {
-                        ProductSizeId = x.ProductSizeId,
-                        Quantity = x.Quantity
-                    }).ToList(),
-                    FinalAmount = model.FinalAmount,
-                    OrderCode = model.OrderCode,
-                    OrderType = model.OrderType,
-                    TotalAmount = model.TotalAmount
-                };
-                var logicResult = await _orderService.CreateOrderAsync(model.ShopId, orderCreateModel);
+               
+                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);

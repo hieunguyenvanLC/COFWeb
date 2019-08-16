@@ -65,7 +65,8 @@ namespace COF.BusinessLogic.Services
             {
                 Id = x.Id,
                 FullName = x.FullName,
-                PhoneNumber = x.PhoneNumber
+                PhoneNumber = x.PhoneNumber,
+                Address = x.Address
             }).ToList();
             return result;
         }

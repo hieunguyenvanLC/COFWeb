@@ -130,7 +130,7 @@
 
 <script id="data-template" type="x-tmpl-mustache">
     <tr  style="text-align:center;vertical-align: middle;">
-        <td>{{Id}}</td>
+        <td>{{OrderCode}}</td>
         <td>{{CustomerName}}</td>
         <td>{{TotalCost}}</td>
         <td>{{CreatedDate}}</td>
@@ -230,7 +230,10 @@
                 url: '/order/getallorderwithpaging',
                 type: 'get',
                 dataType: 'json',
-                data: { shopId: shopId, pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex },
+                data: {
+                    shopId: shopId, pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex,
+                    keyword: $('#txtKeySearch').val()
+                },
                 success: function (res) {
                     if (res.status) {
                         var data = res.data;
@@ -239,6 +242,7 @@
                         $.each(data.Items, function (i, item) {
                             html += Mustache.render(template, {
                                 Id: item.Id,
+                                OrderCode: item.OrderCode,
                                 CustomerName: item.CustomerName,
                                 PhoneNumber: item.PhoneNumber,
                                 Address: item.Address,
