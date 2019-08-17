@@ -99,6 +99,15 @@ namespace COF.BusinessLogic.Services
                     PartnerId = partnerId,
 
                 };
+                var duplicatedUser = _customerRepository.GetByFilter((x) => x.PhoneNumber == customer.PhoneNumber);
+                if (duplicatedUser.Any())
+                {
+                    return new BusinessLogicResult<Customer>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", "Số điện thoại đã được đăng kí.") })
+                    };
+                }
                 _customerRepository.Add(customer, _workContext.CurrentUser.FullName);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Customer>

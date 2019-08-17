@@ -12,4 +12,11 @@ namespace COF.BusinessLogic.Models.Report
         public int TotalOrder { get; set; }
         public double TotalMoney { get; set; }
     }
+
+    public class ShopRevenueReportModel
+    {
+        public string Header { get; set; }
+        public int TotalOrder { get; set; }
+        public double TotalMoney { get; set; }
+    }
 }

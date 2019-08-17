@@ -2,6 +2,7 @@
 using COF.BusinessLogic.Services.AzureBlob;
 using COF.BusinessLogic.Services.Export;
 using COF.Common.Helper;
+using COF.DataAccess.EF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace COF.BusinessLogic.Services.Reports
     {
         void ExportDailyOrderReport();
         List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId);
+        List<ShopRevenueReportModel> GetShopRevenueReportImMonthModels(int partnerId,int? shopId);
+        List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId);
 
     }
     public class ReportService : IReportService
@@ -69,6 +72,66 @@ namespace COF.BusinessLogic.Services.Reports
             }).ToList();
             return result;
 
+        }
+
+        public List<ShopRevenueReportModel> GetShopRevenueReportImMonthModels(int partnerId, int? shopId)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInMonthByShopId(shopId.Value);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInMonth(partnerId);
+                allOrders = queryRes.Result;
+            }
+            var currentDate = DateTime.UtcNow.AddHours(7); 
+            var dateInMonth = Enumerable.Range(1, DateTime.DaysInMonth(currentDate.Year,currentDate.Month))  // Days: 1, 2 ... 31 etc.
+                    .Select(day => new DateTime(currentDate.Year, currentDate.Month, day)) // Map each day to a date
+                    .Where(day => day.Date <= currentDate.Date)
+                    .ToList(); // Load dates into a list
+            var result = dateInMonth.Select(x => new ShopRevenueReportModel
+            {
+                Header = x.Date.ToString("dd/MM"),
+                TotalMoney = allOrders.Where(y => y.CreatedOnUtc.Date == x.Date)
+                                .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum(),
+                TotalOrder = allOrders.Where(y => y.CreatedOnUtc.Date == x.Date).Count()
+            }).ToList();
+
+            return result;
+        }
+
+        public List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInYearByShopId(shopId.Value);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInYear(partnerId);
+                allOrders = queryRes.Result;
+            }
+            var currentDate = DateTime.UtcNow.AddHours(7);
+            var result = new  List<ShopRevenueReportModel>();
+            for (int i = 1; i <= currentDate.Month; i++)
+            {
+                var tmp = new ShopRevenueReportModel
+                {
+                    Header = $"Tháng {i}",
+                    TotalMoney = allOrders.Where(x => x.CreatedOnUtc.Month == i)
+                                 .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum(),
+                    TotalOrder = allOrders.Where(x => x.CreatedOnUtc.Month == i).Count()
+                };
+                result.Add(tmp);
+            }
+            return result;
         }
     }
 }

@@ -216,7 +216,7 @@ var productController = {
                                             if (isAdmin == 'True') {
                                                 html += '<td rowspan=" ' + sizeCount + '">';
                                                 html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                                html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                               // html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
                                                 html += '</td>';
                                             }
                                            
@@ -244,7 +244,7 @@ var productController = {
                                     if (isAdmin == 'True') {
                                         html += '<td>';
                                         html += '<button data-id="' + product.Id + '" class="btn btn-primary btnEditProduct"><i class="fa fa-edit"></i></button> &nbsp;';
-                                        html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
+                                        //html += '<button  data-id="' + product.Id + '"  class="btn btn-danger btnRemoveProduct"><i class="fa fa-remove"></i></button>';
                                         html += '</td>';
                                     }
                                     

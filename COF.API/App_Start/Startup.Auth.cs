@@ -42,7 +42,7 @@ namespace COF.API.App_Start
             {
                 TokenEndpointPath = new PathString("/api/oauth/token"),
                 Provider = new AuthorizationServerProvider(),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
                 AllowInsecureHttp = true
             });
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());

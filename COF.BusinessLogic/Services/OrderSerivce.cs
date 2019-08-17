@@ -19,6 +19,9 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string keyword);
         BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId);
         BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId);
+        BusinessLogicResult<List<Order>> GetOrdersInMonthByShopId(int shopId);
+        BusinessLogicResult<List<Order>> GetOrdersInYear(int partnerId);
+        BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId);
     }
 
     public class OrderService : IOrderService
@@ -237,6 +240,36 @@ namespace COF.BusinessLogic.Services
         public BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId)
         {
             var allOrders = _orderRepository.GetAllOrdersInCurrentMonth(partnerId);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Result = allOrders,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInMonthByShopId(int shopId)
+        {
+            var allOrders = _orderRepository.GetAllOrdersInCurrentMonthByShop(shopId);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Result = allOrders,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInYear(int partnerId)
+        {
+            var allOrders = _orderRepository.GetAllOrdersInCurrentYear(partnerId);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Result = allOrders,
+                Success = true
+            };
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId)
+        {
+            var allOrders = _orderRepository.GetAllOrdersInCurrentYearByShop(shopId);
             return new BusinessLogicResult<List<Order>>
             {
                 Result = allOrders,

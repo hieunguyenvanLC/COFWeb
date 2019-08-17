@@ -52,7 +52,35 @@ namespace COF.API.Api
                 return ErrorResult(ex.Message);
             }
         }
+
+        //[HttpPost]
+        //[Route("cancel")]
+        //public async Task<HttpResponseMessage> CancelOrder([FromBody] ServiceModels.Order.OrderCreateModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return ErrorResult(ModelStateErrorMessage());
+        //        }
+
+        //        var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
+        //        if (logicResult.Validations != null)
+        //        {
+        //            return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+        //        }
+        //        return SuccessResult();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResult(ex.Message);
+        //    }
+        //}
+
         #endregion
+
+
+
 
         #region private methods
         #endregion
