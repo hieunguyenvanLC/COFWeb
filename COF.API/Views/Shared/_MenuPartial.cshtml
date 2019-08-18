@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNet.Identity
+<ul class="sidebar-menu" data-widget="tree">
+    @{
+        if (User.IsInRole("PartnerAdmin") || User.IsInRole("Partner"))
+        {
+            <li>
+                <a href="/bang-dieu-khien">
+                    <i class="fa fa-dashboard"></i> <span>Bảng điều khiển</span>
+                </a>
+            </li>
+
+        }
+    }
+
+    @{
+        if (User.IsInRole("PartnerAdmin") || User.IsInRole("ShopManager"))
+        {
+            <li>
+                <a href="/hoa-don">
+                    <i class="fa fa-list-alt"></i> <span>Hóa đơn</span>
+                </a>
+            </li>
+
+        }
+    }
+
+    @{
+        if (User.IsInRole("PartnerAdmin") || User.IsInRole("ShopManager"))
+        {
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-book"></i>
+                    <span>Sản phẩm</span>
+                    <span class="pull-right-container">
+                        <span class="label label-primary pull-right">2</span>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="/danh-muc-san-pham">
+                            <i class="fa fa-list-alt"></i> <span>Danh mục sản phẩm</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/san-pham">
+                            <i class="fa fa-list-alt"></i> <span>Sản phẩm</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+
+        }
+    }
+
+
+    @{
+        if (User.IsInRole("PartnerAdmin") || User.IsInRole("ShopManager"))
+        {
+            <li>
+                <a href="/khach-hang">
+                    <i class="fa fa-user"></i> <span>Khách hàng</span>
+                </a>
+            </li>
+        }
+    }
+
+
+
+    @{
+        if (User.IsInRole("PartnerAdmin"))
+        {
+            <li>
+                <a href="/nhan-vien">
+                    <i class="fa fa-user-o"></i> <span>Nhân viên</span>
+                </a>
+            </li>
+        }
+    }
+
+
+    @*<li>
+        <a href="/bang-dieu-khien">
+            <i class="fa fa-user-secret"></i> <span>Phân quyền</span>
+        </a>
+    </li>
+
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-book"></i>
+            <span>Báo cáo</span>
+            <span class="pull-right-container">
+                <span class="label label-primary pull-right">4</span>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li><a href="../layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
+            <li><a href="../layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
+            <li><a href="../layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
+            <li><a href="../layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
+        </ul>
+    </li>*@
+
+
+    @*<li class="treeview">
+        <a href="#">
+            <i class="fa fa-cog"></i>
+            <span>Cấu hình</span>
+            <span class="pull-right-container">
+                <span class="label label-primary pull-right">1</span>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li><a href="../layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Máy in</a></li>
+        </ul>
+    </li>*@
+</ul>

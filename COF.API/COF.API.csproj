@@ -306,6 +306,8 @@
     <Compile Include="Api\Core\WorkContext.cs" />
     <Compile Include="Api\CustomerController.cs" />
     <Compile Include="Api\ExportController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Filter\Hangfire\HangfireAuthFilter.cs" />
     <Compile Include="Models\Customer\CustomerCreateModel.cs" />
     <Compile Include="Models\Dashboard\FilterRevenueModel.cs" />
@@ -348,6 +350,8 @@
   <ItemGroup>
     <Content Include="App_Data\databaseUpgradeByCodeFirst.txt" />
     <Content Include="App_Data\Functions\nop_splitstring_to_table.sql" />
+    <Content Include="App_Data\StoredProcedures\AllUserByPartnerIdWithPaging.sql" />
+    <Content Include="App_Data\StoredProcedures\AllCustomerByPartnerIdWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllOrderByShopWithPaging.sql" />
     <Content Include="ConfirmSuccess.html" />
     <Content Include="Content\bower_components\bootstrap-colorpicker\dist\css\bootstrap-colorpicker.css" />
@@ -7199,8 +7203,12 @@
     <Content Include="Views\Category\Index.cshtml" />
     <Content Include="Views\Category\_PartialCreateUpdateCategory.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Customer\Index.cshtml" />
+    <Content Include="Views\Staff\Index.cshtml" />
+    <Content Include="Views\Shared\_MenuPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Filter\Mvc\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Common\" />
     <Folder Include="Views\Supplier\" />

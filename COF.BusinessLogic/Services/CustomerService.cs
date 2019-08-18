@@ -30,7 +30,23 @@ namespace COF.BusinessLogic.Services
         Task<CustomerModel> GetByIdAsync(int id);
 
         Task<BusinessLogicResult<Customer>> CreateAsync(int partnerId, CustomerCreateModel model);
+        
+        /// <summary>
+        /// Gets the total customer.
+        /// </summary>
+        /// <param name="partnerId">The partner identifier.</param>
+        /// <returns></returns>
+        int GetTotalCustomer(int partnerId);
 
+        /// <summary>
+        /// Gets all customer with paging.
+        /// </summary>
+        /// <param name="partnerId">The partner identifier.</param>
+        /// <param name="pageIndex">Index of the page.</param>
+        /// <param name="pageSize">Size of the page.</param>
+        /// <param name="keyword">The keyword.</param>
+        /// <returns></returns>
+        Task<BusinessLogicResult<List<CustomerSearchPagingModel>>> GetAllCustomerWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
     }
     public class CustomerService : ICustomerService
     {
@@ -126,6 +142,36 @@ namespace COF.BusinessLogic.Services
             }
         }
 
+        public int GetTotalCustomer(int partnerId)
+        {
+            return _customerRepository.GetTotalByPartnerId(partnerId);
+        }
+
+
+        public async Task<BusinessLogicResult<List<CustomerSearchPagingModel>>> GetAllCustomerWithPaging(int partnerId, int pageIndex, int pageSize, string keyword)
+        {
+            try
+            {
+                var sql = "exec [dbo].[AllCustomerByPartnerIdWithPaging] @p0, @p1, @p2, @p3";
+                var queryRes = await _unitOfWork.Context.Database.SqlQuery<CustomerSearchPagingModel>(sql, partnerId, pageIndex, pageSize, keyword).ToListAsync();
+
+        
+                return new BusinessLogicResult<List<CustomerSearchPagingModel>>
+                {
+                    Result = queryRes,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<CustomerSearchPagingModel>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+
+        }
 
         #endregion
     }

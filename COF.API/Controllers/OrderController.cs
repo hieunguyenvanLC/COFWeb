@@ -14,7 +14,7 @@ using System.Web.Mvc;
 using ServiceModels = COF.BusinessLogic.Models;
 namespace COF.API.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ShopManager,PartnerAdmin")]
     public class OrderController : MvcControllerBase
     {
         // GET: Order

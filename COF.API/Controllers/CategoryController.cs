@@ -13,6 +13,7 @@ using ServiceModels = COF.BusinessLogic.Models;
 namespace COF.API.Controllers
 {
     [Authorize]
+    [Authorize(Roles = "ShopManager,PartnerAdmin")]
     public class CategoryController : MvcControllerBase
     {
 

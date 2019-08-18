@@ -2,6 +2,7 @@
 using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF;
 using COF.DataAccess.EF.Models;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -17,6 +18,7 @@ namespace COF.BusinessLogic.Services
         Task<AppUser> GetByIdAsync(string userId);
         Task<BusinessLogicResult<List<UserRoleModel>>> GetAppUsersByPartnerId(int partnerId);
         AppUser GetByUserName(string username);
+        Task<BusinessLogicResult<List<UserPagingModel>>> GetAllUserWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
         #endregion
     }
     public class UserService : IUserService
@@ -33,6 +35,7 @@ namespace COF.BusinessLogic.Services
             _context = context;
             _dbSet = _context.Set<AppUser>();
         }
+
         #endregion
 
         #region public methods
@@ -63,6 +66,30 @@ namespace COF.BusinessLogic.Services
         public AppUser GetByUserName(string username)
         {
             return  _dbSet.FirstOrDefault(x => x.UserName == username);
+        }
+
+        public async Task<BusinessLogicResult<List<UserPagingModel>>> GetAllUserWithPaging(int partnerId, int pageIndex, int pageSize, string keyword)
+        {
+            try
+            {
+                var sql = "exec [dbo].[AllUserByPartnerIdWithPaging] @p0, @p1, @p2, @p3";
+                var queryRes = await _context.Database.SqlQuery<UserPagingModel>(sql, partnerId, pageIndex, pageSize, keyword).ToListAsync();
+
+
+                return new BusinessLogicResult<List<UserPagingModel>>
+                {
+                    Result = queryRes,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<UserPagingModel>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
         }
         #endregion
     }

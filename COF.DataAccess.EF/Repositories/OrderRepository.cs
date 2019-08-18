@@ -17,6 +17,8 @@ namespace COF.DataAccess.EF.Repositories
 
         List<Order> GetAllOrdersInCurrentYear(int partnerId);
         List<Order> GetAllOrdersInCurrentYearByShop(int shopId);
+
+        int  GetTotalOrder(int partnerId);
     }
 
     public partial class OrderRepository : EFRepository<Order>, IOrderRepository
@@ -70,6 +72,10 @@ namespace COF.DataAccess.EF.Repositories
                 .Where(x => x.ShopId == shopId && x.CreatedOnUtc.Year == today.Year
                 ).ToList();
             return result;
+        }
+        public int GetTotalOrder(int partnerId)
+        {
+            return _dbSet.Where(x => x.PartnerId == partnerId).Count();
         }
     }
 }

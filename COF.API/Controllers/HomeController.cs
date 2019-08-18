@@ -12,7 +12,15 @@ namespace COF.API.Controllers
     {
         public ActionResult Index()
         {
-            return Redirect("/bang-dieu-khien");
+            if (User.IsInRole("Partner") || User.IsInRole("PartnerAdmin"))
+            {
+                return Redirect("/bang-dieu-khien");
+            }
+            else
+            {
+                return Redirect("/hoa-don");
+            }
+           
         }
         
     }

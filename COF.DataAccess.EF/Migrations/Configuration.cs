@@ -121,11 +121,39 @@
                         }
                     }
             };
-            manager.Create(shopAdmin, "123456");
 
-            var shopAdminUser = manager.FindByName(shopAdmin.UserName);
+            if (manager.FindByName(shopAdmin.UserName)  is null)
+            {
+                manager.Create(shopAdmin, "123456");
 
-            manager.AddToRoles(shopAdminUser.Id, new string[] { "ShopManager" });
+
+                var shopAdminUser = manager.FindByName(shopAdmin.UserName);
+
+                manager.AddToRoles(shopAdminUser.Id, new string[] { "ShopManager" });
+            }
+
+            var outsideContractor = new AppUser()
+            {
+                UserName = "partnercof",
+                Email = "doitac@gmail.com",
+                EmailConfirmed = true,
+                BirthDay = DateTime.Now,
+                FullName = "ĐỐi tác",
+                Avatar = "",
+                Gender = true,
+                PartnerId = partner.Id,
+            };
+
+            if (manager.FindByName(outsideContractor.UserName) is null)
+            {
+                manager.Create(outsideContractor, "123456");
+
+
+                var outsideContractorUser = manager.FindByName(outsideContractor.UserName);
+
+                manager.AddToRoles(outsideContractorUser.Id, new string[] { "Partner" });
+            }
+
         }
         private void CreateSizes(EFContext context)
         {
@@ -187,16 +215,24 @@
 
         private void CreateRoles(EFContext context)
         {
-            if (!context.Roles.Any())
+            if (context.Roles.Any())
             {
+                var allRoles = context.Set<AppRole>().ToList();
                 var roles = new List<AppRole>
                 {
                     new AppRole { Name = "PartnerAdmin", Description = "Partner Admin" },
                     new AppRole { Name = "ShopManager", Description = "Shop Manager"},
                     new AppRole { Name = "Cashier", Description = "Cashier"},
-                    new AppRole { Name = "Staff" , Description = "Staff"}
+                    new AppRole { Name = "Staff" , Description = "Staff"},
+                    new AppRole { Name = "Partner" , Description = "Đối tác"}
                 };
-                roles.ForEach(x => { context.Roles.Add(x); });
+
+                roles.ForEach(x =>
+                {
+                    if (!allRoles.Any(y => y.Name == x.Name))
+                    context.Roles.Add(x); }
+                
+                );
                 context.SaveChanges();
 
             }

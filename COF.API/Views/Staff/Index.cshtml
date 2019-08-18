@@ -1,0 +1,318 @@
+﻿
+@{
+    ViewBag.Title = "Quản lí nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section class="content-header">
+    <h1>
+        Quản lí nhân viên
+
+    </h1>
+    @*<ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
+            <li><a href="#">Tables</a></li>
+            <li class="active">Simple</li>
+        </ol>*@
+</section>
+
+<section class="content">
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="tableContent" class="box-body table-responsive">
+
+                        <div class="nav-tabs-custom">
+
+
+
+
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_1">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_2">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_3">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div>
+
+                        <div>
+
+                            <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                <div class="form-row col-md-12" style="margin-top:15px">
+                                    <div class="col-md-3 col-xs-12">
+                                        <div class="form-group">
+                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control ui-autocomplete-input" value="" autocomplete="off">
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-9 col-xs-12">
+                                        <div class="form-group">
+                                            <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                            &nbsp;
+                                            <button id="btnResetFilter" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <br />
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                    @*<td><b>Mã khách hàng</b></td>*@
+                                    <td><b>Tên</b></td>
+                                    <td><b>Tên đăng nhập</b></td>
+                                    <td><b>Số điện thoại</b></td>
+                                    <td><b>Địa chỉ</b></td>
+                                    <td><b>Ví trị</b></td>
+
+                                   
+                                </tr>
+                            </thead>
+                            <tbody id="tblData"></tbody>
+                        </table>
+                        <div style="" id="pagination" class="pagination">
+                        </div>
+                    </div>
+
+                </div>
+                <!-- ./box-body -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr style="text-align:center;vertical-align: middle;">
+        @*<td>{{CustomerCode}}</td>*@
+        <td>{{FullName}}</td>
+        <td>{{Username}}</td>
+        <td>{{PhoneNumber}}</td>
+        <td>{{Address}}</td>
+        <td>{{Roles}}</td>
+      
+        @*<td>
+                <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-eye"></i></button>
+            </td>*@
+    </tr>
+
+    <tr id="detail_{{Id}}" hidden>
+        <td colspan="6">
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="background-color:#E3F6CE">
+                        <th><b>Tên sản phẩm</b></th>
+                        <th><b>Size</b></th>
+                        <th><b>Số lượng</b></th>
+                        <th><b>Đơn giá</b></th>
+                        <th><b>Thành tiền</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{{OrderDetails}}}
+                    <tr>
+                        <td colspan="4"><b>Tổng</b></td>
+                        <td><b>{{TotalCost}}</b></td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+            <button type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
+        </td>
+
+    </tr>
+</script>
+
+<script>
+    var homeconfig = {
+        pageSize: 10,
+        pageIndex: 1,
+        allShops: [],
+    };
+
+    var staffController = {
+
+        run: function () {
+
+            staffController.loadData();
+            staffController.registerEvent();
+        },
+        // register event for elements
+        registerEvent: function () {
+            // event for search button,
+
+
+
+            $('#txtKeySearch').off('keypress').on('keypress', function (e) {
+                if (e.keyCode === 13) {
+                    homeconfig.pageIndex = 1;
+                    staffController.loadData(true);
+                }
+            });
+
+            $('#btnSearch').off('click').on('click', function () {
+                homeconfig.pageIndex = 1;
+                staffController.loadData(true);
+            });
+
+            $('#btnResetFilter').off('click').on('click', function () {
+                $('#txtKeySearch').val('');
+                homeconfig.pageIndex = 1;
+                staffController.loadData(true);
+            });
+
+            $('.btnDetail').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#detail_' + id).show();
+            });
+
+            $('.btnCloseDetail').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#detail_' + id).hide();
+            });
+
+        },
+        loadData: function (changePageSize) {
+
+            $.ajax({
+                url: '/staff/GetAllUserWithPaging',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex,
+                    keyword: $('#txtKeySearch').val()
+                },
+                success: function (res) {
+                    if (res.status) {
+                        var data = res.data;
+                        var html = '';
+                        var template = $('#data-template').html();
+                        $.each(data.Items, function (i, item) {
+                            html += Mustache.render(template, {
+                                Id: item.Id,
+                                FullName: item.FullName,
+                                Username: item.Username,
+                                PhoneNumber: item.PhoneNumber,
+                                Address: item.Address,
+                                Roles: item.Roles
+                            });
+
+                        });
+                        $('#tblData').html(html);
+                        try {
+                            staffController.paging(data.TotalRows, function () {
+                                staffController.loadData();
+                            }, changePageSize);
+                        } catch (e) {
+
+                        }
+
+                        staffController.registerEvent();
+                    }
+                }
+            });
+
+        },
+        saveData: function (data) {
+            if (data.Id === 0) {
+                $.ajax({
+                    url: '/category/addcategory',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { model: data },
+                    success: function (res) {
+                        if (res.status) {
+                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            toastr.success(res.message, "Kết quả");
+                            staffController.loadData();
+
+                        } else {
+                            toastr.error(res.errorMessage, "Lỗi");
+                        }
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '/category/updatecategory',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { model: data },
+                    success: function (res) {
+                        if (res.status) {
+                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            toastr.success(res.message, "Kết quả");
+                            staffController.loadData();
+                        } else {
+                            toastr.error(res.errorMessage, "Lỗi");
+                        }
+                    }
+                })
+            }
+        },
+        resetParitalView: function () {
+            $('#txtHiddenId').val(0);
+            $('#txtName').val('');
+        },
+        loadDetail: function (row) {
+            $('#txtHiddenId').val(row.Id);
+            $('#txtName').val(row.Name.trim());
+        },
+        paging: function (totalRow, callback, changePageSize) {
+            var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
+            //Unbind pagination if it existed or click change pagesize
+            if ($('#pagination a').length === 0 || changePageSize === true) {
+                $('#pagination').empty();
+                $('#pagination').removeData("twbs-pagination");
+                $('#pagination').unbind("page");
+            }
+            $('#pagination').twbsPagination({
+                totalPages: totalPage,
+                first: "Đầu",
+                next: "Tiếp",
+                last: "Cuối",
+                prev: "Trước",
+                visiblePages: 10,
+                onPageClick: function (event, page) {
+                    homeconfig.pageIndex = page;
+                    setTimeout(callback, 200);
+                }
+            });
+        },
+        renderOrderDetails: function (data) {
+            var html = '';
+            $.each(data, function (i, item) {
+                html += '<tr>';
+                html += '<td>' + item.ProductName + '</td>';
+                html += '<td>' + item.Size + '</td>';
+                html += '<td>' + item.Quantity + '</td>';
+                html += '<td>' + commonController.formatMoney(item.Cost) + '</td>';
+                html += '<td>' + commonController.formatMoney(item.Total) + '</td>';
+                html += '</tr>';
+            });
+            return html;
+        }
+    };
+    staffController.run();
+
+
+</script>

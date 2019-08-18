@@ -22,6 +22,7 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInMonthByShopId(int shopId);
         BusinessLogicResult<List<Order>> GetOrdersInYear(int partnerId);
         BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId);
+        int GetTotalOrder(int partnerId);
     }
 
     public class OrderService : IOrderService
@@ -275,6 +276,11 @@ namespace COF.BusinessLogic.Services
                 Result = allOrders,
                 Success = true
             };
+        }
+
+        public int GetTotalOrder(int partnerId)
+        {
+            return _orderRepository.GetTotalOrder(partnerId);
         }
         #endregion
 

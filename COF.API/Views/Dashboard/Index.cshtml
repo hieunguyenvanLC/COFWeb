@@ -82,7 +82,7 @@
 
                 <div class="info-box-content">
                     <span class="info-box-text">Tổng đơn hàng</span>
-                    <span class="info-box-number">760</span>
+                    <span class="info-box-number" id="generalTotalOrder">@ViewBag.TotalOrder</span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -95,7 +95,7 @@
 
                 <div class="info-box-content">
                     <span class="info-box-text">Tổng khách hàng</span>
-                    <span class="info-box-number">2,000</span>
+                    <span class="info-box-number" id="generalTotalCustomer"></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -257,15 +257,28 @@
                         <!-- /.col -->
                         <div class="col-sm-6 col-xs-6">
                             <div class="description-block border-right">
-                                
+
                                 <span class="description-text">TỔNG DOANH THU</span>
                                 <h5 class="description-header" id="totalMoney"></h5>
-                                
+
                             </div>
                             <!-- /.description-block -->
                         </div>
                         <!-- /.col -->
-                 
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12">
+                          <table class="table table-responsive">
+                             
+                              <tbody id="tblRevenueDetail">
+                                  
+                              </tbody>
+
+
+                          </table>
+                        </div>
+                        
                     </div>
                     <!-- /.row -->
                 </div>
@@ -408,7 +421,7 @@
         $('#date-time-display').html(html);
         refreshFilterDetail();
     }
-    loadShopRevenue();
+    
     $('#options li').off('click').on('click', function () {
         var selectedOption = $(this).data('id');
         var start = null;
@@ -439,7 +452,7 @@
         refreshFilterDetail();
     })
 
-    renderRangeFilter(moment().startOf('year').format('DD-MM-YYYY'), moment().endOf('year').format('DD-MM-YYYY'));
+    
     $('#fromDate').datepicker({
         format: 'dd/mm/yyyy',
     });
@@ -453,6 +466,22 @@
         renderRangeFilter(startTime, endDate);
         $('#searchDateTime').modal('hide');
     });
+    function getGeneralInfo() {
+
+                        
+                        $.ajax({
+                            url: '/Dashboard/GetGeneralInfo',
+                            
+                            type: 'post',
+                            success: function (res) {
+                                if (res.status) {
+                                    var result = res.data;
+                                    $('#generalTotalCustomer').html(commonController.formatMoney(result.TotalCustomer));
+                                    $('#generalTotalOrder').html(commonController.formatMoney(result.TotalOrder));
+                                }
+                            }
+                        });
+                    }
     function refreshFilterDetail() {
         var shopId = $('#ddlShop').val();
         var filterType = $('#date-time-display').data('filtertype');
@@ -473,13 +502,32 @@
                     $('#revenue-bar-chart').empty();
                     $('#totalOrder').text(0);
                     $('#totalMoney').text(0);
+                    var html = '';
+                    html += '<tr style="background-color: #ddd; text-align: center">';
+                    if (filterType == 2) {
+                        html += '<td> <b>Ngày </b></td>';
+                    }
+                    else if (filterType == 3) {
+                        html += '<td> <b>Tháng</b> </td>';
+                    }
+                    html += '<td> <b>Tổng hóa đơn</b>  </td>';
+                    html += '<td> <b>Tổng doanh thu</b>  </td>';
+                    html += '</tr>';
                     if (result.length > 0) {
                         var totalMoney = 0;
                         var totalOrder = 0;
                         $.each(result, function (i, item) {
                             totalMoney += item.TotalMoney;
                             totalOrder += item.TotalOrder;
+
+                            html += '<tr style="text-align: center">';
+                            html += "<td>" + item.Header + "</td>";
+                            html += "<td>" + commonController.formatMoney(item.TotalOrder) + "</td>";
+                            html += "<td>" + commonController.formatMoney(item.TotalMoney) + "</td>";
+                            html += "</tr>";
                         });
+
+                        
                         $('#totalOrder').text(commonController.formatMoney(totalOrder));
                         $('#totalMoney').text(commonController.formatMoney(totalMoney));
                         var bar = new Morris.Bar({
@@ -493,12 +541,16 @@
                             hideHover: 'auto'
                         });
                     }
+                    $('#tblRevenueDetail').html(html);
                 }
             }
-        });
-    }
-   
+        });}
 
+    loadShopRevenue();
+    getGeneralInfo();
+    renderRangeFilter(moment().startOf('year').format('DD-MM-YYYY'), moment().endOf('year').format('DD-MM-YYYY'));
+
+             
 
 
 

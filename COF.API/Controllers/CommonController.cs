@@ -1,5 +1,6 @@
 ﻿using COF.API.Controllers.Core;
 using COF.BusinessLogic.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace COF.API.Controllers
     {
         #region fields
         private readonly ISizeService _commonService;
-        #endregion
+        private readonly IUserService _userService;
 
+        #endregion
         #region ctor
         public CommonController(ISizeService commonService)
         {
@@ -37,5 +39,7 @@ namespace COF.API.Controllers
             }
            
         }
+
+       
     }
 }
