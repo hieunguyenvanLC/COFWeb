@@ -74,16 +74,20 @@ namespace COF.BusinessLogic.Services
                     };
                  }
 
-                var customer = await _customerRepository.GetByIdAsync(model.CustomerId);
-
-                if (customer is null)
+                if (model.CustomerId != null)
                 {
-                    return new BusinessLogicResult<Order>
+                    var customer = await _customerRepository.GetByIdAsync(model.CustomerId);
+
+                    if (customer is null)
                     {
-                        Success = false,
-                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Khách hàng không tồn tại.") })
-                    };
+                        return new BusinessLogicResult<Order>
+                        {
+                            Success = false,
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Khách hàng không tồn tại.") })
+                        };
+                    }
                 }
+                
 
                 var order = new Order
                 {

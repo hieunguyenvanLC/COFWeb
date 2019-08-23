@@ -25,7 +25,7 @@ DECLARE @query NVARCHAR(MAX) ='
 		o.CreatedOnUtc as CreatedDate,
 		o.FinalAmount as TotalCost
 		from [Order] o
-		inner join [Customer] customer on o.CustomerId = customer.Id
+		left join [Customer] customer on o.CustomerId = customer.Id
 		inner join [User] u on o.UserId = u.Id
 			WHERE 1=1 '
 		 
