@@ -1,5 +1,6 @@
 ﻿using COF.API.Controllers.Core;
 using COF.API.Models;
+using COF.BusinessLogic.Services;
 using COF.DataAccess.EF.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,6 +17,18 @@ namespace COF.API.Controllers
     public class AccountController : MvcControllerBase
     {
         #region fields
+        private readonly IRoleService _roleService;
+        private readonly IUserService _userService;
+        #endregion
+
+        #region ctor
+        public AccountController(
+            IRoleService roleService,
+            IUserService userService)
+        {
+            _roleService = roleService;
+            _userService = userService;
+        }
         #endregion
 
         [AllowAnonymous]
@@ -108,31 +121,56 @@ namespace COF.API.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                try
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    var role = await _roleService.GetByIdAsync(model.RoleId);
+                    if (role is null)
+                    {
+                        return HttpPostErrorResponse(message: "Role không tồn tại.");
+                    }
 
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    if (UserManager.FindByName(model.Username) != null)
+                    {
+                        return HttpPostErrorResponse(message: "Tên đăng nhập đã tồn tại.");
+                    }
 
-                    return RedirectToAction("Index", "Home");
+                    
+                    var loginUser = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                    var user = new AppUser
+                    {
+                        UserName = model.Username,
+                        PartnerId = loginUser.PartnerId,
+                        PhoneNumber = model.PhoneNumber,
+                        Address = model.Address,
+                        FullName = model.Fullname
+                    };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                        var createdUser = UserManager.FindByName(user.UserName);
+
+                        UserManager.AddToRoles(createdUser.Id, new string[] { "ShopManager" });
+
+                        return HttpPostSuccessResponse(message: "Tạo mới thành công");
+                    }
                 }
-                AddErrors(result);
+                catch (Exception ex)
+                {
+
+                    return HttpPostErrorResponse(message: ex.Message);
+                }
+                
+                //AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return HttpPostErrorResponse(message: "Tạo mới không thành công");
         }
 
         //

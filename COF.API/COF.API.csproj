@@ -7206,6 +7206,7 @@
     <Content Include="Views\Customer\Index.cshtml" />
     <Content Include="Views\Staff\Index.cshtml" />
     <Content Include="Views\Shared\_MenuPartial.cshtml" />
+    <Content Include="Views\Staff\_PartialCreateUpdateStaff.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filter\Mvc\" />

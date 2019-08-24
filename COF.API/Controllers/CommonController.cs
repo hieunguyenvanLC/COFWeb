@@ -16,12 +16,17 @@ namespace COF.API.Controllers
         #region fields
         private readonly ISizeService _commonService;
         private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
+
 
         #endregion
         #region ctor
-        public CommonController(ISizeService commonService)
+        public CommonController(
+            ISizeService commonService,
+            IRoleService roleService)
         {
             _commonService = commonService;
+            _roleService = roleService;
         }
         #endregion
 
@@ -40,6 +45,27 @@ namespace COF.API.Controllers
            
         }
 
-       
+        [HttpGet]
+        public async Task<JsonResult> GetAllRoles()
+        {
+            try
+            {
+                var allRoles = await _roleService.GetAllRoles();
+                var result = allRoles.Select(x => new
+                {
+                    RoleId = x.Id,
+                    Name = x.Name,
+                    Description = x.Description
+                }).ToList();
+                return HttpGetSuccessResponse(result);
+            }
+            catch (Exception ex)
+            {
+                return HttpGetErrorResponse(ex.Message);
+            }
+
+        }
+
+
     }
 }

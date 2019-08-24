@@ -8,13 +8,7 @@
 <section class="content-header">
     <h1>
         Quản lí nhân viên
-
     </h1>
-    @*<ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
-        </ol>*@
 </section>
 
 <section class="content">
@@ -22,17 +16,10 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
-
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div id="tableContent" class="box-body table-responsive">
-
                         <div class="nav-tabs-custom">
-
-
-
-
-
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tab_1">
 
@@ -75,6 +62,12 @@
                             <br />
                             <br />
                         </div>
+                        @{
+                            if (User.IsInRole("PartnerAdmin"))
+                            {
+                                <button id="btnAdd" class="btn bg-purple margin">Thêm tài khoản</button>
+                            }
+                        }
                         <table class="table table-bordered">
                             <thead>
                                 <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
@@ -84,8 +77,6 @@
                                     <td><b>Số điện thoại</b></td>
                                     <td><b>Địa chỉ</b></td>
                                     <td><b>Ví trị</b></td>
-
-                                   
                                 </tr>
                             </thead>
                             <tbody id="tblData"></tbody>
@@ -101,45 +92,17 @@
     </div>
 </section>
 
+@{
+    Html.RenderPartial("_PartialCreateUpdateStaff");
+}
+
 <script id="data-template" type="x-tmpl-mustache">
     <tr style="text-align:center;vertical-align: middle;">
-        @*<td>{{CustomerCode}}</td>*@
         <td>{{FullName}}</td>
         <td>{{Username}}</td>
         <td>{{PhoneNumber}}</td>
         <td>{{Address}}</td>
         <td>{{Roles}}</td>
-      
-        @*<td>
-                <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-eye"></i></button>
-            </td>*@
-    </tr>
-
-    <tr id="detail_{{Id}}" hidden>
-        <td colspan="6">
-            <table class="table table-bordered">
-                <thead>
-                    <tr style="background-color:#E3F6CE">
-                        <th><b>Tên sản phẩm</b></th>
-                        <th><b>Size</b></th>
-                        <th><b>Số lượng</b></th>
-                        <th><b>Đơn giá</b></th>
-                        <th><b>Thành tiền</b></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{{OrderDetails}}}
-                    <tr>
-                        <td colspan="4"><b>Tổng</b></td>
-                        <td><b>{{TotalCost}}</b></td>
-                    </tr>
-
-
-                </tbody>
-            </table>
-            <button type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
-        </td>
-
     </tr>
 </script>
 
@@ -153,7 +116,7 @@
     var staffController = {
 
         run: function () {
-
+            staffController.getAllRoles();
             staffController.loadData();
             staffController.registerEvent();
         },
@@ -189,6 +152,25 @@
             $('.btnCloseDetail').off('click').on('click', function () {
                 var id = $(this).data('id');
                 $('#detail_' + id).hide();
+            });
+
+            $('#btnAdd').off('click').on('click', function () {
+                staffController.resetParitalView();
+                $('#lblTitle').text('Thêm tài khoản');
+                $('#addOrUpdateStaffModal').modal('show');
+            });
+
+            $('#btnSave').off('click').on('click', function () {
+                var data = {
+                    Id: $('#txtHiddenId').val(),
+                    Username: $('#txtUsername').val(),
+                    Password: $('#txtPassword').val(),
+                    RoleId: $('#ddlRoles').val(),
+                    FullName: $('#txtFullName').val(),
+                    PhoneNumber: $('#txtPhoneNumber').val(),
+                    Address : $('#txtAddress').val()
+                };
+                staffController.saveData(data);
             });
 
         },
@@ -234,17 +216,17 @@
 
         },
         saveData: function (data) {
-            if (data.Id === 0) {
+            if (data.Id.trim() == '') {
                 $.ajax({
-                    url: '/category/addcategory',
+                    url: '/Account/Register',
                     type: 'post',
                     dataType: 'json',
                     data: { model: data },
                     success: function (res) {
                         if (res.status) {
-                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            $('#addOrUpdateStaffModal').modal('hide');
                             toastr.success(res.message, "Kết quả");
-                            staffController.loadData();
+                            staffController.loadData(true);
 
                         } else {
                             toastr.error(res.errorMessage, "Lỗi");
@@ -270,8 +252,10 @@
             }
         },
         resetParitalView: function () {
-            $('#txtHiddenId').val(0);
-            $('#txtName').val('');
+            $('#txtHiddenId').val('');
+            $('#txtUsername').val('');
+            $('#txtPassword').val('');
+            $('#txtConfirmPassword').val('');
         },
         loadDetail: function (row) {
             $('#txtHiddenId').val(row.Id);
@@ -298,19 +282,26 @@
                 }
             });
         },
-        renderOrderDetails: function (data) {
-            var html = '';
-            $.each(data, function (i, item) {
-                html += '<tr>';
-                html += '<td>' + item.ProductName + '</td>';
-                html += '<td>' + item.Size + '</td>';
-                html += '<td>' + item.Quantity + '</td>';
-                html += '<td>' + commonController.formatMoney(item.Cost) + '</td>';
-                html += '<td>' + commonController.formatMoney(item.Total) + '</td>';
-                html += '</tr>';
-            });
-            return html;
+        getAllRoles: function () {
+            $.ajax({
+                url: '/Common/GetAllRoles',
+                type: 'get',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        var allRoles = res.data;
+                        var html = '';
+                        html += '<option value = ""> -- Chọn vị trí --</option>' 
+                        $.each(allRoles, function (i, item) {
+                            html += '<option value="' + item.RoleId + '">' + item.Description +'</option>'; 
+                        });
+                        $('#ddlRoles').html(html);
+
+                    }
+                }
+            })
         }
+        
     };
     staffController.run();
 
