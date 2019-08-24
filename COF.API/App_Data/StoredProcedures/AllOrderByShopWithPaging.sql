@@ -31,7 +31,11 @@ DECLARE @query NVARCHAR(MAX) ='
 		 
 	IF NULLIF(@keyword, '') IS NOT NULL
 	Begin
-	set @query = @query + ' and o.OrderCode like ''%' + @keyword  + '%'''  
+	set @query = @query + ' and ( o.OrderCode like N''%' + @keyword  + '%''  
+	
+	or customer.FullName like N''%' + @keyword  + '%''
+	or u.FullName like N''%' + @keyword  + '%'' )
+	'  
 	End
 
 	--IF NULLIF(@keyword, '') IS NOT NULL

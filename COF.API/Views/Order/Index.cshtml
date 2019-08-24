@@ -100,9 +100,16 @@
 
                             <br />
                             <br />
+                           
+
                         </div>
-                        <table class="table table-bordered">
-                            <thead >
+                            <div class="col-md-12">
+                                <span style="text-align:left" id="pagingInfo"></span>
+                            </div>
+                            
+                        </div>
+                        <table class="table table-bordered" style="padding-top:10px">
+                            <thead>
                                 <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
                                     <td><b>Mã đơn hàng</b></td>
                                     <td><b>Tên khách hàng</b></td>
@@ -236,6 +243,15 @@
                 },
                 success: function (res) {
                     if (res.status) {
+
+                        var paginInfo = "";
+                        if (res.data.Items.length > 0) {
+                            var begin = (homeconfig.pageIndex - 1) * homeconfig.pageSize + 1;
+                            paginInfo = begin +  " - " + (begin + res.data.Items.length - 1) + " trên " + res.data.TotalRows + " đơn hàng";
+                        }
+
+                        $('#pagingInfo').html(paginInfo);
+                        console.log(paginInfo);
                         var data = res.data;
                         var html = '';
                         var template = $('#data-template').html();

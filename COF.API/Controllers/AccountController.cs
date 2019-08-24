@@ -123,54 +123,58 @@ namespace COF.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var role = await _roleService.GetByIdAsync(model.RoleId);
-                    if (role is null)
-                    {
-                        return HttpPostErrorResponse(message: "Role không tồn tại.");
-                    }
-
-                    if (UserManager.FindByName(model.Username) != null)
-                    {
-                        return HttpPostErrorResponse(message: "Tên đăng nhập đã tồn tại.");
-                    }
-
-                    
-                    var loginUser = await _userService.GetByIdAsync(User.Identity.GetUserId());
-                    var user = new AppUser
-                    {
-                        UserName = model.Username,
-                        PartnerId = loginUser.PartnerId,
-                        PhoneNumber = model.PhoneNumber,
-                        Address = model.Address,
-                        FullName = model.Fullname
-                    };
-                    var result = await UserManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                        var createdUser = UserManager.FindByName(user.UserName);
-
-                        UserManager.AddToRoles(createdUser.Id, new string[] { "ShopManager" });
-
-                        return HttpPostSuccessResponse(message: "Tạo mới thành công");
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                    return HttpPostErrorResponse(message: ex.Message);
-                }
-                
-                //AddErrors(result);
+                var errors = ModelStateErrorMessages();
+                var message = string.Join("<br/>", errors.Select(x => $"- {x}"));
+                return HttpPostErrorResponse(message);
             }
+            try
+            {
+                var role = await _roleService.GetByIdAsync(model.RoleId);
+                if (role is null)
+                {
+                    return HttpPostErrorResponse(message: "Role không tồn tại.");
+                }
 
-            // If we got this far, something failed, redisplay form
-            return HttpPostErrorResponse(message: "Tạo mới không thành công");
+                if (UserManager.FindByName(model.Username) != null)
+                {
+                    return HttpPostErrorResponse(message: "Tên đăng nhập đã tồn tại.");
+                }
+
+
+                var loginUser = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                var user = new AppUser
+                {
+                    UserName = model.Username,
+                    PartnerId = loginUser.PartnerId,
+                    PhoneNumber = model.PhoneNumber,
+                    Address = model.Address,
+                    FullName = model.Fullname,
+                    EmailConfirmed = true,
+                    Email = $"{model.Username}@gmail.com",
+                    BirthDay = DateTime.Now,
+                    Avatar = "",
+                    Gender = true,
+                };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var createdUser = UserManager.FindByName(user.UserName);
+
+                    UserManager.AddToRoles(createdUser.Id, new string[] { role.Name });
+
+                    return HttpPostSuccessResponse(message: "Tạo mới thành công.");
+                }
+                else
+                {
+                    return HttpPostErrorResponse(message: "Tạo mới không thành công.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(message: ex.Message);
+            }
         }
 
         //

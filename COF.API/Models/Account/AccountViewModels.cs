@@ -67,33 +67,33 @@ namespace COF.API.Models
         public string UserId { get; set; }
 
 
-        [Required]
         [Display(Name = "Username")]
+        [Required(ErrorMessage = "Tên đăng nhập là bắt buộc.")]
         public string Username { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
+        [StringLength(100, ErrorMessage = "Mật khẩu có độ dài tối thiểu là 6.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        //[DataType(DataType.Password)]
-        //[Display(Name = "Confirm password")]
-        //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        //public string ConfirmPassword { get; set; }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "Mật khẩu và xác nhận mật khẩu không trùng.")]
+        public string ConfirmPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vị trí nhân viên là bắt buộc.")]
         public string RoleId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Họ tên là bắt buộc.")]
         [Display(Name = "Fullname")]
         public string Fullname { get; set; }
 
-        [Required]
+       // [Required]
         [Display(Name = "PhoneNumber")]
         public string PhoneNumber { get; set; }
 
-        [Required]
+       // [Required]
         [Display(Name = "Address")]
         public string Address { get; set; }
     }

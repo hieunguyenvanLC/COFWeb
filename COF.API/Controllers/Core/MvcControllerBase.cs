@@ -93,6 +93,19 @@ namespace COF.API.Controllers.Core
             }
             return "";
         }
+
+        protected List<string> ModelStateErrorMessages()
+        {
+            var errors = new List<string>();
+                foreach (var key in ModelState.Keys.Where(key => ModelState[key].Errors.Count > 0))
+            {
+                var error = (!string.IsNullOrEmpty(ModelState[key].Errors[0].ErrorMessage)
+                     ? ModelState[key].Errors[0].ErrorMessage
+                     : ModelState[key].Errors[0].Exception.Message);
+                errors.Add(error);
+            }
+            return errors;
+        }
     }
     public static class CamelCaseResult
     {
