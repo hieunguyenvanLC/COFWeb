@@ -77,6 +77,12 @@ namespace COF.API.Api
                     return ErrorResult("Tên đăng nhập hoặc mật khẩu không đúng.");
                 }
 
+                var roles = AppUserManager.GetRoles(user.Id);
+                if (!roles.Contains("ShopManager"))
+                {
+                    return ErrorResult("Bạn không có quyền hủy order");
+                }
+
 
                 var logicResult = await _orderService.CancelOrder(_workContext.CurrentUser.PartnerId.GetValueOrDefault(), model.OrderCode, user.FullName, model.Reason);
                 if (logicResult.Validations != null)
