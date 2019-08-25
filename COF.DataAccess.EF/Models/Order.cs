@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -71,10 +72,13 @@ namespace COF.DataAccess.EF.Models
         public string CheckInPerson { get; set; }
         public string CheckOutPerson { get; set; }
         public string ApprovePerson { get; set; }
+        public DateTime? CancelDate { get; set; }
+        public string CancelBy { get; set; }
     }
     public enum OrderStatus
     {
         //PosNew = 16, // Hóa đươn tạo mới từ POS
+        [Description("Vừa tạo")]
         New = 8, //Đơn hàng mới tạo, từ tổng đài,web...//DeliveryStatus: New,Assgigned
 
         PosProcessing = 17,

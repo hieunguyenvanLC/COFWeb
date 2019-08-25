@@ -19,6 +19,7 @@ namespace COF.DataAccess.EF.Repositories
         List<Order> GetAllOrdersInCurrentYearByShop(int shopId);
 
         int  GetTotalOrder(int partnerId);
+       
     }
 
     public partial class OrderRepository : EFRepository<Order>, IOrderRepository

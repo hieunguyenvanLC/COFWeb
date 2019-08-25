@@ -143,6 +143,14 @@
     <Compile Include="Migrations\201908151619526_ChangeCustomerNotRequired.Designer.cs">
       <DependentUpon>201908151619526_ChangeCustomerNotRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908250114515_AddCancelDateTime.cs" />
+    <Compile Include="Migrations\201908250114515_AddCancelDateTime.Designer.cs">
+      <DependentUpon>201908250114515_AddCancelDateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908250122291_AddCancelDate.cs" />
+    <Compile Include="Migrations\201908250122291_AddCancelDate.Designer.cs">
+      <DependentUpon>201908250122291_AddCancelDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -251,6 +259,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908151619526_ChangeCustomerNotRequired.resx">
       <DependentUpon>201908151619526_ChangeCustomerNotRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908250114515_AddCancelDateTime.resx">
+      <DependentUpon>201908250114515_AddCancelDateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908250122291_AddCancelDate.resx">
+      <DependentUpon>201908250122291_AddCancelDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

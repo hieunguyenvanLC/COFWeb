@@ -1,7 +1,9 @@
 ﻿using COF.API.Core;
 using COF.API.Models.Order;
 using COF.BusinessLogic.Services;
+using COF.BusinessLogic.Settings;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +21,16 @@ namespace COF.API.Api
     {
         #region fields
         private readonly IOrderService _orderService;
+        private readonly IWorkContext _workContext;
         #endregion
 
         #region ctor
-        public OrderController(IOrderService orderService)
+        public OrderController(
+            IOrderService orderService,
+            IWorkContext workContext)
         {
             _orderService = orderService;
+            _workContext = workContext;
         }
         #endregion
 
@@ -53,29 +59,37 @@ namespace COF.API.Api
             }
         }
 
-        //[HttpPost]
-        //[Route("cancel")]
-        //public async Task<HttpResponseMessage> CancelOrder([FromBody] ServiceModels.Order.OrderCreateModel model)
-        //{
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return ErrorResult(ModelStateErrorMessage());
-        //        }
+        [HttpPost]
+        [Route("cancel")]
+        public async Task<HttpResponseMessage> CancelOrder(OrderCancelModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ErrorResult(ModelStateErrorMessage());
+                }
 
-        //        var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
-        //        if (logicResult.Validations != null)
-        //        {
-        //            return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
-        //        }
-        //        return SuccessResult();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ErrorResult(ex.Message);
-        //    }
-        //}
+                var user = await AppUserManager.FindAsync(model.Username, model.Password);
+
+                if (user is null)
+                {
+                    return ErrorResult("Tên đăng nhập hoặc mật khẩu không đúng.");
+                }
+
+
+                var logicResult = await _orderService.CancelOrder(_workContext.CurrentUser.PartnerId.GetValueOrDefault(), model.OrderCode, user.FullName, model.Reason);
+                if (logicResult.Validations != null)
+                {
+                    return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+                return SuccessResult();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResult(ex.Message);
+            }
+        }
 
         #endregion
 

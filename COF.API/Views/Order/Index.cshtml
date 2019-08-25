@@ -83,7 +83,7 @@
                                 <div class="form-row col-md-12" style="margin-top:15px">
                                     <div class="col-md-3 col-xs-12">
                                         <div class="form-group">
-                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control ui-autocomplete-input" value="" autocomplete="off">
+                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control" value="" autocomplete="off">
                                         </div>
 
                                     </div>
@@ -108,14 +108,18 @@
                             </div>
                             
                         </div>
-                        <table class="table table-bordered" style="padding-top:10px">
+                    <div class="table table-responsive">
+                        <table class="table table-responsive" style="padding-top:10px">
                             <thead>
                                 <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
                                     <td><b>Mã đơn hàng</b></td>
                                     <td><b>Tên khách hàng</b></td>
                                     <td><b>Tổng số tiền</b></td>
-                                    <td><b>Ngày tạo</b></td>
-                                    <td><b>Nhân viên</b></td>
+                                    <td><b>Thời gian tạo</b></td>
+                                    <td><b>Tạo bởi</b></td>
+                                    <td><b>Thời gian hủy</b></td>
+                                    <td><b>Hủy bởi</b></td>
+                                    <td><b>Trạng thái</b></td>
                                     <td><b></b></td>
                                 </tr>
                             </thead>
@@ -123,6 +127,8 @@
                         </table>
                         <div style="" id="pagination" class="pagination">
                         </div>
+                    </div>
+                      
                     </div>
                   
                 </div>
@@ -132,26 +138,28 @@
 
 
         </div>
-    </div>
 </section>
 
 <script id="data-template" type="x-tmpl-mustache">
-    <tr  style="text-align:center;vertical-align: middle;">
+    <tr style="text-align:center;vertical-align: middle;">
         <td>{{OrderCode}}</td>
         <td>{{CustomerName}}</td>
         <td>{{TotalCost}}</td>
         <td>{{CreatedDate}}</td>
         <td>{{CreatedBy}}</td>
+        <td>{{CancelDateTime}}</td>
+        <td>{{CancelBy}}</td>
+        <td>{{OrderStatus}}</td>
         <td>
             <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-eye"></i></button>
         </td>
     </tr>
 
     <tr id="detail_{{Id}}" hidden>
-        <td colspan="6">
+        <td colspan="9">
         <table class="table table-bordered">
             <thead >
-                <tr style="background-color:#ffd800">
+                <tr style="background-color:#EFFBFB;">
                     <th><b>Tên sản phẩm</b></th>
                     <th><b>Size</b></th>
                     <th><b>Số lượng</b></th>
@@ -169,7 +177,7 @@
 
             </tbody>
         </table>
-        <button type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
+        <button style="float:right" type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
         </td>
         
     </tr>
@@ -265,7 +273,10 @@
                                 CreatedBy: item.StaffName,
                                 CreatedDate: item.CreateDateTime,
                                 OrderDetails: orderController.renderOrderDetails(item.OrderDetails),
-                                TotalCost: commonController.formatMoney(item.TotalCost)
+                                TotalCost: commonController.formatMoney(item.TotalCost),
+                                CancelDateTime : item.CancelDateTime,
+                                CancelBy: item.CancelBy,
+                                OrderStatus: item.OrderStatusDisplay
                             });
 
                         });
@@ -352,7 +363,7 @@
         renderOrderDetails: function (data) {
             var html = '';
             $.each(data, function (i, item) {
-                html += '<tr>';
+                html += '<tr style="">';
                 html += '<td>' + item.ProductName + '</td>';
                 html += '<td>' + item.Size + '</td>';
                 html += '<td>' + item.Quantity + '</td>';

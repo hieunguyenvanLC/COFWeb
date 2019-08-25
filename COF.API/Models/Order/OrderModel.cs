@@ -11,25 +11,13 @@ namespace COF.API.Models.Order
     {
     }
 
-    public class OrderCreateModel
+    public class OrderCancelModel
     {
-        [Required]
-        public int ShopId { get; set; }
-        [Required]
-        public int CustomerId { get; set; }
-        [Required]
-        public DateTime PaymentDate { get; set; }
-        [Required]
         public string OrderCode { get; set; }
-        [Required]
-        public List<OrderDetailModel> OrderDetails { get; set; }
-
-        public decimal TotalAmount { get; set; }
-        public decimal FinalAmount { get; set; }
-        public OrderType OrderType { get; set; }
-
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Reason { get; set; }
     }
-
     public class Test
     {
         public string OrderCode { get; set; }

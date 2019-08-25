@@ -1,6 +1,7 @@
 ﻿using COF.BusinessLogic.Models.Order;
 using COF.BusinessLogic.Models.Report;
 using COF.BusinessLogic.Settings;
+using COF.Common.Helper;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
@@ -23,6 +24,7 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInYear(int partnerId);
         BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId);
         int GetTotalOrder(int partnerId);
+        Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode, string cancelByUserId, string reason);
     }
 
     public class OrderService : IOrderService
@@ -57,6 +59,7 @@ namespace COF.BusinessLogic.Services
             _partnerService = partnerService;
         }
 
+       
         #endregion
 
         #region public methods
@@ -286,6 +289,43 @@ namespace COF.BusinessLogic.Services
         {
             return _orderRepository.GetTotalOrder(partnerId);
         }
+
+        public async Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode,string cancelByUserId, string reason)
+        {
+            try
+            {
+                var order = await _orderRepository.GetSingleAsync(filter: x => x.OrderCode == orderCode && x.PartnerId == partnerId);
+                if (order is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Mã hóa đơn không tồn tại.") })
+                    };
+                }
+
+                order.OrderStatus = OrderStatus.PreCancel;
+                order.CancelDate = DateTimeHelper.CurentVnTime;
+                order.CancelBy = cancelByUserId;
+                _orderRepository.Update(order, cancelByUserId );
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Result = true,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+
+
         #endregion
 
         #region private methods

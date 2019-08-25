@@ -23,7 +23,11 @@ DECLARE @query NVARCHAR(MAX) ='
 		customer.Address,
 		u.FullName as StaffName,
 		o.CreatedOnUtc as CreatedDate,
-		o.FinalAmount as TotalCost
+		o.FinalAmount as TotalCost,
+		o.CancelDate,
+		o.CancelBy,
+		o.OrderStatus
+
 		from [Order] o
 		left join [Customer] customer on o.CustomerId = customer.Id
 		inner join [User] u on o.UserId = u.Id
@@ -51,7 +55,10 @@ DECLARE @query NVARCHAR(MAX) ='
 		null Address,
 	    null StaffName,
 		null CreatedDate,
-		0 TotalCost
+		0 TotalCost,
+		null CancelDate,
+		null CancelBy,
+		0 OrderStatus
 	from paging p
 
 	union all

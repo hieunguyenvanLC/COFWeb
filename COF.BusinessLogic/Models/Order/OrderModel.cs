@@ -19,6 +19,27 @@ namespace COF.BusinessLogic.Models.Order
         public DateTime? CreatedDate { get; set; }
         public string CreateDateTime => CreatedDate.HasValue ? CreatedDate.Value.ToString("dd-MM-yyyy HH:mm ") : "";
         public List<OrderDetailModelVm> OrderDetails { get; set; }
+        public DateTime? CancelDate { get; set; }
+        public string CancelDateTime => CancelDate.HasValue ? CancelDate.Value.ToString("dd-MM-yyyy HH:mm ") : "";
+        public string CancelBy { get; set; }
+        public OrderStatus OrderStatus { get; set; }
+        public string OrderStatusDisplay
+        {
+            get
+            {
+                var description = "";
+                switch (OrderStatus)
+                {
+                    case OrderStatus.PosFinished:
+                        description = "Tạo mới thành công ở POS";
+                        break;
+                    case OrderStatus.PreCancel:
+                        description = "Hủy";
+                        break;
+                }
+                return description;
+            }
+        }
     }
     public class OrderCreateModel
     {

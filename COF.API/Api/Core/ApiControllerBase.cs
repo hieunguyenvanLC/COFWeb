@@ -42,6 +42,14 @@ namespace COF.API.Core
             }
         }
 
+        protected ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return Request.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+        }
+
         [NonAction]
         public HttpResponseMessage SuccessResult(object result = null)
         {
