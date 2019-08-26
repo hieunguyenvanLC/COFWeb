@@ -22,8 +22,9 @@ DECLARE @query NVARCHAR(MAX) ='
 	customer.Address,
 	customer.CreatedOnUtc as CreatedDate,
 	customer.ActiveBonusPoint,
-	null as CustomerLevel
+	level.Name as CustomerLevel
 	from [Customer] customer
+	join [BonusLevel] level on customer.BonusLevelId = level.Id
 			WHERE 1=1 '
 		 
 	IF NULLIF(@keyword, '') IS NOT NULL

@@ -12,22 +12,15 @@
 
     public class EFContext : IdentityDbContext<AppUser>
     {
-        private int _partnerId = 0;
-
-
         public EFContext()
             : base("name=COFContext")
         {
-            //this.InitializeDynamicFilters();
-            //this.EnableFilter("SoftDelete");         
+                    
         }
 
-        public EFContext(IPartnerContext partnerContext, String connectionString) : base(connectionString)
+        public EFContext(String connectionString) : base(connectionString)
         {
-            //this.InitializeDynamicFilters();
-            //if (partnerContext.PartnerId > 0) SetPartnerId(partnerContext.PartnerId);
-            //this.EnableFilter("SoftDelete");
-
+       
         }
 
         public DbSet<Shop> Shops { get; set; }
@@ -43,6 +36,8 @@
         public DbSet<Partner> Partners { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
         public DbSet<ScheduleTask> ScheduleTasks { get; set; }
+        public DbSet<BonusLevel> BonusLevels { get; set; }
+        public DbSet<BonusPointHistory> BonusPointHistories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -55,13 +50,6 @@
 
         }
 
-
-        public void SetPartnerId(int partnerId)
-        {
-            _partnerId = partnerId;
-            this.SetFilterScopedParameterValue("Partner", "partnerId", _partnerId);
-            this.SetFilterGlobalParameterValue("Partner", "partnerId", _partnerId);
-        }
 
         private void ConfigureEntities(DbModelBuilder modelBuilder)
         {

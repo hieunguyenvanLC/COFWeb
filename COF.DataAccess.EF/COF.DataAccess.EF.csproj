@@ -151,6 +151,10 @@
     <Compile Include="Migrations\201908250122291_AddCancelDate.Designer.cs">
       <DependentUpon>201908250122291_AddCancelDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908261514589_ChangeBonousLevel.cs" />
+    <Compile Include="Migrations\201908261514589_ChangeBonousLevel.Designer.cs">
+      <DependentUpon>201908261514589_ChangeBonousLevel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -265,6 +269,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908250122291_AddCancelDate.resx">
       <DependentUpon>201908250122291_AddCancelDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908261514589_ChangeBonousLevel.resx">
+      <DependentUpon>201908261514589_ChangeBonousLevel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

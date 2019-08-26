@@ -10,7 +10,8 @@ namespace COF.DataAccess.EF.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal PointToReach { get; set; }
+        public decimal StartPointToReach { get; set; }
+        public decimal EndPointToReach { get; set; }
         public decimal MoneyToOnePoint { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }
     }

@@ -224,8 +224,9 @@
                                 Address: item.Address,
                                 CreatedBy: item.StaffName,
                                 JoinDate: item.JoinDate,
-                                ActiveBonusPoint: commonController.formatMoney(item.ActiveBonusPoint)
-                            });
+                                ActiveBonusPoint: commonController.formatMoney(item.ActiveBonusPoint),
+                                CustomerLevel : item.CustomerLevel                        
+    });
 
                         });
                         $('#tblData').html(html);

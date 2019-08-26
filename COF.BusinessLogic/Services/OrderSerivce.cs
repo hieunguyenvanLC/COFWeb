@@ -33,10 +33,12 @@ namespace COF.BusinessLogic.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
+        private readonly IBonusLevelRepository _bonusLevelRepository;
         private readonly IWorkContext _workContext;
         private readonly IProductSizeRepository _productSizeRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IPartnerService _partnerService;
+        private readonly IBonusPointHistoryRepository _bonusPointHistoryRepository;
         #endregion
 
         #region ctor
@@ -47,7 +49,10 @@ namespace COF.BusinessLogic.Services
             IWorkContext workContext,
             IProductSizeRepository productSizeRepository,
             ICustomerRepository customerRepository,
-            IPartnerService partnerService
+            IPartnerService partnerService,
+            IBonusLevelRepository bonusLevelRepository,
+            IBonusPointHistoryRepository bonusPointHistoryRepository
+            
            )
         {
             _orderRepository = orderRepository;
@@ -57,6 +62,8 @@ namespace COF.BusinessLogic.Services
             _productSizeRepository = productSizeRepository;
             _customerRepository = customerRepository;
             _partnerService = partnerService;
+            _bonusLevelRepository = bonusLevelRepository;
+            _bonusPointHistoryRepository = bonusPointHistoryRepository;
         }
 
        
@@ -76,10 +83,10 @@ namespace COF.BusinessLogic.Services
                         Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Shop", "Shop Id không tồn tại.") })
                     };
                  }
-
+                Customer customer = null; 
                 if (model.CustomerId != null)
                 {
-                    var customer = await _customerRepository.GetByIdAsync(model.CustomerId);
+                    customer = await _customerRepository.GetByIdAsync(model.CustomerId);
 
                     if (customer is null)
                     {
@@ -130,7 +137,7 @@ namespace COF.BusinessLogic.Services
                     LastModifiedOrderDetail = model.LastModifiedOrderDetail,
                     LastModifiedPayment = model.LastModifiedPayment
                 };
-
+                
                 order.OrderDetails = new List<OrderDetail>();
                 foreach (var item in model.OrderDetailViewModels)
                 {
@@ -154,6 +161,29 @@ namespace COF.BusinessLogic.Services
                 }
 
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                if (customer != null)
+                {
+                    var allLevels = await _bonusLevelRepository.GetAllAsync();
+                    var point = Math.Round((decimal) model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
+
+                    var orderHistory = new BonusPointHistory
+                    {
+                        PartnerId = customer.PartnerId,
+                        CustomerId = customer.Id,
+                        OldLevel = customer.BonusLevel.Name,
+                        OldPoint = customer.ActiveBonusPoint
+                    };
+
+                    customer.TotalBonusPoint += point;
+                    customer.ActiveBonusPoint += point;
+                    var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
+                    customer.BonusLevelId = newLevel.Id;
+
+                    orderHistory.Level = newLevel.Name;
+                    orderHistory.Point = customer.ActiveBonusPoint;
+                    _bonusPointHistoryRepository.Add(orderHistory);
+                    _customerRepository.Update(customer);
+                }
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
                 {

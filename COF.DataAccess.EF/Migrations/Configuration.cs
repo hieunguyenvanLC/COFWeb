@@ -24,8 +24,50 @@
             //  to avoid creating duplicate seed data.
             CreatePartner(context);
             CreateSizes(context);
+            CreateLevel(context);
             CreateRoles(context);
             CreateUser(context);
+            
+        }
+
+        private void CreateLevel(EFContext context)
+        {
+            if (!context.BonusLevels.Any())
+            {
+                var bonusLevels = new List<BonusLevel>
+                {
+                   new BonusLevel
+                   {
+                      Name = "Level 1",
+                      StartPointToReach = 0,
+                      EndPointToReach = 250,
+                      MoneyToOnePoint = 20000,
+                   },
+                   new BonusLevel
+                   {
+                      Name = "Level 2",
+                      StartPointToReach = 251,
+                      EndPointToReach = 600,
+                      MoneyToOnePoint = 15000,
+                   },
+                   new BonusLevel
+                   {
+                      Name = "Level 3",
+                      StartPointToReach = 601,
+                      EndPointToReach = 1200,
+                      MoneyToOnePoint = 10000,
+                   },
+                   new BonusLevel
+                   {
+                      Name = "Level 4",
+                      StartPointToReach = 1201,
+                      EndPointToReach = 3000,
+                      MoneyToOnePoint = 5000,
+                   }
+                };
+                context.BonusLevels.AddRange(bonusLevels);
+
+            }
         }
 
         private void CreateUser(EFContext context)

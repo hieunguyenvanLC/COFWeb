@@ -53,6 +53,7 @@ namespace COF.BusinessLogic.Services
         #region fields
         private readonly ICustomerRepository _customerRepository;
         private readonly IShopRepository _shopRepository;
+        private readonly IBonusLevelRepository _bonusLevelRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWorkContext _workContext;
         #endregion
@@ -62,12 +63,14 @@ namespace COF.BusinessLogic.Services
             ICustomerRepository customerRepository,
             IShopRepository shopRepository,
             IUnitOfWork unitOfWork,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IBonusLevelRepository bonusLevelRepository)
         {
             _customerRepository = customerRepository;
             _shopRepository = shopRepository;
             _unitOfWork = unitOfWork;
             _workContext = workContext;
+            _bonusLevelRepository = bonusLevelRepository;
         }
 
         
@@ -107,13 +110,15 @@ namespace COF.BusinessLogic.Services
         {
             try
             {
+                var allLevels = await _bonusLevelRepository.GetAllAsync();
+                var firstLevel = allLevels.OrderBy(x => x.StartPointToReach).FirstOrDefault();
                 var customer = new Customer
                 {
                     FullName = model.FullName,
                     Address = model.Address,
                     PhoneNumber = model.PhoneNumber,
                     PartnerId = partnerId,
-
+                    BonusLevelId = firstLevel.Id
                 };
                 var duplicatedUser = _customerRepository.GetByFilter((x) => x.PhoneNumber == customer.PhoneNumber);
                 if (duplicatedUser.Any())
