@@ -30,7 +30,7 @@ namespace COF.API.Api
         #region public methods
         [HttpGet]
         [Route("partner/{partnerId}")]
-        [ValidateRolePermission(RoleClaim ="PartnerAdmin")]
+        [ValidateRolePermission(RoleClaim = "PartnerAdmin,ShopManager")]
         public async Task<HttpResponseMessage> GetAllAccountByPartnerId([FromUri]int partnerId)
         {
             try

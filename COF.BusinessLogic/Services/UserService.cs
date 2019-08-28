@@ -50,7 +50,7 @@ namespace COF.BusinessLogic.Services
                         where PartnerId = @p0";
 
             var result  =  await _context.Database.SqlQuery<UserRoleModel>(sql, partnerId).ToListAsync();
-
+            result = result.Where(x => !x.Roles.Contains("PartnerAdmin") && !x.Roles.Contains("Partner")).ToList();
             return new BusinessLogicResult<List<UserRoleModel>>
             {
                 Result = result,
