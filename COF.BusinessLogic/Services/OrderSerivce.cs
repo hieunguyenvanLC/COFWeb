@@ -6,6 +6,7 @@ using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
 using FluentValidation.Results;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -135,7 +136,9 @@ namespace COF.BusinessLogic.Services
                     Att5 = model.Att5,
                     GroupPaymentStatus = model.GroupPaymentStatus,
                     LastModifiedOrderDetail = model.LastModifiedOrderDetail,
-                    LastModifiedPayment = model.LastModifiedPayment
+                    LastModifiedPayment = model.LastModifiedPayment,
+                    ApiLog = JsonConvert.SerializeObject(model)
+                    
                 };
                 
                 order.OrderDetails = new List<OrderDetail>();
@@ -161,7 +164,9 @@ namespace COF.BusinessLogic.Services
                 }
 
                 _orderRepository.Add(order, _workContext.CurrentUser.FullName);
-                if (customer != null)
+                if (customer != null  && order.OrderStatus != 
+                    OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
+                    order.OrderStatus !=  OrderStatus.PreCancel)
                 {
                     var allLevels = await _bonusLevelRepository.GetAllAsync();
                     var point = Math.Round((decimal) model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);

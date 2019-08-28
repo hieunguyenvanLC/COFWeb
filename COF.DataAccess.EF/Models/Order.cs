@@ -74,6 +74,7 @@ namespace COF.DataAccess.EF.Models
         public string ApprovePerson { get; set; }
         public DateTime? CancelDate { get; set; }
         public string CancelBy { get; set; }
+        public string ApiLog { get; set; }
     }
     public enum OrderStatus
     {
