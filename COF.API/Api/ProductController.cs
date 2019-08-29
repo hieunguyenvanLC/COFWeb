@@ -30,6 +30,10 @@ namespace COF.API.Api
         public async Task<HttpResponseMessage> GetAllProductByIdAsync([FromUri] int shopId)
         {
             var result = await _productService.GetAllProductsAsync(string.Empty,shopId);
+            result.ForEach(x =>
+            {
+                x.Products = x.Products.Where(y => y.IsActive).ToList();
+            });
             return SuccessResult(result);
         }
         #endregion

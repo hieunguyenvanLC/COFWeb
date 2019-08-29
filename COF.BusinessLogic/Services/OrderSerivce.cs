@@ -159,7 +159,8 @@ namespace COF.BusinessLogic.Services
                         ProductSizeId = productSize.Id,
                         Quantity = item.Quantity,
                         UnitPrice = productSize.Cost,
-                        CreatedBy = _workContext.CurrentUser.FullName
+                        CreatedBy = _workContext.CurrentUser.FullName,
+                        CategoryId = productSize.Product.CategoryId
                     });
                 }
 

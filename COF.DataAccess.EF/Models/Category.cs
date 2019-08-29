@@ -16,6 +16,13 @@ namespace COF.DataAccess.EF.Models
         public int PartnerId { get; set; }
         public virtual Shop Shop { get; set; }
         public virtual ICollection<Product> Products { get; set; }
+        public CategoryType Type { get; set; }
 
+    }
+    public enum CategoryType
+    {
+
+        Coffee = 1,
+        Cake = 2
     }
 }

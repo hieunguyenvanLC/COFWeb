@@ -62,6 +62,7 @@ namespace COF.BusinessLogic.Services
         public async Task<List<ProductByCategoryModel>> GetAllProductsAsync(string keyword ,int shopId)
         {
             var products = await _productRepository.GetAllProductAsync(shopId, keyword);
+            
             var categories =  products.Select(x => x.Category).Distinct().OrderBy(x => x.SeqNo).ToList();
             var result = categories.Select(x => new ProductByCategoryModel
             {

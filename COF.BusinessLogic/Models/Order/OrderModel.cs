@@ -31,9 +31,18 @@ namespace COF.BusinessLogic.Models.Order
                 switch (OrderStatus)
                 {
                     case OrderStatus.PosFinished:
-                        description = "Tạo mới thành công ở POS";
+                        description = "Hoàn tất";
                         break;
                     case OrderStatus.PreCancel:
+                        description = "Hủy";
+                        break;
+                    case OrderStatus.Cancel:
+                        description = "Hủy";
+                        break;
+                    case OrderStatus.PosCancel:
+                        description = "Hủy";
+                        break;
+                    case OrderStatus.PosPreCancel:
                         description = "Hủy";
                         break;
                 }

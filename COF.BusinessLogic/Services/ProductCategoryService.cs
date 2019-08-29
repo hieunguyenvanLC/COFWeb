@@ -18,6 +18,7 @@ namespace COF.BusinessLogic.Services
         Task<List<CategoryModel>> GetAllAsync(string keyword, int shopId);
         Task<BusinessLogicResult<bool>> CreateCategoryAsync(int shopId, CategoryRequestModel createModel);
         Task<BusinessLogicResult<bool>> UpdateCategoryAsync(int id, CategoryRequestModel model);
+        List<Category> GetAll();
 
     }
     public class ProductCategoryService : IProductCategoryService
@@ -143,6 +144,11 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
                 };
             }
+        }
+
+        public  List<Category> GetAll()
+        {
+            return _categoryRepository.GetAll();
         }
 
 

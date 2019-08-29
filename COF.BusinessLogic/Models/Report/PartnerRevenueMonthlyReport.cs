@@ -18,5 +18,14 @@ namespace COF.BusinessLogic.Models.Report
         public string Header { get; set; }
         public int TotalOrder { get; set; }
         public double TotalMoney { get; set; }
+        public int TotalUnit { get; set; }
+        public List<CategoryReportModel> Details { get; set; }
+    }
+
+    public class CategoryReportModel
+    {
+        public string Type { get; set; }
+        public int TotalUnit { get; set; }
+        public decimal TotalMoney { get;set; }
     }
 }
