@@ -1,5 +1,6 @@
 ﻿using COF.API.Controllers.Core;
 using COF.API.Models.Shared;
+using COF.BusinessLogic.Models.User;
 using COF.BusinessLogic.Services;
 using Microsoft.AspNet.Identity;
 using System;
@@ -16,13 +17,16 @@ namespace COF.API.Controllers
     {
         #region fields 
         private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
         #endregion
 
         #region ctor
         public StaffController(
-            IUserService userService)
+            IUserService userService,
+            IRoleService roleService)
         {
             _userService = userService;
+            _roleService = roleService;
         }
         #endregion
 
@@ -64,6 +68,46 @@ namespace COF.API.Controllers
             {
 
                 throw;
+            }
+        }
+
+        
+        [HttpPost]
+        public async Task<ActionResult> GetById(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelStateErrorMessages();
+                var message = string.Join("<br/>", errors.Select(x => $"- {x}"));
+                return HttpPostErrorResponse(message);
+            }
+            try
+            {
+                var user = await _userService.GetByIdAsync(id);
+                if (user is null)
+                {
+                    return HttpPostErrorResponse(message: "User không tồn tại.");
+                }
+
+                var result = new UserDetailModel
+                {
+                    Username = user.UserName,
+                    Address = user.Address,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber, 
+                    ShopId = user.ShopHasUsers.FirstOrDefault()?.ShopId
+                };
+
+                
+                var roles = UserManager.GetRoles(user.Id);
+                var role = await _roleService.GetByNameAsync(roles.FirstOrDefault());
+                result.RoleId = role?.Id;
+                return HttpPostSuccessResponse(result);                
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(message: ex.Message);
             }
         }
     }

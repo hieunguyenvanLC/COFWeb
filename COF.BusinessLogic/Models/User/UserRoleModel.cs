@@ -28,6 +28,18 @@ namespace COF.BusinessLogic.Models.User
         public string Email { get; set; }
         public string Address { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string Shop { get; set; }
         public string JoinDate => CreatedDate.HasValue ? CreatedDate.Value.ToString("dd-MM-yyyy") : "";
+    }
+
+    public class UserDetailModel
+    {
+        public string Username { get; set; }
+        public string FullName { get; set; }
+        public int? ShopId { get; set; }
+        public string RoleId { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
     }
 }

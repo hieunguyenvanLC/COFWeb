@@ -22,9 +22,14 @@ DECLARE @query NVARCHAR(MAX) ='
     u.Address, 
 	u.userName, 
 	u.Phonenumber,
+
                         (select STRING_AGG(r.Description, '','') from[Role] r join[UserRole] ur
                         on r.Id = ur.RoleId
-                        where ur.UserId = u.Id ) as Roles
+                        where ur.UserId = u.Id ) as Roles,
+					   (select STRING_AGG(shop.ShopName, '','') from[Shop] shop 
+					   join[ShopHasUser] hasUsers
+											on hasUsers.ShopId = shop.Id
+                        where hasUsers.UserId = u.Id ) as Shop
                         from[User] u
                         where 1 = 1'
 	IF NULLIF(@keyword, '') IS NOT NULL
@@ -50,7 +55,8 @@ DECLARE @query NVARCHAR(MAX) ='
 	    null Address,
 	    null UserName,
 	    null PhoneNumber,
-	    null  Roles
+	    null  Roles,
+		null Shop
 	from paging p
 
 	union all

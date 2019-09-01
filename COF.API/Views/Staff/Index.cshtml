@@ -44,7 +44,7 @@
                                 <div class="form-row col-md-12" style="margin-top:15px">
                                     <div class="col-md-3 col-xs-12">
                                         <div class="form-group">
-                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control" value="" autocomplete="off">
+                                            <input id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control" value="">
                                         </div>
 
                                     </div>
@@ -74,9 +74,12 @@
                                     @*<td><b>Mã khách hàng</b></td>*@
                                     <td><b>Tên</b></td>
                                     <td><b>Tên đăng nhập</b></td>
+                                    <td><b>Email</b></td>
                                     <td><b>Số điện thoại</b></td>
                                     <td><b>Địa chỉ</b></td>
                                     <td><b>Ví trị</b></td>
+                                    <td><b>Chi nhánh</b></td>
+                                    <td></td>
                                 </tr>
                             </thead>
                             <tbody id="tblData"></tbody>
@@ -100,9 +103,12 @@
     <tr style="text-align:center;vertical-align: middle;">
         <td>{{FullName}}</td>
         <td>{{Username}}</td>
+        <td>{{Email}}</td>
         <td>{{PhoneNumber}}</td>
         <td>{{Address}}</td>
         <td>{{Roles}}</td>
+        <td>{{Shop}}</td>
+        <td><button class="btn btn-primary btn-edit" data-id="{{Id}}"><i class="fa fa-pencil-square-o"></i></button></td>
     </tr>
 </script>
 
@@ -117,6 +123,7 @@
 
         run: function () {
             staffController.getAllRoles();
+            staffController.getAllShops();
             staffController.loadData();
             staffController.registerEvent();
         },
@@ -162,7 +169,7 @@
 
             $('#btnSave').off('click').on('click', function () {
                 var data = {
-                    Id: $('#txtHiddenId').val(),
+                    UserId: $('#txtHiddenId').val(),
                     Username: $('#txtUsername').val(),
                     Password: $('#txtPassword').val(),
                     RoleId: $('#ddlRoles').val(),
@@ -170,8 +177,26 @@
                     PhoneNumber: $('#txtPhoneNumber').val(),
                     Address: $('#txtAddress').val(),
                     ConfirmPassword: $('#txtConfirmPassword').val(),
+                    ShopId: $('#ddlShops').val(),
+                    Email: $('#txtEmail').val()
                 };
+                console.log(data);
                 staffController.saveData(data);
+            });
+
+            $('#ddlRoles').off('change').on('change', function () {
+                var role = $(this).find(":selected").data('name');
+                if (role == 'PartnerAdmin' || role == 'Partner') {
+                    $('#shopDiv').hide();
+                }
+                else {
+                    $('#shopDiv').show();
+                }
+            })
+            $('.btn-edit').off('click').on('click', function () {
+                var id = $(this).data('id');
+                console.log(id);
+                staffController.loadDetail(id);
             });
 
         },
@@ -192,12 +217,14 @@
                         var template = $('#data-template').html();
                         $.each(data.Items, function (i, item) {
                             html += Mustache.render(template, {
-                                Id: item.Id,
+                                Id: item.UserId,
                                 FullName: item.FullName,
                                 Username: item.Username,
                                 PhoneNumber: item.PhoneNumber,
                                 Address: item.Address,
-                                Roles: item.Roles
+                                Roles: item.Roles,
+                                Shop: item.Shop,
+                                Email: item.Email
                             });
 
                         });
@@ -217,7 +244,7 @@
 
         },
         saveData: function (data) {
-            if (data.Id.trim() == '') {
+            if (data.UserId.trim() == '') {
                 $.ajax({
                     url: '/Account/Register',
                     type: 'post',
@@ -236,13 +263,13 @@
                 });
             } else {
                 $.ajax({
-                    url: '/category/updatecategory',
+                    url: '/Account/Update',
                     type: 'post',
                     dataType: 'json',
                     data: { model: data },
                     success: function (res) {
                         if (res.status) {
-                            $('#addOrUpdateCateogoryModal').modal('hide');
+                            $('#addOrUpdateStaffModal').modal('hide');
                             toastr.success(res.message, "Kết quả");
                             staffController.loadData();
                         } else {
@@ -257,10 +284,56 @@
             $('#txtUsername').val('');
             $('#txtPassword').val('');
             $('#txtConfirmPassword').val('');
+            $('#shopDiv').show();
+            $('#txtFullName').val('');
+
+            $('#txtPhoneNumber').val('');
+            $('#txtAddress').val('');
+            $('#txtEmail').val('');
+            $('#passwordDiv').show();
+            $('#confirmPasswordDiv').show();
+            $('#txtUsername').removeAttr('readonly');
+            $('#ddlShops').val('').change();
         },
-        loadDetail: function (row) {
-            $('#txtHiddenId').val(row.Id);
-            $('#txtName').val(row.Name.trim());
+        loadDetail: function (id) {
+            $.ajax({
+                url: '/Staff/GetById',
+                type: 'post',
+                data: {id : id},
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        $('#passwordDiv').hide();
+                        $('#confirmPasswordDiv').hide();
+                        var data = res.data;
+                        $('#txtHiddenId').val(id);
+                        $('#txtUsername').val(data.Username);
+                        $('#txtUsername').attr('readonly', 'readonly');
+                        try {
+                            $('#ddlShops').val(data.ShopId).change();
+                        } catch (e) {
+
+                        }
+
+                        try {
+                            $('#ddlRoles').val(data.RoleId).change();
+                        } catch (e) {
+
+                        }
+
+                        $('#txtFullName').val(data.FullName);
+
+                        $('#txtPhoneNumber').val(data.PhoneNumber);
+                        $('#txtAddress').val(data.Address);
+                        $('#txtEmail').val(data.Email);
+
+                        $('#lblTitle').text('Cập nhật tài khoản');
+                        $('#addOrUpdateStaffModal').modal('show');
+                        
+                        console.log(data);
+                    }
+                }
+            })
         },
         paging: function (totalRow, callback, changePageSize) {
             var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
@@ -294,9 +367,28 @@
                         var html = '';
                         html += '<option value = ""> -- Chọn vị trí --</option>' 
                         $.each(allRoles, function (i, item) {
-                            html += '<option value="' + item.RoleId + '">' + item.Description +'</option>'; 
+                            html += '<option data-name ="' + item.Name + '" value="' + item.RoleId + '">' + item.Description + '</option>'; 
                         });
                         $('#ddlRoles').html(html);
+
+                    }
+                }
+            })
+        },
+        getAllShops: function () {
+            $.ajax({
+                url: '/Shop/GetAllShops',
+                type: 'get',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        var allRoles = res.data;
+                        var html = '';
+                        html += '<option value = ""> -- Chọn chi nhánh --</option>'
+                        $.each(allRoles, function (i, item) {
+                            html += '<option value="' + item.Id + '">' + item.Name + '</option>';
+                        });
+                        $('#ddlShops').html(html);
 
                     }
                 }

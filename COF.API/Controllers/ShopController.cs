@@ -30,7 +30,7 @@ namespace COF.API.Controllers
         #endregion
        
         [HttpGet]
-        public async Task<JsonResult> GetAllShops(int shopId)
+        public async Task<JsonResult> GetAllShops()
         {
             var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
             var result = await _shopService.GetAllShopAsync(user.PartnerId.GetValueOrDefault());

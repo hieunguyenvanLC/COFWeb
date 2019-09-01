@@ -19,6 +19,8 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<UserRoleModel>>> GetAppUsersByPartnerId(int partnerId);
         AppUser GetByUserName(string username);
         Task<BusinessLogicResult<List<UserPagingModel>>> GetAllUserWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
+
+        Task Update(AppUser appUser);
         #endregion
     }
     public class UserService : IUserService
@@ -90,6 +92,12 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
                 };
             }
+        }
+
+        public async Task Update(AppUser appUser)
+        {
+            _context.Entry(appUser).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
         #endregion
     }

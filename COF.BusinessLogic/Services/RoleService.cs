@@ -13,6 +13,8 @@ namespace COF.BusinessLogic.Services
     {
         Task<List<AppRole>> GetAllRoles();
         Task<AppRole> GetByIdAsync(string id);
+        Task<AppRole> GetByNameAsync(string name);
+
     }
     public class RoleService : IRoleService
     {
@@ -36,6 +38,11 @@ namespace COF.BusinessLogic.Services
         public async Task<AppRole> GetByIdAsync(string id)
         {
             return await _appRoles.FindAsync(id);
+        }
+
+        public async Task<AppRole> GetByNameAsync(string name)
+        {
+            return await _appRoles.FirstOrDefaultAsync(x => x.Name == name);
         }
         #endregion
     }

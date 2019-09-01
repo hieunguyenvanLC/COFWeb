@@ -96,6 +96,39 @@ namespace COF.API.Models
        // [Required]
         [Display(Name = "Address")]
         public string Address { get; set; }
+       
+        [Display(Name = "Shop")]
+        public int? ShopId { get; set; }
+
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+    }
+
+    public class UpdateAccountViewModel
+    {
+        [Display(Name = "UserId")]
+        public string UserId { get; set; }
+
+        [Required(ErrorMessage = "Vị trí nhân viên là bắt buộc.")]
+        public string RoleId { get; set; }
+
+        [Required(ErrorMessage = "Họ tên là bắt buộc.")]
+        [Display(Name = "Fullname")]
+        public string Fullname { get; set; }
+
+        // [Required]
+        [Display(Name = "PhoneNumber")]
+        public string PhoneNumber { get; set; }
+
+        // [Required]
+        [Display(Name = "Address")]
+        public string Address { get; set; }
+
+        [Display(Name = "Shop")]
+        public int? ShopId { get; set; }
+
+        [Display(Name = "Email")]
+        public string Email { get; set; }
     }
 
     public class ResetPasswordViewModel

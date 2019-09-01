@@ -152,11 +152,28 @@ namespace COF.API.Controllers
                     Address = model.Address,
                     FullName = model.Fullname,
                     EmailConfirmed = true,
-                    Email = $"{model.Username}@gmail.com",
+                    Email = model.Email,
                     BirthDay = DateTime.Now,
                     Avatar = "",
                     Gender = true,
+                    
                 };
+                if (role.Name != "PartnerAdmin"  && role.Name != "Partner")
+                {
+                    if (model.ShopId is null)
+                    {
+                        return HttpPostErrorResponse(message: "Phải chọn chi nhánh.");
+                    }
+                    user.ShopHasUsers = new List<ShopHasUser>
+                    {
+                        new ShopHasUser
+                        {
+                            ShopId = model.ShopId.GetValueOrDefault(),
+                            PartnerId = loginUser.PartnerId.GetValueOrDefault()
+                        }
+                    };
+                }
+                
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -168,7 +185,8 @@ namespace COF.API.Controllers
                 }
                 else
                 {
-                    return HttpPostErrorResponse(message: "Tạo mới không thành công.");
+                    var errors = string.Join("<br/>", result.Errors.Select(x => $"- {x}"));
+                    return HttpPostErrorResponse(message: $"{errors}");
                 }
             }
             catch (Exception ex)
@@ -176,6 +194,66 @@ namespace COF.API.Controllers
                 return HttpPostErrorResponse(message: ex.Message);
             }
         }
+
+
+        // POST: /Account/Register
+        [HttpPost]
+        public async Task<ActionResult> Update(UpdateAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelStateErrorMessages();
+                var message = string.Join("<br/>", errors.Select(x => $"- {x}"));
+                return HttpPostErrorResponse(message);
+            }
+            try
+            {
+                var user = await _userService.GetByIdAsync(model.UserId);
+                if (user is null)
+                {
+                    return HttpPostErrorResponse(message: "User không tồn tại.");
+                }
+                var role = await _roleService.GetByIdAsync(model.RoleId);
+                if (role is null)
+                {
+                    return HttpPostErrorResponse(message: "Role không tồn tại.");
+                }
+
+                var loginUser = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Address = model.Address;
+                user.FullName = model.Fullname;
+                
+                if (role.Name != "PartnerAdmin" && role.Name != "Partner")
+                {
+                    user.ShopHasUsers.Clear();
+                    user.ShopHasUsers = new List<ShopHasUser>
+                    {
+                        new ShopHasUser
+                        {
+                            ShopId = model.ShopId.GetValueOrDefault(),
+                            PartnerId = loginUser.PartnerId.GetValueOrDefault()
+                        }
+                    };
+                }
+                await _userService.Update(user);
+                var updatedUser = UserManager.FindByName(user.UserName);
+                var roles = await UserManager.GetRolesAsync(user.Id);
+                await UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray());
+
+                UserManager.AddToRoles(updatedUser.Id, new string[] { role.Name });
+
+                return HttpPostSuccessResponse(message: "Cập nhật thành công.");
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(message: ex.Message);
+            }
+        }
+
+
+       
 
         //
         // GET: /Account/ConfirmEmail

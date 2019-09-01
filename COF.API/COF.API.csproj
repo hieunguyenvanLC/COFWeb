@@ -7160,10 +7160,14 @@
     <Content Include="Content\dist\css\adminlte.css.map" />
     <Content Include="Content\dist\css\adminlte.min.css.map" />
     <None Include="Properties\PublishProfiles\acsa-capstone - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-app - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-app - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - FTP2.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy1.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\phannhathoang - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\web-capstone - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
