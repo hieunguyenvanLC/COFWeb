@@ -7165,9 +7165,11 @@
     <None Include="Properties\PublishProfiles\cof-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP2.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - FTP3.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy2.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - Web Deploy3.pubxml" />
     <None Include="Properties\PublishProfiles\phannhathoang - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\web-capstone - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -7211,6 +7213,7 @@
     <Content Include="Views\Staff\Index.cshtml" />
     <Content Include="Views\Shared\_MenuPartial.cshtml" />
     <Content Include="Views\Staff\_PartialCreateUpdateStaff.cshtml" />
+    <Content Include="Views\Staff\_ParitalResetPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filter\Mvc\" />

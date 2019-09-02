@@ -323,27 +323,33 @@ namespace COF.API.Controllers
         //
         // POST: /Account/ResetPassword
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                var errors = ModelStateErrorMessages();
+                var message = string.Join("<br/>", errors.Select(x => $"- {x}"));
+                return HttpPostErrorResponse(message);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByNameAsync(model.Username);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return HttpPostErrorResponse(message: $"Username không tồn tại trong hệ thống.");
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+
+            string resetToken = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            var result = await UserManager.ResetPasswordAsync(user.Id, resetToken, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+
+                return HttpPostSuccessResponse(message: "Cập nhật mật khẩu mới thành công.");
             }
-            AddErrors(result);
-            return View();
+            else
+            {
+                var errors = string.Join("<br/>", result.Errors.Select(x => $"- {x}"));
+                return HttpPostErrorResponse(message: $"{errors}");
+            }
         }
 
         //

@@ -97,7 +97,9 @@
 
 @{
     Html.RenderPartial("_PartialCreateUpdateStaff");
+    Html.RenderPartial("_ParitalResetPassword");
 }
+
 
 <script id="data-template" type="x-tmpl-mustache">
     <tr style="text-align:center;vertical-align: middle;">
@@ -195,9 +197,24 @@
             })
             $('.btn-edit').off('click').on('click', function () {
                 var id = $(this).data('id');
-                console.log(id);
+                staffController.resetParitalView();
+                $('#btnChangePassword').show();
                 staffController.loadDetail(id);
             });
+
+            $('#btnChangePassword').off('click').on('click', function () {
+                $('#divChangePassword').show();
+            })
+
+            $('#btnUpdatePassword').off('click').on('click', function () {
+                var data = {
+                    Username: $('#txtUsername').val(),
+                    Password: $('#txtNewPassword').val(),
+                    ConfirmPassword: $('#txtCofirmNewPassword').val()
+                }
+
+                staffController.updatePassword(data);
+            })
 
         },
         loadData: function (changePageSize) {
@@ -294,6 +311,8 @@
             $('#confirmPasswordDiv').show();
             $('#txtUsername').removeAttr('readonly');
             $('#ddlShops').val('').change();
+            $('#divChangePassword').hide();
+            $('#btnChangePassword').hide();
         },
         loadDetail: function (id) {
             $.ajax({
@@ -393,6 +412,24 @@
                     }
                 }
             })
+        },
+        updatePassword: function (data) {
+            $.ajax({
+                url: '/Account/ResetPassword',
+                type: 'post',
+                dataType: 'json',
+                data: { model: data },
+                success: function (res) {
+                    if (res.status) {
+                        toastr.success(res.message, "Kết quả");
+                        $('#divChangePassword').hide();
+                    
+
+                    } else {
+                        toastr.error(res.errorMessage, "Lỗi");
+                    }
+                }
+            });
         }
         
     };

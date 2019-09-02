@@ -1,6 +1,6 @@
 ﻿<!-- Modal -->
 <div class="modal fade" id="addOrUpdateStaffModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="box-title" id="lblTitle"></h3>
@@ -39,7 +39,7 @@
                             <label for="txtName" class="col-sm-2 control-label">Vị trí:</label>
                             <div class="col-sm-10">
                                 <select id="ddlRoles" class="form-control"></select>
-                               
+
                             </div>
                         </div>
 
@@ -48,7 +48,7 @@
                             <label for="txtName" class="col-sm-2 control-label">Chi nhánh:</label>
                             <div class="col-sm-10">
                                 <select id="ddlShops" class="form-control"></select>
-                              
+
                             </div>
                         </div>
 
@@ -84,12 +84,39 @@
                             </div>
                         </div>
 
+                       
 
                     </div>
                 </div>
             </div>
+            <div class="modal-footer" id="divChangePassword" hidden>
+                <div class="form-group">
+
+                    <label for="txtName" class="col-sm-2 control-label">Đặt lại password:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="txtNewPassword" placeholder="Nhập mật khẩu mới ....">
+                    </div>
+
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+
+                    <label for="txtName" class="col-sm-2 control-label">Xác nhận password:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="txtCofirmNewPassword" placeholder="Nhập xác nhận mật khẩu mới  ....">
+                    </div>
+
+                </div>
+                <br />
+                <br />
+                <div class="col-sm-12" style="align-items:flex-start">
+                    <button type="button" id="btnUpdatePassword" class="btn btn-default">Cập nhật mật khẩu</button>
+                </div>
+            </div>
             <div class="modal-footer">
-                <button type="button" id="btnCancel" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" style="align-content:flex-start" id="btnCancel" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnChangePassword" class="btn btn-success">Đặt lai mật khẩu</button>
                 <button type="button" id="btnSave" class="btn btn-primary">Lưu</button>
             </div>
         </div>
