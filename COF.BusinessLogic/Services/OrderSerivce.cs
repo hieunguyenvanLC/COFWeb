@@ -98,73 +98,90 @@ namespace COF.BusinessLogic.Services
                         };
                     }
                 }
-                
 
-                var order = new Order
+                var order = await _orderRepository.GetByOrderCode(model.OrderCode);
+                if (order is null)
                 {
-                    CustomerId = model.CustomerId,
-                    PartnerId = shop.PartnerId,
-                    UserId = _workContext.CurrentUserId,
-                    ShopId = shop.Id,
-                    OrderCode = model.OrderCode,
-                    TotalAmount = model.TotalAmount,
-                    CheckInDate = model.CheckInDate,
-                    ApproveDate = model.ApproveDate,
-                    FinalAmount = model.FinalAmount,
-                    OrderStatus = model.OrderStatus,
-                    Notes = model.Notes,
-                    FeeDescription = model.FeeDescription,
-                    CheckInPerson = model.CheckInPerson,
-                    ApprovePerson = model.ApprovePerson,
-                    SourceId = model.SourceID,
-                    TableId = model.TableId,
-                    IsFixedPrice = model.IsFixedPrice,
-                    SourceType = model.SourceType,
-                    LastRecordDate = model.LastRecordDate,
-                    ServedPerson = model.ServedPerson,
-                    DeliveryAddress = model.DeliveryAddress,
-                    DeliveryStatus = model.DeliveryStatus,
-                    DeliveryCustomer = model.DeliveryCustomer,
-                    TotalInvoicePrint = model.TotalInvoicePrint,
-                    VAT = model.VAT,
-                    VATAmount = model.VATAmount,
-                    NumberOfGuest = model.NumberOfGuest,
-                    Att1 = model.Att1,
-                    Att2 = model.Att2,
-                    Att3 = model.Att3,
-                    Att4 = model.Att4,
-                    Att5 = model.Att5,
-                    GroupPaymentStatus = model.GroupPaymentStatus,
-                    LastModifiedOrderDetail = model.LastModifiedOrderDetail,
-                    LastModifiedPayment = model.LastModifiedPayment,
-                    ApiLog = JsonConvert.SerializeObject(model)
-                    
-                };
-                
-                order.OrderDetails = new List<OrderDetail>();
-                foreach (var item in model.OrderDetailViewModels)
-                {
-                    var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
-                    if (productSize is null)
+
+                    order = new Order
                     {
-                        return new BusinessLogicResult<Order>
-                        {
-                            Success = false,
-                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Sản phẩm với Id {item.ProductSizeId} không tồn tại. ") })
-                        };
-                    }
-                    order.OrderDetails.Add(new OrderDetail
-                    {
+                        CustomerId = model.CustomerId,
                         PartnerId = shop.PartnerId,
-                        ProductSizeId = productSize.Id,
-                        Quantity = item.Quantity,
-                        UnitPrice = productSize.Cost,
-                        CreatedBy = _workContext.CurrentUser.FullName,
-                        CategoryId = productSize.Product.CategoryId
-                    });
-                }
+                        UserId = _workContext.CurrentUserId,
+                        ShopId = shop.Id,
+                        OrderCode = model.OrderCode,
+                        TotalAmount = model.TotalAmount,
+                        CheckInDate = model.CheckInDate,
+                        ApproveDate = model.ApproveDate,
+                        FinalAmount = model.FinalAmount,
+                        OrderStatus = model.OrderStatus,
+                        Notes = model.Notes,
+                        FeeDescription = model.FeeDescription,
+                        CheckInPerson = model.CheckInPerson,
+                        ApprovePerson = model.ApprovePerson,
+                        SourceId = model.SourceID,
+                        TableId = model.TableId,
+                        IsFixedPrice = model.IsFixedPrice,
+                        SourceType = model.SourceType,
+                        LastRecordDate = model.LastRecordDate,
+                        ServedPerson = model.ServedPerson,
+                        DeliveryAddress = model.DeliveryAddress,
+                        DeliveryStatus = model.DeliveryStatus,
+                        DeliveryCustomer = model.DeliveryCustomer,
+                        TotalInvoicePrint = model.TotalInvoicePrint,
+                        VAT = model.VAT,
+                        VATAmount = model.VATAmount,
+                        NumberOfGuest = model.NumberOfGuest,
+                        Att1 = model.Att1,
+                        Att2 = model.Att2,
+                        Att3 = model.Att3,
+                        Att4 = model.Att4,
+                        Att5 = model.Att5,
+                        GroupPaymentStatus = model.GroupPaymentStatus,
+                        LastModifiedOrderDetail = model.LastModifiedOrderDetail,
+                        LastModifiedPayment = model.LastModifiedPayment,
+                        ApiLog = JsonConvert.SerializeObject(model)
 
-                _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                    };
+
+                    order.OrderDetails = new List<OrderDetail>();
+                    foreach (var item in model.OrderDetailViewModels)
+                    {
+                        var productSize = await _productSizeRepository.GetByIdAsync(item.ProductSizeId);
+                        if (productSize is null)
+                        {
+                            return new BusinessLogicResult<Order>
+                            {
+                                Success = false,
+                                Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Sản phẩm với Id {item.ProductSizeId} không tồn tại. ") })
+                            };
+                        }
+                        order.OrderDetails.Add(new OrderDetail
+                        {
+                            PartnerId = shop.PartnerId,
+                            ProductSizeId = productSize.Id,
+                            Quantity = item.Quantity,
+                            UnitPrice = productSize.Cost,
+                            CreatedBy = _workContext.CurrentUser.FullName,
+                            CategoryId = productSize.Product.CategoryId
+                        });
+                    }
+
+                    _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                }
+                else
+                {
+                    if (order.OrderStatus !=
+                     OrderStatus.PosCancel || order.OrderStatus != OrderStatus.PosPreCancel ||
+                     order.OrderStatus == OrderStatus.PreCancel)
+                    {
+                        order.CancelDate = DateTimeHelper.CurentVnTime;
+                        order.CancelBy = _workContext.CurrentUser.FullName;
+                    }
+
+                    order.OrderStatus = model.OrderStatus;
+                    _orderRepository.Update(order);
+                }
                 if (customer != null  && order.OrderStatus != 
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
                     order.OrderStatus !=  OrderStatus.PreCancel)

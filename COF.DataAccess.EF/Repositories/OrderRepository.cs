@@ -19,6 +19,7 @@ namespace COF.DataAccess.EF.Repositories
         List<Order> GetAllOrdersInCurrentYearByShop(int shopId);
 
         int  GetTotalOrder(int partnerId);
+        Task<Order> GetByOrderCode(string orderCode);
        
     }
 
@@ -81,6 +82,11 @@ namespace COF.DataAccess.EF.Repositories
         public int GetTotalOrder(int partnerId)
         {
             return _dbSet.Where(x => x.PartnerId == partnerId).Count();
+        }
+
+        public async Task<Order> GetByOrderCode(string orderCode)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x => x.OrderCode == orderCode);
         }
     }
 }
