@@ -163,6 +163,14 @@
     <Compile Include="Migrations\201908291414178_AddCategoryId.Designer.cs">
       <DependentUpon>201908291414178_AddCategoryId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201909031808253_AddVouchourSupport.cs" />
+    <Compile Include="Migrations\201909031808253_AddVouchourSupport.Designer.cs">
+      <DependentUpon>201909031808253_AddVouchourSupport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909031820024_AddVouchourSupportDescription.cs" />
+    <Compile Include="Migrations\201909031820024_AddVouchourSupportDescription.Designer.cs">
+      <DependentUpon>201909031820024_AddVouchourSupportDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -286,6 +294,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908291414178_AddCategoryId.resx">
       <DependentUpon>201908291414178_AddCategoryId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909031808253_AddVouchourSupport.resx">
+      <DependentUpon>201909031808253_AddVouchourSupport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909031820024_AddVouchourSupportDescription.resx">
+      <DependentUpon>201909031820024_AddVouchourSupportDescription.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

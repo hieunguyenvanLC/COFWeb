@@ -75,6 +75,7 @@ namespace COF.DataAccess.EF.Models
         public DateTime? CancelDate { get; set; }
         public string CancelBy { get; set; }
         public string ApiLog { get; set; }
+        public DiscountType DiscountType { get; set; }
     }
     public enum OrderStatus
     {
@@ -94,4 +95,11 @@ namespace COF.DataAccess.EF.Models
         PosPreCancel = 12,//Don hang bi huy truoc khi che bien - CHUA SUBMIT LEN SERVER
         PreCancel = 4,//Don hang bi huy truoc khi che bien - DA SUBMIT LEN SERVER
     }
+
+    public enum DiscountType
+    {
+        None = 0,
+        OneGetOne = 1
+    }
+
 }

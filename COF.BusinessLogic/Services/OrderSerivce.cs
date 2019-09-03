@@ -140,8 +140,8 @@ namespace COF.BusinessLogic.Services
                         GroupPaymentStatus = model.GroupPaymentStatus,
                         LastModifiedOrderDetail = model.LastModifiedOrderDetail,
                         LastModifiedPayment = model.LastModifiedPayment,
-                        ApiLog = JsonConvert.SerializeObject(model)
-
+                        ApiLog = JsonConvert.SerializeObject(model),
+                        DiscountType = model.DiscountType,
                     };
 
                     order.OrderDetails = new List<OrderDetail>();
@@ -163,8 +163,15 @@ namespace COF.BusinessLogic.Services
                             Quantity = item.Quantity,
                             UnitPrice = productSize.Cost,
                             CreatedBy = _workContext.CurrentUser.FullName,
-                            CategoryId = productSize.Product.CategoryId
+                            CategoryId = productSize.Product.CategoryId,
+                            Description = ""
                         });
+                        
+                    }
+                    if (order.DiscountType == DiscountType.OneGetOne)
+                    {
+                        var lowestUnit = order.OrderDetails.OrderBy(x => x.UnitPrice).FirstOrDefault();
+                        lowestUnit.Description = "Sản phẩm thuộc diện mua 1 tặng 1";
                     }
 
                     _orderRepository.Add(order, _workContext.CurrentUser.FullName);
@@ -389,7 +396,8 @@ namespace COF.BusinessLogic.Services
                                size.Name as Size,
 							   od.UnitPrice as Cost,
 							   od.Quantity,
-							   p.ProductName
+							   p.ProductName,
+                               od.Description
                         from OrderDetail od
                         join ProductSize pd on od.ProductSizeId = pd.Id
                         join Product p on p.Id = pd.ProductId

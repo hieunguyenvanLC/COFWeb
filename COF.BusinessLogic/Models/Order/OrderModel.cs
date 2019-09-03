@@ -49,6 +49,21 @@ namespace COF.BusinessLogic.Models.Order
                 return description;
             }
         }
+        public DiscountType DiscountType { get; set; }
+        public string DiscountTypeDisplay
+        {
+            get
+            {
+                var description = "";
+                switch (DiscountType)
+                {
+                    case DiscountType.OneGetOne:
+                        description = "1 tặng 1";
+                        break;                    
+                }
+                return description;
+            }
+        }
     }
     public class OrderCreateModel
     {
@@ -89,6 +104,9 @@ namespace COF.BusinessLogic.Models.Order
         public Nullable<System.DateTime> LastModifiedPayment { get; set; }
         public Nullable<System.DateTime> LastModifiedOrderDetail { get; set; }
         public List<OrderDetailModel> OrderDetailViewModels { get; set; }
+        public DiscountType DiscountType { get; set; }
+        public double DiscountAmount { get; set; }
+
     }
 
     public class OrderDetailModel
@@ -106,6 +124,7 @@ namespace COF.BusinessLogic.Models.Order
         public string  ProductName { get; set; }
         public int Quantity { get; set; }
         public decimal Total => Cost * Quantity;
+        public string Description { get; set; }
     }
 
     public enum OrderType
@@ -113,4 +132,6 @@ namespace COF.BusinessLogic.Models.Order
          AtShop = 1,
          Online = 2
     }
+
+    
 }

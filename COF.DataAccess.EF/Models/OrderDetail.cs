@@ -17,5 +17,6 @@ namespace COF.DataAccess.EF.Models
         public virtual Order Order { get; set; }
         public int PartnerId { get; set; }
         public int  CategoryId { get; set; }
+        public string Description { get; set; }
     }
 }

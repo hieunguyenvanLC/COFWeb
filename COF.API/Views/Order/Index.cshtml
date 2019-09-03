@@ -115,6 +115,7 @@
                                     <td><b>Mã đơn hàng</b></td>
                                     <td><b>Tên khách hàng</b></td>
                                     <td><b>Tổng số tiền</b></td>
+                                    <td><b>Voucher</b></td>
                                     <td><b>Thời gian tạo</b></td>
                                     <td><b>Tạo bởi</b></td>
                                     <td><b>Thời gian hủy</b></td>
@@ -145,6 +146,7 @@
         <td>{{OrderCode}}</td>
         <td>{{CustomerName}}</td>
         <td>{{TotalCost}}</td>
+        <td>{{DiscountType}}</td>
         <td>{{CreatedDate}}</td>
         <td>{{CreatedBy}}</td>
         <td>{{CancelDateTime}}</td>
@@ -156,7 +158,7 @@
     </tr>
 
     <tr id="detail_{{Id}}" hidden>
-        <td colspan="9">
+        <td colspan="10">
         <table class="table table-bordered">
             <thead >
                 <tr style="background-color:#EFFBFB;">
@@ -165,6 +167,7 @@
                     <th><b>Số lượng</b></th>
                     <th><b>Đơn giá</b></th>
                     <th><b>Thành tiền</b></th>
+                    <th><b>Ghi chú</b></th>
                 </tr>
             </thead>
             <tbody>
@@ -172,6 +175,7 @@
                 <tr>
                     <td colspan="4"><b>Tổng</b></td>
                     <td><b>{{TotalCost}}</b></td>
+                    <td><b></b></td>
                 </tr>
 
 
@@ -276,7 +280,8 @@
                                 TotalCost: commonController.formatMoney(item.TotalCost),
                                 CancelDateTime : item.CancelDateTime,
                                 CancelBy: item.CancelBy,
-                                OrderStatus: item.OrderStatusDisplay
+                                OrderStatus: item.OrderStatusDisplay,
+                                DiscountType: item.DiscountTypeDisplay
                             });
 
                         });
@@ -369,6 +374,7 @@
                 html += '<td>' + item.Quantity + '</td>';
                 html += '<td>' + commonController.formatMoney(item.Cost) + '</td>';
                 html += '<td>' + commonController.formatMoney(item.Total) + '</td>';
+                html += '<td>' + item.Description +  '</td>';
                 html += '</tr>';
             });
             return html;

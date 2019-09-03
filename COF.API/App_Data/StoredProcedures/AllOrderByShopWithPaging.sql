@@ -26,8 +26,8 @@ DECLARE @query NVARCHAR(MAX) ='
 		o.FinalAmount as TotalCost,
 		o.CancelDate,
 		o.CancelBy,
-		o.OrderStatus
-
+		o.OrderStatus,
+		o.DiscountType
 		from [Order] o
 		left join [Customer] customer on o.CustomerId = customer.Id
 		inner join [User] u on o.UserId = u.Id
@@ -58,7 +58,8 @@ DECLARE @query NVARCHAR(MAX) ='
 		0 TotalCost,
 		null CancelDate,
 		null CancelBy,
-		0 OrderStatus
+		0 OrderStatus,
+		0 DiscountType
 	from paging p
 
 	union all
