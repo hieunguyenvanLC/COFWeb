@@ -24,6 +24,8 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<Product>> UpdatProductAsync(int productId, ProductCreateModel model);
         Task<BusinessLogicResult<bool>> RemoveProductSize(int id);
         Task<BusinessLogicResult<bool>> UpdateProductSizeAsync(int id, ProductSizeRequestModel model);
+
+        List<ProductByCategoryModel> GetAllProducts(string keyword, int shopId);
     }
     public class ProductService : IProductService
     {
@@ -68,12 +70,15 @@ namespace COF.BusinessLogic.Services
             {
                 CategoryId = x.Id,
                 Name = x.Name,
+                Image = x.CategoryImage,
                 Products = products.Where(p => p.CategoryId == x.Id).Select(y => new ProductModel
                 {
                     Id = y.Id,
                     Name = y.ProductName,
                     Description = y.Description,
                     CategoryId = y.CategoryId,
+                    Image = y.ProductImage,
+                    
                     Sizes = y.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
@@ -133,6 +138,7 @@ namespace COF.BusinessLogic.Services
                     Description = product.Description,
                     CategoryId = product.CategoryId,
                     IsActive = product.IsActive,
+
                     Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
@@ -404,6 +410,37 @@ namespace COF.BusinessLogic.Services
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
                 };
             }
+        }
+
+        public List<ProductByCategoryModel> GetAllProducts(string keyword, int shopId)
+        {
+            var products =  _productRepository.GetAllProduct(shopId, keyword);
+
+            var categories = products.Select(x => x.Category).Distinct().OrderBy(x => x.SeqNo).ToList();
+            var result = categories.Select(x => new ProductByCategoryModel
+            {
+                CategoryId = x.Id,
+                Name = x.Name,
+                Image = x.CategoryImage,
+                Products = products.Where(p => p.CategoryId == x.Id).Select(y => new ProductModel
+                {
+                    Id = y.Id,
+                    Name = y.ProductName,
+                    Description = y.Description,
+                    CategoryId = y.CategoryId,
+                    Image = y.ProductImage,
+                    Sizes = y.ProductSizes.Select(z => new Models.Product.ProductSize
+                    {
+                        Id = z.Id,
+                        SizeId = z.SizeId,
+                        Cost = z.Cost,
+                        Size = z.Size.Name
+                    }).ToList(),
+                    IsActive = y.IsActive
+                }).ToList(),
+
+            }).ToList();
+            return result;
         }
 
         #endregion

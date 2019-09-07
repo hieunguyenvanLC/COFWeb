@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "COF.AzureFunctions", "COF.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COF.Common", "COF.Common\COF.Common.csproj", "{AEA3713D-4335-4B95-A0B3-17BE0FACE969}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COF.UserWeb", "COF.UserWeb\COF.UserWeb.csproj", "{FDE19463-D049-48E3-B238-5FB1024F9E1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{AEA3713D-4335-4B95-A0B3-17BE0FACE969}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEA3713D-4335-4B95-A0B3-17BE0FACE969}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEA3713D-4335-4B95-A0B3-17BE0FACE969}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDE19463-D049-48E3-B238-5FB1024F9E1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDE19463-D049-48E3-B238-5FB1024F9E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDE19463-D049-48E3-B238-5FB1024F9E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDE19463-D049-48E3-B238-5FB1024F9E1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

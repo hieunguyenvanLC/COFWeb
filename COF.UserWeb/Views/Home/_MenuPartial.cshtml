@@ -1,0 +1,89 @@
+﻿
+@model List<COF.BusinessLogic.Models.Product.ProductByCategoryModel>
+<section id="menu-section" class="menu-section">
+    <div class="container">
+        <div class="menu-box">
+            <div class="section-title">
+                <!-- <h1>Menu</h1> -->
+                <img class="logo-vector"
+                     src="~/asset/img/cof-full.svg" />
+            </div>
+            <div class="section-content">
+                <div class="menu-tabs tabs">
+                    <ul class="tabs-wrapper">
+                        @{
+                            for (int i = 0; i < Model.Count; i++)
+                            {
+                                var category = Model[i];
+
+                                if (i == 0)
+                                {
+                                    <li class="item active" tab-target="#tab_@category.CategoryId">
+                                        @category.Name
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="item" tab-target="#tab_@category.CategoryId">
+                                        @category.Name
+                                    </li>
+                                }
+
+                            }
+
+                        }
+                    </ul>
+                </div>
+
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        var category = Model[i];
+                        var hide = i == 0 ? "" : "hide";
+                        var imageConfigure = category.Products.Count >= 5 ? "large" : "small-figure";
+                        <div id="tab_@category.CategoryId" class="menu-list coffee-list tab-content">
+                            
+                            <div class="menu-figure @imageConfigure">
+                                <img src="@category.Image" />
+                            </div>
+                            <div class="flex-box">
+                                @{
+                                    foreach (var item in category.Products)
+                                    {
+                                        <div class="menu-item-wrapper">
+                                            <div class="menu-item">
+                                                <figure class="item-img"
+                                                        style="background-image:
+                                            url('@item.Image')"></figure>
+                                                <div class="item-info">
+                                                    <p class="name">@item.Name.ToLower()</p>
+
+                                                    @{
+                                                        var allSizes = @item.Sizes.OrderBy(x => x.Cost).ToList();
+                                                        var sizes = String.Join(" | ", allSizes.Select(x => x.Size).ToList());
+                                                        var allPrices = string.Join(" | ", allSizes.Select(x =>String.Format("{0:C}", x.Cost).Replace("$","").Replace(".00","")).ToList());
+                                                    }
+                                                    <p class="en-name">@sizes</p>
+                                                    <p class="price">@allPrices</p>
+                                                    <a class="atc-btn btn-secondary">
+                                                        Thêm
+                                                        vào giỏ
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    }
+
+                }
+
+            </div>
+        </div>
+
+    </div>
+</section>

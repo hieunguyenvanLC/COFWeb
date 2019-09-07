@@ -1,0 +1,52 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale= 1;
+            user-scalable= no;" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta name="format-detection" content="telephone=no"> -->
+    <title>COF Cafe</title>
+    <link href="~/asset/img/CofIcon.png" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="stylesheet/main.css" />
+    <link rel="stylesheet" href="plugins/owl.carousel.min.css" />
+    <link rel="stylesheet" href="plugins/owl.theme.default.min.css" />
+</head>
+<body>
+    <!--header-->
+    @Html.Partial("_HeaderPartial")
+    <!--END HEAD BANNER-->
+    @{Html.RenderAction("AllProducts", "Home");}
+ 
+    <!--END MENU SECTION-->
+    @Html.Partial("_FeaturePartial")
+    <!--END FEATURE SECTION-->
+    @Html.Partial("_AboutPartial")
+    <!--END ABOUT SECTION-->
+
+    @Html.Partial("_GalleryPartial")
+    <!--END GALLERY SECTION-->
+    @Html.Partial("_FooterPartial")
+
+</body>
+
+</html>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="~/js/main.js"></script>
+<script src="plugins/owl.carousel.min.js"></script>
+<script>
+
+
+    $('.gallery-slider').owlCarousel({
+        items: 1,
+        autoplay: false,
+        loop: true,
+        margin: 50,
+        nav: true
+    });
+</script>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0"></script>

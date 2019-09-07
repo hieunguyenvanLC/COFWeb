@@ -1,0 +1,105 @@
+//GRID LAYOUT
+
+.container {
+    max-width: 1280px;
+    padding-left: 60px;
+    padding-right: 60px;
+    margin-left: auto;
+    margin-right: auto;
+}
+// @media (min-width: $mobile){
+//     .container {
+//         padding-left: 60px;
+//         padding-right: 60px;
+//     }
+// }
+// @media (max-width: $mobile){
+//     .container {
+//         padding-left: 50px;
+//         padding-right: 50px;
+//     }
+// }
+
+.flex-box{
+    display: flex;
+    justify-content: space-between;
+}
+
+.v-center {
+    align-items: center;
+}
+
+.col-1{
+    flex: 0 0 10%;
+    max-width: 10%;
+}
+
+.col-2{
+    flex: 0 0 20%;
+    max-width: 20%;
+}
+
+.col-3{
+    flex: 0 0 30%;
+    max-width: 30%;
+}
+
+.col-35{
+    flex: 0 0 35%;
+    max-width: 35%;
+}
+
+.col-4{
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+.col-45{
+    flex: 0 0 45%;
+    max-width: 45%;
+}
+
+.col-5{
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.col-55{
+    flex: 0 0 55%;
+    max-width: 55%;
+}
+
+
+.col-6{
+    flex: 0 0 60%;
+    max-width: 60%;
+}
+.col-65{
+    flex: 0 0 65%;
+    max-width: 65%;
+}
+
+.col-7{
+    flex: 0 0 70%;
+    max-width: 70%;
+}
+
+.col-8{
+    flex: 0 0 80%;
+    max-width: 80%;
+}
+
+.col-9{
+    flex: 0 0 90%;
+    max-width: 90%;
+}
+
+@media (max-width: $tablet){
+    .flex-box {
+        flex-wrap: wrap;
+    }
+    .col-1, .col-2, .col-3, .col-35,.col-4, .col-45, .col-55, .col-6,.col-65, .col-7, .col-8, .col-9{
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

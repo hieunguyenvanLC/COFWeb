@@ -1,0 +1,49 @@
+//TABLE
+.table {
+    width: 100%;
+    margin: 20px 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    tr {
+        border: .5px solid rgba(0,0,0,0.1);
+    }
+
+    thead {
+        th {
+            // font-size: $font14;
+            // font-weight: $regular;
+            text-align: left;
+            padding: 20px 10px;
+            color: #fff;
+            background: $primary-color;
+        }
+    }
+
+    tbody {
+        background: #fff;
+
+        td {
+            padding: 18px 8px;
+            text-align: left;
+        }
+    }
+
+    .disabled {
+        color: rgba(0,0,0,0.4);
+    }
+}
+
+.table.center {
+    thead {
+        th {
+            text-align: center;
+        }
+    }
+
+    tbody {
+        td {
+            text-align: center;
+        }
+    }
+}

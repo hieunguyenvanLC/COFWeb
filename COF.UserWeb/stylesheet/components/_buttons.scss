@@ -1,0 +1,101 @@
+// BUTTONS
+
+.btn {
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+    border-radius: .125rem;
+    line-height: 1.5;
+    transition: $transition-cubic;
+    padding: .375rem .85rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    @extend .btn;
+    background: $primary-color;
+    color: #fff;
+    box-shadow: $shadow-basic;
+    &:hover{
+        background: $accent-color;
+        box-shadow: $shadow-light;
+    }
+}
+.btn-secondary {
+    @extend .btn;
+    background: $secondary-color;
+    color: #fff;
+    box-shadow: $shadow-basic;
+}
+
+.btn-large {
+    font-size: 1.5rem;
+    padding: .65rem 2rem;
+    font-weight: 600;
+}
+
+.btn-round {
+    @extend .btn;
+    padding: .7rem 1rem;
+    border-radius: 2rem !important;
+}
+
+.btn-round-secondary {
+    @extend .btn-round;
+    background: $secondary-color;
+    color: #fff;
+}
+
+.btn-img {
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+
+.btn-img.medium{
+    
+    img{
+        width: 35px;
+    }
+    
+}
+
+.btn-img.small{
+    
+    img{
+        width: 16px;
+    }
+    
+}
+
+
+//icon inside button
+.btn-icon {
+    height: 14px;
+    margin-left: 5px;
+}
+
+.btn-outline-white {
+    @extend .btn;
+    color: #fff;
+    background: transparent;
+    border: 1px solid #fff;
+    &.large {
+        padding: .5rem 1.5rem;
+    }
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+.btn-text-primary {
+    @extend .btn;
+    color: $primary-color;
+    background: transparent;
+    font-weight: 700;
+    padding: 0;
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
