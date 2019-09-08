@@ -52,7 +52,8 @@ var productController = {
                 CategoryId: $('#ddlCategories').val(),
                 ShopId: homeconfig.shopId,
                 Description: $('#txtDescription').val(),
-                IsActive: $('#chkActive').is(":checked")
+                IsActive: $('#chkActive').is(":checked"),
+                Image: $('#bigView').attr('src')
             };
             productController.saveData(data);
         });
@@ -147,7 +148,45 @@ var productController = {
          
         });
 
+        $('#inputImage').off('change').on('change', function () {
+            // Checking whether FormData is available in browser
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#inputImage").get(0);
+                var files = fileUpload.files;
+                // Create FormData object
+                var fileData = new FormData();
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+                // Adding one more key to FormData object
+                $.ajax({
+                    url: '/Common/UploadImage?type=1',
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: fileData,
+                    success: function (result) {
+                        if (result.status) {
+                            var data = result.data;
        
+                            toastr.success("Upload successfully.");
+                            $('#bigView').css('display', '');
+                            $('#bigView').attr('src', data.Url);
+                            $('#smallView').attr('src', data.Url);
+                        }
+                        else {
+                            toastr.error(result.ErrorMessage);
+                        }
+                    },
+                    error: function (err) {
+                        toastr.error(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+        });
     },
     loadData: function (shopId) {
         homeconfig.allProducts = [];
@@ -387,6 +426,8 @@ var productController = {
         $('#priceFrm').hide();
         $('#chkActive').prop('checked', false);
         productController.loadProductSizes([]);
+        $('#bigView').show();
+        $('#bigView').attr('src', '');
     },
     saveProductSize: function (data) {
         if (data.Id == 0) {
@@ -496,6 +537,12 @@ var productController = {
                             $('#txtDescription').val(row.Description);
                             $('#chkActive').prop('checked', row.IsActive);
                             $('#ddlCategories').val(row.CategoryId).change();
+                            $('#bigView').hide();
+                            if (row.Image != null) {
+                                $('#bigView').show();
+                                $('#bigView').attr('src',  row.Image);
+                            }
+                            
                             productController.loadProductSizes(row.Sizes);
                         } else {
                             toastr.error(res.errorMessage, "Lỗi");

@@ -143,6 +143,7 @@
     <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.3.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Azure.Storage.Blob, Version=11.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
@@ -7229,6 +7230,10 @@
     <ProjectReference Include="..\COF.BusinessLogic\COF.BusinessLogic.csproj">
       <Project>{0FF42E2C-A09C-4283-8D54-52E927D51A13}</Project>
       <Name>COF.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\COF.Common\COF.Common.csproj">
+      <Project>{AEA3713D-4335-4B95-A0B3-17BE0FACE969}</Project>
+      <Name>COF.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\COF.DataAccess.EF\COF.DataAccess.EF.csproj">
       <Project>{35293B2D-4C59-41DB-BC50-1A4713EB4B6E}</Project>

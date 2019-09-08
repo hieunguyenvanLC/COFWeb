@@ -36,20 +36,68 @@
                             </label>
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        
+                        <div class="panel-body">
+                            
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Hình ảnh sản phẩm
+                                        </label>
+                                        <p id="txtAvatarMessage">
 
-                    <div class="form-group" id="priceFrm">
-                        <label>Giá tiền</label>
-                        <br />
-                        <button type="button" id="btnAddProductSize" class="btn bg-purple margin" data-toggle="modal" data-target="#addPriceModal">
-                            Thêm giá
-                        </button>
+                                        </p>
+                                        <div class="col-md-6" style="align-content:center">
+                                            <p id="lblUploadAlert">
+                                               
+                                            </p>
 
-                        <table class="table table-striped">
-                            <tbody id="tblProductSizes">
-                               
-                            </tbody>
-                        </table>
+                                            <div class="btn-group">
+                                                <label title="Upload image file" for="inputImage" class="btn btn-default">
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                    <input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+                                                    Upload
+                                                </label>
+
+                                            </div>
+                                            <div class="" style="align-content:center">
+                                                <div style="width:400px;">
+                                                    <img class="cropper-hidden">
+                                                    <img id="bigView" style="width:100%;height:100%" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+
+                                    <div class="form-group" id="priceFrm">
+                                        <label>Giá tiền</label>
+                                        <br />
+                                        <button type="button" id="btnAddProductSize" class="btn bg-purple margin" data-toggle="modal" data-target="#addPriceModal">
+                                            Thêm giá
+                                        </button>
+
+                                        <table class="table table-striped">
+                                            <tbody id="tblProductSizes"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        </div>
                     </div>
+
+                   
 
 
                     <br />

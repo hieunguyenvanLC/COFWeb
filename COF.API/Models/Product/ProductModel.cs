@@ -22,6 +22,7 @@ namespace COF.API.Models.Product
         public string Description { get; set; }
 
         public bool IsActive { get; set; }
+        public string Image { get; set; }
     }
 
     public class ProductSizeCreateModel

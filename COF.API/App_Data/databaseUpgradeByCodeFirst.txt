@@ -8,4 +8,4 @@ Add-Migration -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.E
 Update-database -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF
 
 //update database to specified target
-Update-database -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF -TargetMigration:"201801240459221_AddArtReceivedStatus"
+Update-database -StartUpProjectName COF.API -verbose -ProjectName COF.DataAccess.EF -TargetMigration:"201909031820024_AddVouchourSupportDescription"

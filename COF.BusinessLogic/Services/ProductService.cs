@@ -138,7 +138,7 @@ namespace COF.BusinessLogic.Services
                     Description = product.Description,
                     CategoryId = product.CategoryId,
                     IsActive = product.IsActive,
-
+                    Image = product.ProductImage,
                     Sizes = product.ProductSizes.Select(z => new Models.Product.ProductSize
                     {
                         Id = z.Id,
@@ -181,7 +181,8 @@ namespace COF.BusinessLogic.Services
                     ProductName = model.Name,
                     Description = model.Description,
                     ShopId = model.ShopId,
-                    PartnerId = model.PartnerId
+                    PartnerId = model.PartnerId,
+                    ProductImage = model.Image
                 };
 
                 _productRepository.Add(product);
@@ -310,6 +311,7 @@ namespace COF.BusinessLogic.Services
                 product.ProductName = model.Name;
                 product.Description = model.Description;
                 product.IsActive = model.IsActive;
+                product.ProductImage = model.Image;
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Product>
                 {

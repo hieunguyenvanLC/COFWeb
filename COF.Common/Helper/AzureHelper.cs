@@ -35,7 +35,7 @@ namespace COF.Common.Helper
 
         #endregion
 
-        #region container
+        #region daily export
         /// <summary>
         /// avatar container, public
         /// </summary>
@@ -59,6 +59,65 @@ namespace COF.Common.Helper
                 }
 
                 return _dailyOrderExportContainer;
+            }
+
+        }
+
+        #endregion
+        #region product image
+        /// <summary>
+        /// product image container, public
+        /// </summary>
+        private static CloudBlobContainer _productImageContainer;
+
+        /// <summary>
+        /// avatar container, public
+        /// </summary>
+        public static CloudBlobContainer ProductImageContainer
+        {
+            get
+            {
+                if (_productImageContainer == null)
+                {
+                    var productImageFolder = ConfigurationManager.AppSettings["Product"];
+                    // Retrieve a reference to a container. 
+                    _productImageContainer = CloudBlobClient.GetContainerReference(productImageFolder);
+                    // Create the container if it doesn't already exist.
+                    _productImageContainer.CreateIfNotExists();
+
+                }
+
+                return _productImageContainer;
+            }
+
+        }
+
+        #endregion
+
+        #region category image
+        /// <summary>
+        /// category image container, public
+        /// </summary>
+        private static CloudBlobContainer _categoryImageContainer;
+
+        /// <summary>
+        /// avatar container, public
+        /// </summary>
+        public static CloudBlobContainer CategoryImageContainer
+        {
+            get
+            {
+                if (_productImageContainer == null)
+                {
+                    var categoryImageFolder = ConfigurationManager.AppSettings["Category"];
+                    // Retrieve a reference to a container. 
+                    _categoryImageContainer = CloudBlobClient.GetContainerReference(categoryImageFolder);
+                    // Create the container if it doesn't already exist.
+                    _categoryImageContainer.CreateIfNotExists();
+
+                }
+
+                return _productImageContainer;
             }
 
         }

@@ -100,7 +100,8 @@ namespace COF.API.Controllers
                     CategoryId = model.CategoryId,
                     Description = model.Description,
                     ShopId = model.ShopId,
-                    PartnerId = user.PartnerId.GetValueOrDefault()
+                    PartnerId = user.PartnerId.GetValueOrDefault(),
+                    Image = model.Image
                 };
 
                 var logicResult = await _productService.AddProductAsync(productModel);
@@ -180,7 +181,8 @@ namespace COF.API.Controllers
                     Description = model.Description,
                     ShopId = model.ShopId,
                     IsActive = model.IsActive,
-                    PartnerId = user.PartnerId.GetValueOrDefault()
+                    PartnerId = user.PartnerId.GetValueOrDefault(),
+                    Image = model.Image
                 };
 
                 var logicResult = await _productService.UpdatProductAsync(model.Id.GetValueOrDefault(), productModel);

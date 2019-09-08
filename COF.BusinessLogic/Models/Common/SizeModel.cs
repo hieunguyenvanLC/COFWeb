@@ -11,4 +11,15 @@ namespace COF.BusinessLogic.Models.Common
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    public class UploadImageResult
+    {
+        public string Url { get; set; }
+    }
+
+    public enum UploadFileType
+    {
+        Product = 1,
+        Category = 2
+    }
 }

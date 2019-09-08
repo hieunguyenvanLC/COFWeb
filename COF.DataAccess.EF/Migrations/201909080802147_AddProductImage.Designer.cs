@@ -13,7 +13,7 @@ namespace COF.DataAccess.EF.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201909071002450_AddProductImage"; }
+            get { return "201909080802147_AddProductImage"; }
         }
         
         string IMigrationMetadata.Source

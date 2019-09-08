@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COF.DataAccess.EF.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,14 @@ namespace COF.BusinessLogic.Models.Report
         public string Shop { get; set; }
         public int TotalOrder { get; set; }
         public double TotalMoney { get; set; }
+    }
+
+    public class OrderQueryModel
+    {
+        public int Id { get; set; }
+        public double FinalAmount { get; set; }
+        public OrderStatus OrderStatus { get; set; }
+        public int ShopId { get; set; }
     }
 
     public class ShopRevenueReportModel

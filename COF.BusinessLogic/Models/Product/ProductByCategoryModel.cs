@@ -62,6 +62,7 @@ namespace COF.BusinessLogic.Models.Product
         public int ShopId { get; set; }
         public int PartnerId { get; set; }
         public bool IsActive { get; set; }
+        public string Image { get; set; }
     }
 
     public class ProductSizeRequestModel

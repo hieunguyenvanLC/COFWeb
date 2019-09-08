@@ -171,9 +171,9 @@
     <Compile Include="Migrations\201909031820024_AddVouchourSupportDescription.Designer.cs">
       <DependentUpon>201909031820024_AddVouchourSupportDescription.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201909071002450_AddProductImage.cs" />
-    <Compile Include="Migrations\201909071002450_AddProductImage.Designer.cs">
-      <DependentUpon>201909071002450_AddProductImage.cs</DependentUpon>
+    <Compile Include="Migrations\201909080802147_AddProductImage.cs" />
+    <Compile Include="Migrations\201909080802147_AddProductImage.Designer.cs">
+      <DependentUpon>201909080802147_AddProductImage.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
@@ -305,8 +305,8 @@
     <EmbeddedResource Include="Migrations\201909031820024_AddVouchourSupportDescription.resx">
       <DependentUpon>201909031820024_AddVouchourSupportDescription.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201909071002450_AddProductImage.resx">
-      <DependentUpon>201909071002450_AddProductImage.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201909080802147_AddProductImage.resx">
+      <DependentUpon>201909080802147_AddProductImage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

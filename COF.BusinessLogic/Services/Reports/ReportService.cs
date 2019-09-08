@@ -2,6 +2,7 @@
 using COF.BusinessLogic.Services.AzureBlob;
 using COF.BusinessLogic.Services.Export;
 using COF.Common.Helper;
+using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace COF.BusinessLogic.Services.Reports
         private readonly IOrderService _orderService;
         private readonly IAzureBlobSavingService _azureBlobSavingService;
         private readonly IProductCategoryService _productCategoryService;
+        private readonly IUnitOfWork _unitOfWork;
         #endregion
 
         #region ctor
@@ -35,7 +37,8 @@ namespace COF.BusinessLogic.Services.Reports
             IExcelExportService excelExportService,
             IOrderService orderService,
             IAzureBlobSavingService azureBlobSavingService,
-            IProductCategoryService productCategoryService
+            IProductCategoryService productCategoryService,
+            IUnitOfWork unitOfWork
             )
         {
             _partnerService = partnerService;
@@ -43,6 +46,7 @@ namespace COF.BusinessLogic.Services.Reports
             _orderService = orderService;
             _azureBlobSavingService = azureBlobSavingService;
             _productCategoryService = productCategoryService;
+            _unitOfWork = unitOfWork;
         }
         #endregion
         public void ExportDailyOrderReport()
@@ -63,8 +67,10 @@ namespace COF.BusinessLogic.Services.Reports
         {
             var partner = _partnerService.GetById(partnerId);
             var shops = partner.Result.Shops.ToList();
-            var allOrders = _orderService.GetOrdersInMonth(partnerId).Result;
+            
 
+            var sql = "select Id, FinalAmount, ShopId,OrderStatus from [Order] where PartnerId = @p0 and Year(CreatedOnUtc) = @p1 and Month(CreatedOnUtc) = @p2";
+            var allOrders =  _unitOfWork.Context.Database.SqlQuery<OrderQueryModel>(sql, partnerId, DateTimeHelper.CurentVnTime.Year, DateTimeHelper.CurentVnTime.Month).ToList();
             allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
             var result = shops.Select(shop => new ShopRevenueMonthlyReport
             {
