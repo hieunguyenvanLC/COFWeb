@@ -99,7 +99,8 @@ namespace COF.DataAccess.EF.Models
     public enum DiscountType
     {
         None = 0,
-        OneGetOne = 1
+        OneGetOne = 1,
+        _20kDiscount = 2
     }
 
 }
