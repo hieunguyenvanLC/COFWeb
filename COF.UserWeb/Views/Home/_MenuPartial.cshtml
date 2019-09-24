@@ -42,7 +42,7 @@
                         var hide = i == 0 ? "" : "hide";
                         var imageConfigure = category.Products.Count >= 7 ? "large" : "small-figure";
                         <div id="tab_@category.CategoryId" class="menu-list coffee-list tab-content">
-                            
+
                             <div class="menu-figure @imageConfigure">
                                 <img src="@category.Image" />
                             </div>
@@ -61,14 +61,25 @@
                                                     @{
                                                         var allSizes = @item.Sizes.OrderBy(x => x.Cost).ToList();
                                                         var sizes = String.Join(" | ", allSizes.Select(x => x.Size).ToList());
-                                                        var allPrices = string.Join(" | ", allSizes.Select(x =>String.Format("{0:C}", x.Cost).Replace("$","").Replace(".00","")).ToList());
+                                                        var allPrices = string.Join(" | ", allSizes.Select(x => String.Format("{0:C}", x.Cost).Replace("$", "").Replace(".00", "")).ToList());
                                                     }
                                                     <p class="en-name">@sizes</p>
                                                     <p class="price">@allPrices</p>
-                                                    @*<a class="atc-btn btn-secondary">
+                                                    @{
+                                                        var sizeId = 0;
+                                                        if (item.Sizes.Count == 1 || item.Sizes.Count == 2)
+                                                        {
+                                                            sizeId = item.Sizes.FirstOrDefault().SizeId;
+                                                        }
+                                                        else
+                                                        {
+                                                            sizeId = item.Sizes[2].SizeId;
+                                                        }
+                                                    }
+                                                    <a class="atc-btn btn-secondary add-to-cart-hoang" data-id="@item.Id" data-size="@sizeId">
                                                         Thêm
                                                         vào giỏ
-                                                    </a>*@
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,3 +98,6 @@
 
     </div>
 </section>
+
+
+

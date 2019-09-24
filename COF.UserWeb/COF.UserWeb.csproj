@@ -177,11 +177,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Constants\CommonConstants.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\Core\WorkContext.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ShoppingCartViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +302,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\toastr\toastr.min.css" />
+    <Content Include="Content\toastr\toastr.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -313,13 +318,27 @@
     <Content Include="asset\img\.DS_Store" />
     <Content Include="fonts\.DS_Store" />
     <Content Include="fonts\Pestapora.otf" />
+    <None Include="Properties\PublishProfiles\cof-dev - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-app - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-app - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-dev - FTP2.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-dev - FTP3.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - Web Deploy1.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-dev - Web Deploy2.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-dev - Web Deploy3.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\client-app\controllers\base\index.js" />
+    <Content Include="Scripts\client-app\controllers\cart\index.js" />
+    <Content Include="Scripts\client-app\controllers\contact\index.js" />
+    <Content Include="Scripts\client-app\controllers\home\index.js" />
+    <Content Include="Scripts\client-app\controllers\product\details.js" />
+    <Content Include="Scripts\client-app\shared\localize\resources.en-US.js" />
+    <Content Include="Scripts\client-app\shared\localize\resources.vi-VN.js" />
+    <Content Include="Scripts\client-app\shared\tedu.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -341,7 +360,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="stylesheet\.DS_Store" />
@@ -370,10 +388,11 @@
     <Content Include="Views\Home\_AboutPartial.cshtml" />
     <Content Include="Views\Home\_GalleryPartial.cshtml" />
     <Content Include="Views\Home\_FooterPartial.cshtml" />
+    <Content Include="Views\Cart\HeaderCart.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

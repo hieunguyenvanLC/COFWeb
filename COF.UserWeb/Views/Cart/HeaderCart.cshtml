@@ -1,0 +1,78 @@
+﻿@model List<COF.UserWeb.Models.ShoppingCartViewModel>
+@{
+
+    var allDatas = Model;
+    allDatas = allDatas != null ? allDatas : new List<COF.UserWeb.Models.ShoppingCartViewModel>();
+    //var groupByData = allDatas.GroupBy(x => x.ProductId).ToList();
+    var groupData = allDatas.GroupBy(x => x.ProductId).ToList();
+}
+
+
+<style>
+    .top-subtotal {
+        color: #333333;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 8px 15px;
+        text-align: left;
+        text-transform: none;
+        background-color: #f5fafc;
+        margin-bottom: 12px
+    }
+    .actions {
+        padding: 5px 8px 20px;
+    }
+
+</style>
+
+<a class="cart-btn">
+    <img class="icon-img" src="~/asset/img/bag.svg" />
+    <span class="cart-badge">@allDatas.Count()</span>
+</a>
+<div class="drop-list">
+    <ul class="cart-list">
+
+
+        @foreach (var item in groupData)
+        {
+            var product = allDatas.FirstOrDefault(x => x.ProductId == item.Key);
+            var allSizes = item.ToList();
+            var description = string.Join(" | ", allSizes.Select(x => $"{x.Size.Size } - {x.Quantity}").ToList());
+            var total = allSizes.Sum(x => x.Quantity * x.Price);
+
+            <li class="item">
+                <figure class="item-img"
+                        style="background-image:
+                                        url('@product.ImageUrl')"></figure>
+                <div class="item-info">
+                    <p class="name">@product.Product</p>
+                    <p class="en-name">@description</p>
+                </div>
+                <p class="price">@total.ToString("N0")</p>
+            </li>
+        }
+        <li></li>
+            <li>
+                <div class="top-subtotal">Tổng: <span class="price">@Model.Sum(x => x.Quantity * x.Price).ToString("N0")</span></div>
+            </li>
+            <li>
+                <div class="actions">
+
+                    <button style="float:left" id="view-cart" class="btn-primary " type="button" onClick="location.href='/cart.html'"><i class="fa fa-shopping-cart"></i><span>  Xem chi tiết</span></button>
+                    <button style="float:right" class="btn-secondary btn-checkout" type="button" onClick="location.href='/checkout.html'"><i class="fa fa-check"></i><span>  Thanh toán</span></button>
+                </div>
+            </li>
+        <li>
+            <div style="height:40px"></div>
+        </li>
+
+    </ul>
+    
+</div>
+
+
+<script>
+    $('#view-cart').off('click').on('click', function () {
+        
+    })
+</script>

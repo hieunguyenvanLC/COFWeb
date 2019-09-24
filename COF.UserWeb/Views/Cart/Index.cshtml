@@ -1,0 +1,280 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="main-container col1-layout" style="padding-top:10%">
+    <div class="main container">
+        <div class="col-main">
+            <div class="cart">
+
+                <div class="page-content page-order">
+                    <div class="page-title">
+                        <h2>Giỏ hàng của bạn</h2>
+                    </div>
+
+                    <div class="order-detail-content">
+                        <div class="table-responsive">
+                            <table class="table table-bordered cart_summary">
+                                <thead>
+                                    <tr>
+                                        <th class="cart_product">Sảm phẩm</th>
+                                        <th>Mô tả</th>
+                                        <th>Size</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                        <th class="action"><i class="fa fa-trash-o"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-cart-content"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3"><strong>Tổng</strong></td>
+                                        <td colspan="3"><strong><span id="lblTotalAmount"></span> </strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <script id="template-cart" type="x-tmpl-mustache">
+                                <tr data-id="{{ProductId}}">
+                                    <td class="cart_product">
+                                        <a href="{{Url}}">
+                                            <img src="{{Image}}" alt="{{ProductName}}" width="100">
+                                        </a>
+                                    </td>
+                                    <td class="cart_description">
+                                        <p class="product-name"><a href="#">{{ProductName}}</a></p>
+                                       
+                                        <small><a href="#">Size : {{{Sizes}}}</a></small>
+                                    </td>
+                                    <td class="price"><span>{{Price}}</span></td>
+                                    <td class="qty"><input class="form-control input-sm txtQuantity" data-id="{{ProductId}}" type="text" value="{{Quantity}}"></td>
+                                    <td class="price"><span>{{Amount}}</span></td>
+                                    <td class="action"><a href="#" data-id="{{ProductId}}" class="btn-delete"><i class="icon-close"></i></a></td>
+                                </tr>
+                            </script>
+                        </div>
+                        <div class="cart_navigation">
+                            <a class="continue-btn" href="/products.html"><i class="fa fa-arrow-left"> </i>&nbsp; Tiếp tục chọn sản phẩm</a>
+                            <a id="btnClearAll" href="#"><i class="fa fa-remove"> </i>&nbsp; Xóa giỏ hàng</a>
+                            <a class="checkout-btn" href="/checkout.html"><i class="fa fa-check"></i> Tiến hành thanh toán</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.0/mustache.min.js"></script>
+<script>
+    var CartController = function () {
+        var cachedObj = {
+            colors: [],
+            sizes: [],
+        }
+        this.initialize = function () {
+            loadData();
+            registerEvents();
+        }
+
+        function registerEvents() {
+            $('body').on('click', '.btn-delete', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '/Cart/RemoveFromCart',
+                    type: 'post',
+                    data: {
+                        productId: id
+                    },
+                    success: function () {
+                        tedu.notify('Removing product is successful.', 'success');
+                        loadHeaderCart();
+                        loadData();
+                    }
+                });
+            });
+            $('body').on('keyup', '.txtQuantity', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                var q = $(this).val();
+                if (q > 0) {
+                    $.ajax({
+                        url: '/Cart/UpdateCart',
+                        type: 'post',
+                        data: {
+                            productId: id,
+                            quantity: q
+                        },
+                        success: function () {
+                            tedu.notify('Update quantity is successful', 'success');
+                            loadHeaderCart();
+                            loadData();
+                        }
+                    });
+                } else {
+                    tedu.notify('Your quantity is invalid', 'error');
+                }
+
+            });
+
+            $('body').on('change', '.ddlColorId', function (e) {
+                e.preventDefault();
+                var id = parseInt($(this).closest('tr').data('id'));
+                var colorId = $(this).val();
+                var q = $(this).closest('tr').find('.txtQuantity').first().val();
+                var sizeId = $(this).closest('tr').find('.ddlSizeId').first().val();
+
+                if (q > 0) {
+                    $.ajax({
+                        url: '/Cart/UpdateCart',
+                        type: 'post',
+                        data: {
+                            productId: id,
+                            quantity: q,
+                            color: colorId,
+                            size: sizeId
+                        },
+                        success: function () {
+                            tedu.notify('Update quantity is successful', 'success');
+                            loadHeaderCart();
+                            loadData();
+                        }
+                    });
+                } else {
+                    tedu.notify('Your quantity is invalid', 'error');
+                }
+
+            });
+
+            $('body').on('change', '.ddlSizeId', function (e) {
+                e.preventDefault();
+                var id = parseInt($(this).closest('tr').data('id'));
+                var sizeId = $(this).val();
+                var q = parseInt($(this).closest('tr').find('.txtQuantity').first().val());
+                var colorId = parseInt($(this).closest('tr').find('.ddlColorId').first().val());
+                if (q > 0) {
+                    $.ajax({
+                        url: '/Cart/UpdateCart',
+                        type: 'post',
+                        data: {
+                            productId: id,
+                            quantity: q,
+                            color: colorId,
+                            size: sizeId
+                        },
+                        success: function () {
+                            tedu.notify('Update quantity is successful', 'success');
+                            loadHeaderCart();
+                            loadData();
+                        }
+                    });
+                } else {
+                    tedu.notify('Your quantity is invalid', 'error');
+                }
+
+            });
+            $('#btnClearAll').on('click', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/Cart/ClearCart',
+                    type: 'post',
+                    success: function () {
+                        tedu.notify('Clear cart is successful', 'success');
+                        loadHeaderCart();
+                        loadData();
+                    }
+                });
+            });
+        }
+        function loadColors() {
+            return $.ajax({
+                type: "GET",
+                url: "/Cart/GetColors",
+                dataType: "json",
+                success: function (response) {
+                    cachedObj.colors = response;
+                },
+                error: function () {
+                    tedu.notify('Has an error in progress', 'error');
+                }
+            });
+        }
+
+        function loadSizes() {
+            return $.ajax({
+                type: "GET",
+                url: "/Cart/GetSizes",
+                dataType: "json",
+                success: function (response) {
+                    cachedObj.sizes = response;
+                },
+                error: function () {
+                    tedu.notify('Has an error in progress', 'error');
+                }
+            });
+        }
+        function getColorOptions(selectedId) {
+            var colors = "<select class='form-control ddlColorId'><option value='0'></option>";
+            $.each(cachedObj.colors, function (i, color) {
+                if (selectedId === color.Id)
+                    colors += '<option value="' + color.Id + '" selected="select">' + color.Name + '</option>';
+                else
+                    colors += '<option value="' + color.Id + '">' + color.Name + '</option>';
+            });
+            colors += "</select>";
+            return colors;
+        }
+
+        function getSizeOptions(selectedId, allSizes) {
+            var sizes = "<select class='form-control ddlSizeId'>";
+            $.each(allSizes, function (i, size) {
+                if (selectedId === size.ProductSizeId)
+                    sizes += '<option value="' + size.ProductSizeId + '" selected="select">' + size.Size + '</option>';
+                else
+                    sizes += '<option value="' + size.ProductSizeId + '">' + size.Size + '</option>';
+            });
+            sizes += "</select>";
+            return sizes;
+        }
+        function loadHeaderCart() {
+            $("#headerCart").load("/AjaxContent/HeaderCart");
+        }
+        function loadData() {
+            $.ajax({
+                url: '/Cart/GetCart',
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    var template = $('#template-cart').html();
+                    var render = "";
+                    var totalAmount = 0;
+
+                    $.each(response.Data, function (i, item) {
+                        render += Mustache.render(template,
+                            {
+                                ProductId: item.ProductId,
+                                ProductName: item.Product,
+                                Image: item.ImageUrl,
+                                Price: item.Price,
+                                Quantity: item.Quantity,
+                                //Colors: getColorOptions(item.Color == null ? 0 : item.Color.Id),
+                                Sizes: getSizeOptions(item.Size == null ? "" : item.Size.ProductSizeId, item.AllSizes),
+                                Amount: item.Price * item.Quantity,
+                                Url: '/' + item.Product.SeoAlias + "-p." + item.Product.Id + ".html"
+                            });
+                        totalAmount += item.Price * item.Quantity;
+                    });
+                    $('#lblTotalAmount').text(totalAmount);
+                    if (render !== "")
+                        $('#table-cart-content').html(render);
+                    else
+                        $('#table-cart-content').html('You have no product in cart');
+                }
+            });
+            return false;
+        }
+    }
+    var cartObj = new CartController();
+    cartObj.initialize();
+</script>

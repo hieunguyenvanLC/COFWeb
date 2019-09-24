@@ -1,4 +1,10 @@
-﻿<header class="header">
+﻿@*@{
+
+        var allDatas = Session[COF.UserWeb.Constants.CommonConstants.CartSession] as List<COF.UserWeb.Models.ShoppingCartViewModel>;
+        allDatas = allDatas != null ? allDatas : new List<COF.UserWeb.Models.ShoppingCartViewModel>();
+        var groupByData = allDatas.GroupBy(x => x.ProductId).ToList();
+    }*@
+<header class="header">
     <div class="flex-box v-center container">
         <div id="open-nav" class="hamburger-menu">
             <a class="hamburger-btn"></a>
@@ -41,57 +47,20 @@
         </div>
         <div class="header-action-container">
             <div class="header-action">
-                @*<a href="#" class="user-link">
+                <a href="#" class="user-link">
                     <span>Đăng nhập</span>
                     <img class="icon-img" src="~/asset/img/user.svg" />
-                </a>*@
-
-            </div>
-            <div class="cart-action header-action">
-                @*<a class="cart-btn">
-                    <img class="icon-img" src="~/asset/img/bag.svg" />
-                    <span class="cart-badge">3</span>
                 </a>
-                <div class="drop-list">
-                    <ul class="cart-list">
-                        <li class="item">
-                            <figure class="item-img"
-                                    style="background-image:
-                                        url('~/asset/img/dx-matcha.jpg')"></figure>
-                            <div class="item-info">
-                                <p class="name">Matcha đá xay</p>
-                                <p class="en-name">Black Coffee</p>
-                            </div>
-                            <p class="price">22.000đ</p>
-                        </li>
-                        <li class="item">
-                            <figure class="item-img"
-                                    style="background-image:
-                                        url('~/asset/img/dx-matcha.jpg')"></figure>
-                            <div class="item-info">
-                                <p class="name">Matcha đá xay</p>
-                                <p class="en-name">Black Coffee</p>
-                            </div>
-                            <p class="price">22.000đ</p>
-                        </li>
-                        <li class="item">
-                            <figure class="item-img"
-                                    style="background-image:
-                                        url('~/asset/img/dx-matcha.jpg')"></figure>
-                            <div class="item-info">
-                                <p class="name">Matcha đá xay</p>
-                                <p class="en-name">Black Coffee</p>
-                            </div>
-                            <p class="price">22.000đ</p>
-                        </li>
-                    </ul>
-                </div>*@
-            </div>
 
+            </div>
+            <div class="cart-action _headerCart">
+
+            </div>
         </div>
 
     </div>
 </header>
+
 
 <section class="head-banner">
     <div class="head-wrapper" style="background-image:

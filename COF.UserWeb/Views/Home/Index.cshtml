@@ -1,4 +1,12 @@
 ﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,30 +20,110 @@
     <link rel="stylesheet" href="stylesheet/main.css" />
     <link rel="stylesheet" href="plugins/owl.carousel.min.css" />
     <link rel="stylesheet" href="plugins/owl.theme.default.min.css" />
+    <link href="~/Content/toastr/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+    <script src="plugins/owl.carousel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+
+    <script src="~/Content/toastr/toastr.min.js"></script>
+
 </head>
 <body>
-    <!--header-->
     @Html.Partial("_HeaderPartial")
-    <!--END HEAD BANNER-->
+
+
+
     @{Html.RenderAction("AllProducts", "Home");}
- 
+    <!--END HEAD BANNER-->
     <!--END MENU SECTION-->
     @Html.Partial("_FeaturePartial")
     <!--END FEATURE SECTION-->
     @Html.Partial("_AboutPartial")
     <!--END ABOUT SECTION-->
-
     @Html.Partial("_GalleryPartial")
     <!--END GALLERY SECTION-->
-    @Html.Partial("_FooterPartial")
 
+    <section id="contact-section" class="contact-section">
+        <div class="section-title">
+            <h1>Liên hệ</h1>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="cof-info flex-box">
+                <div class="contact-info col-45">
+                    <div class="brand-wrapper">
+                        <a href="./" class="logo-link">
+                            <img class="logo-vector"
+                                 src="~/asset/img/cof-cafe.svg" />
+                        </a>
+                    </div>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <img src="~/asset/img/address.svg" />
+                            <span>
+                                Lô 46 công viên phần mềm Quang Trung, quận 12, thành phố Hồ Chí Minh
+                            </span>
+                        </li>
+                        <li class="info-item">
+                            <img src="~/asset/img/call.svg" />
+                            <span>0931889882</span>
+                        </li>
+                        <li class="info-item">
+                            <img src="~/asset/img/email.svg" />
+                            <span>cof.coffeeshop@gmail.com</span>
+                        </li>
+                    </ul>
+                    <div class="map-box" style="background-image:
+                            url(~/asset/img/map.png)">
+
+                    </div>
+                </div>
+                <div class="cof-fb col-4">
+                    <h3 class="cof-fb-title">COF trên Facebook</h3>
+                    <div class="fb-page"
+                         data-href="https://www.facebook.com/COF-1904577266311069/"
+                         data-tabs="timeline" data-width="400"
+                         data-height="500" data-small-header="false"
+                         data-adapt-container-width="true"
+                         data-hide-cover="false" data-show-facepile="true">
+                        <blockquote cite="https://www.facebook.com/COF-1904577266311069/"
+                                    class="fb-xfbml-parse-ignore">
+                            <a href="https://www.facebook.com/COF-1904577266311069/">
+                                COF
+
+                            </a>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>Copyright © COF Cafe 2019</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-action close-modal">
+                <img class="btn-icon" src="~/asset/img/close.svg" />
+            </div>
+            <div class="modal-body">
+                <div class="gallery-img-wrapper">
+                    <img class="gallery-img" src="~/asset/img/cof-1.jpg" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="fb-root"></div>
 </body>
 
 </html>
-
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="~/js/main.js"></script>
-<script src="plugins/owl.carousel.min.js"></script>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0"></script>
 <script>
 
 
@@ -47,6 +135,67 @@
         nav: true
     });
 </script>
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0"></script>
+<script>
+    var baseController =
+    {
+        initialize: function () {
+            baseController.registerEvents();
+            baseController.loadHeaderCart();
+        },
+
+        registerEvents: function () {
+            $('.add-to-cart-hoang').off('click').on('click', function (e) {
+                var id = $(this).data('id');
+                var size = $(this).data('size');
+                $.ajax({
+                    url: '/Cart/AddToCart',
+                    type: 'post',
+                    data: {
+                        productId: id,
+                        quantity: 1,
+                        size: size
+                    },
+                    success: function (response) {
+                        toastr.success("Thêm mới thành công.");
+                        baseController.loadHeaderCart();
+                    }
+                });
+            });
+
+
+            $('body').on('click', '.remove-cart', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '/Cart/RemoveFromCart',
+                    type: 'post',
+                    data: {
+                        productId: id
+                    },
+                    success: function (response) {
+                        tedu.notify(resources["RemoveCartOK"], 'success');
+                        loadHeaderCart();
+                    }
+                });
+            });
+        },
+        loadHeaderCart: function () {
+            $.ajax({
+                url: '/Cart/HeaderCart',
+                type: 'POST',
+                success: function (res) {
+
+                    $("._headerCart").html(res.html);
+
+                }
+            });
+
+        }
+    };
+
+    $(document).ready(function () {
+        baseController.initialize();
+    })
+</script>
+
+

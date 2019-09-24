@@ -28,6 +28,13 @@
     box-shadow: $shadow-basic;
 }
 
+.btn-red {
+    @extend .btn;
+    background: $secondary-color;
+    color: orangered;
+    box-shadow: $shadow-basic;
+}
+
 .btn-large {
     font-size: 1.5rem;
     padding: .65rem 2rem;
