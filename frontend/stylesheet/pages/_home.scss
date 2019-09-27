@@ -564,3 +564,28 @@ html {
         height: auto;
     }
 }
+
+.qty-input {
+    width: 50px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 5px;
+    border: .5px solid rgba($color: #000, $alpha: 0.1);
+}
+
+.btn.close-modal{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    img {
+        width: 14px;
+    }
+}
+
+.cart-modal {
+    .order-box {
+        margin-bottom: 0;
+    }
+}

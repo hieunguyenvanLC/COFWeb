@@ -861,7 +861,7 @@ a[x-apple-data-detectors] {
   color: rgba(0, 0, 0, 0.5);
 }
 
-.btn, .btn-primary, .btn-secondary, .btn-round, .btn-round-secondary, .btn-outline-white, .btn-text-primary {
+.btn, .btn-primary, .btn-secondary, .btn-round, .btn-round-secondary, .btn-outline-white, .btn-text-primary, .btn-flat {
   display: inline-block;
   text-align: center;
   -webkit-user-select: none;
@@ -958,6 +958,10 @@ a[x-apple-data-detectors] {
 
 .btn-text-primary:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-flat:hover {
+  color: #0d72b9;
 }
 
 .cart-action {
@@ -1075,7 +1079,7 @@ a[x-apple-data-detectors] {
   width: 55%;
   position: absolute;
   z-index: 9999;
-  top: 50%;
+  top: 40%;
   left: 50%;
   -webkit-transform: translate(-50%, -53%);
           transform: translate(-50%, -53%);
@@ -1125,7 +1129,7 @@ a[x-apple-data-detectors] {
 
 .modal .modal-body {
   line-height: 1.5;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.8);
   padding: 0px 24px 24px;
 }
 
@@ -1925,6 +1929,36 @@ html {
   }
 }
 
+.qty-input {
+  width: 50px;
+  height: 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding-left: 5px;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn.close-modal, .close-modal.btn-primary, .close-modal.btn-secondary, .close-modal.btn-round, .close-modal.btn-round-secondary, .close-modal.btn-outline-white, .close-modal.btn-text-primary, .close-modal.btn-flat {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+.btn.close-modal img, .close-modal.btn-primary img, .close-modal.btn-secondary img, .close-modal.btn-round img, .close-modal.btn-round-secondary img, .close-modal.btn-outline-white img, .close-modal.btn-text-primary img, .close-modal.btn-flat img {
+  width: 14px;
+}
+
+.cart-modal .order-box {
+  margin-bottom: 0;
+}
+
 .profile-section {
   margin-top: 100px;
   margin-bottom: 100px;
@@ -2162,6 +2196,11 @@ html {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.order-info.title {
+  max-width: 200px;
+  min-width: 140px;
 }
 
 .order-info .info-title {
