@@ -187,7 +187,14 @@
     background-size: cover;
     background-repeat: no-repeat;
 }
-.order-info{
+
+.order-info.title {
+    max-width: 200px;
+    min-width: 140px;
+}
+
+.order-info {
+
     .info-title{
         font-size: .85rem;
         font-weight: bold;

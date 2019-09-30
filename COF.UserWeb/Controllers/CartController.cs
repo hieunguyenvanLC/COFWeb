@@ -211,68 +211,67 @@ namespace COF.UserWeb.Controllers
             });
         }
 
-        ///// <summary>
-        ///// Remove a product
-        ///// </summary>
-        ///// <param name="productId"></param>
-        ///// <returns></returns>
-        //public ActionResult RemoveFromCart(int productId)
-        //{
-        //    var session = HttpContext.Session.Get<List<ShoppingCartViewModel>>(CommonConstants.CartSession);
-        //    if (session != null)
-        //    {
-        //        bool hasChanged = false;
-        //        foreach (var item in session)
-        //        {
-        //            if (item.Product.Id == productId)
-        //            {
-        //                session.Remove(item);
-        //                hasChanged = true;
-        //                break;
-        //            }
-        //        }
-        //        if (hasChanged)
-        //        {
-        //            HttpContext.Session.Set(CommonConstants.CartSession, session);
-        //        }
-        //        return new OkObjectResult(productId);
-        //    }
-        //    return new EmptyResult();
-        //}
+        /// <summary>
+        /// Remove a product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public ActionResult RemoveFromCart(int productId, int size)
+        {
+            var session = Session[CommonConstants.CartSession] as List<ShoppingCartViewModel>;
 
-        ///// <summary>
-        ///// Update product quantity
-        ///// </summary>
-        ///// <param name="productId"></param>
-        ///// <param name="quantity"></param>
-        ///// <returns></returns>
-        //public IActionResult UpdateCart(int productId, int quantity, int color, int size)
-        //{
-        //    var session = HttpContext.Session.Get<List<ShoppingCartViewModel>>(CommonConstants.CartSession);
-        //    if (session != null)
-        //    {
-        //        bool hasChanged = false;
-        //        foreach (var item in session)
-        //        {
-        //            if (item.Product.Id == productId)
-        //            {
-        //                var product = _productService.GetById(productId);
-        //                item.Product = product;
-        //                item.Size = _billService.GetSize(size);
-        //                item.Color = _billService.GetColor(color);
-        //                item.Quantity = quantity;
-        //                item.Price = product.PromotionPrice ?? product.Price;
-        //                hasChanged = true;
-        //            }
-        //        }
-        //        if (hasChanged)
-        //        {
-        //            HttpContext.Session.Set(CommonConstants.CartSession, session);
-        //        }
-        //        return new OkObjectResult(productId);
-        //    }
-        //    return new EmptyResult();
-        //}
+            if (session != null)
+            {
+                var item = session.FirstOrDefault(x => x.ProductId == productId && x.Size.SizeId == size);
+                if (item != null)
+                {
+                    session.Remove(item);
+                }
+
+            }
+            return Json(new
+            {
+                Success = true
+            });
+        }
+
+            /// <summary>
+            /// Update product quantity
+            /// </summary>
+            /// <param name="productId"></param>
+            /// <param name="quantity"></param>
+            /// <returns></returns>
+        public async Task<ActionResult> UpdateCart(int productId, int quantity, int size)
+        {
+      
+            //Get session with item list from cart
+            var session = Session[CommonConstants.CartSession] as List<ShoppingCartViewModel>;
+           
+            if (session != null)
+            {
+                
+
+                var item = session.FirstOrDefault(x => x.ProductId == productId && x.Size.SizeId == size);
+
+                //Check exist with item product id
+                if (item != null)
+                {
+                    item.Quantity = quantity;
+                  
+                }
+                Session[CommonConstants.CartSession] = session;
+                return Json(new
+                {
+                    Status = true,
+                    Data = new
+                    {
+                        Total = session.Sum(x => x.Quantity * x.Price).ToString("N0"),
+                        UnitTotalPrice = (item.Quantity * item.Price).ToString("N0")
+                    }
+                });
+            }
+            return new EmptyResult();
+        }
 
         //[HttpGet]
         //public IActionResult GetColors()
@@ -295,6 +294,15 @@ namespace COF.UserWeb.Controllers
             var session = Session[CommonConstants.CartSession] as List<ShoppingCartViewModel>;
             session = session != null ? session : new List<ShoppingCartViewModel>();
             var data = RenderPartialViewToString("HeaderCart", session);
+            return Json(new { html = data });
+        }
+
+        [ValidateInput(false)]
+        public ActionResult CartDetail()
+        {
+            var session = Session[CommonConstants.CartSession] as List<ShoppingCartViewModel>;
+            session = session != null ? session : new List<ShoppingCartViewModel>();
+            var data = RenderPartialViewToString("CartDetail", session);
             return Json(new { html = data });
         }
 

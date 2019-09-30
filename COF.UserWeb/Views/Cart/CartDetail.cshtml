@@ -1,0 +1,145 @@
+﻿
+@model List<COF.UserWeb.Models.ShoppingCartViewModel>
+@{
+
+    var allDatas = Model;
+    allDatas = allDatas != null ? allDatas : new List<COF.UserWeb.Models.ShoppingCartViewModel>();
+    allDatas = allDatas.OrderBy(x => x.Product).ThenBy(x => x.Size.Size).ToList();
+
+}
+
+<div class="modal-content">
+    <div class="modal-head">
+        Giỏ hàng
+        <a class="close-modal btn"><img src="asset/img/close.svg"></a>
+    </div>
+    <div class="modal-body">
+        <div class="order-box">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            Tên sản phẩm
+                        </th>
+                        <th>
+                            Size
+                        </th>
+                        <th>
+                            Số lượng
+                        </th>
+                        <th>
+                            Thành tiền
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+
+
+                        foreach (var item in allDatas)
+                        {
+                            var total = (item.Price * @item.Quantity).ToString("N0");
+
+                    <tr>
+                        <td>
+                            <figure class="prod-img" style="background-image:
+                                    url('@item.ImageUrl')"></figure>
+                        </td>
+                        <td>
+                            <p class="prod-title"><b>@item.Product</b></p>
+                            <p class="prod-price">@item.Price.ToString("N0")</p>
+                        </td>
+                        <td>
+                            @item.Size.Size
+                        </td>
+
+                        <td>
+                            <p class="info-value">
+                                <input type="number" data-productid="@item.ProductId" data-sizeid="@item.Size.SizeId"  class="qty-input" value="@item.Quantity">
+                            </p>
+                        </td>
+                        <td id="@string.Concat(item.ProductId,"_",item.Size.SizeId)">
+                            @total
+                        </td>
+                        <td>
+                            <a  data-productid="@item.ProductId" data-sizeid="@item.Size.SizeId" class="btn-flat btnRemoveItem">Xóa</a>
+                        </td>
+                    </tr>
+                    }
+                    }
+                    <tr>
+                        <td colspan="5" style="align-items:flex-end">
+                           
+                        </td>
+                        <td>
+                            <label>Tổng tiền</label>
+                            <span class="value" id="total"> <b>
+                            @Model.Sum(x => x.Quantity * x.Price).ToString("N0")
+                        </b></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+           
+
+          
+        </div>
+    </div>
+    <!-- <div class="modal-footer">
+        <a class="close-modal btn-primary">Đóng</a>
+    </div> -->
+
+</div>
+<script>
+    $('.qty-input').off('keyup').on('keyup', function () {
+        var value = $(this).val();
+        var productId = $(this).data('productid');
+        var size = $(this).data('sizeid');
+        var s = "";
+        if (value) {
+            $.ajax({
+                url: '/Cart/UpdateCart',
+                type: 'post',
+                data: { productId: productId, size: size, quantity: value },
+                success: function (res) {
+                    if (res.Status) {
+                        var data = res.Data;
+                        $('#' + productId + "_" + size).text(data.UnitTotalPrice);
+                        $('#total').text(data.Total);
+                    }
+                    else {
+
+                    }
+                }
+
+            })
+        }
+
+
+
+
+    });
+    $('.btnRemoveItem').off('click').on('click', function () {
+        var productId = $(this).data('productid');
+        var size = $(this).data('sizeid');
+        $.ajax({
+            url: '/Cart/RemoveFromCart',
+            type: 'post',
+            data: { productId: productId, size: size },
+            success: function (res) {
+                toastr.success("Xóa sản phẩm thành công.")
+                baseController.loadCartDetail();
+                baseController.loadHeaderCart();
+            }
+
+        })
+    });
+
+</script>

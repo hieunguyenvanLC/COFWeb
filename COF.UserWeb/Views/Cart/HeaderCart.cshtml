@@ -25,10 +25,12 @@
 
 </style>
 
-<a class="cart-btn">
+
+<a class="cart-btn open-modal" id="btnViewCartDetail" >
     <img class="icon-img" src="~/asset/img/bag.svg" />
     <span class="cart-badge">@allDatas.Count()</span>
 </a>
+
 <div class="drop-list">
     <ul class="cart-list">
 
@@ -51,8 +53,8 @@
                 <p class="price">@total.ToString("N0")</p>
             </li>
         }
-        <li></li>
-            <li>
+        @*<li></li>*@
+            @*<li>
                 <div class="top-subtotal">Tổng: <span class="price">@Model.Sum(x => x.Quantity * x.Price).ToString("N0")</span></div>
             </li>
             <li>
@@ -61,10 +63,10 @@
                     <button style="float:left" id="view-cart" class="btn-primary " type="button" onClick="location.href='/cart.html'"><i class="fa fa-shopping-cart"></i><span>  Xem chi tiết</span></button>
                     <button style="float:right" class="btn-secondary btn-checkout" type="button" onClick="location.href='/checkout.html'"><i class="fa fa-check"></i><span>  Thanh toán</span></button>
                 </div>
-            </li>
-        <li>
+            </li>*@
+        @*<li>
             <div style="height:40px"></div>
-        </li>
+        </li>*@
 
     </ul>
     

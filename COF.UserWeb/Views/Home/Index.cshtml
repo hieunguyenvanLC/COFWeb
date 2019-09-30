@@ -118,7 +118,15 @@
         </div>
     </div>
     <div id="fb-root"></div>
+
+    <div id="cart-modal" class="cart-modal modal">
+
+    </div>
+
+
 </body>
+
+
 
 </html>
 <script src="~/js/main.js"></script>
@@ -158,6 +166,7 @@
                     success: function (response) {
                         toastr.success("Thêm mới thành công.");
                         baseController.loadHeaderCart();
+                        baseController.loadCartDetail();
                     }
                 });
             });
@@ -178,6 +187,12 @@
                     }
                 });
             });
+
+            $('#btnViewCartDetail').off('click').on('click', function (e) {
+                
+                baseController.loadCartDetail();
+               
+            })
         },
         loadHeaderCart: function () {
             $.ajax({
@@ -186,6 +201,22 @@
                 success: function (res) {
 
                     $("._headerCart").html(res.html);
+                    baseController.registerEvents();
+
+                }
+            });
+
+        },
+        loadCartDetail: function () {
+            $.ajax({
+                url: '/Cart/CartDetail',
+                type: 'POST',
+                success: function (res) {
+                   
+                    $("#cart-modal").html(res.html);
+                    $('#btnViewCartDetail').attr('target', '#cart-modal');
+                   
+                    
 
                 }
             });
