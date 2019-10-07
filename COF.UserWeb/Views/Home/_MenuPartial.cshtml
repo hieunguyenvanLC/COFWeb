@@ -1,4 +1,18 @@
 ﻿
+<script>
+    function loadPrice(id,size, price) {
+        $('#_price_product_' + id).text(price);
+        $('.price-product-' + id).removeClass('isSelected');
+        $('#price-product-' + id + '-' + size).addClass('isSelected');
+        $('#btn-add-price-product-' + id).val(size);
+    }
+</script>
+<style>
+    .coffeeSize.isSelected {
+        color: #0d72b9 !important;
+        border-color: #0d72b9 !important;
+    }
+</style>
 @model List<COF.BusinessLogic.Models.Product.ProductByCategoryModel>
 <section id="menu-section" class="menu-section">
     <div class="container">
@@ -48,8 +62,11 @@
                             </div>
                             <div class="flex-box">
                                 @{
-                                    foreach (var item in category.Products)
-                                    {
+                                        var count = 1;
+                                        foreach (var item in category.Products)
+                                        {
+                                            var position = count % 2 == 0 ? "right" : "left";
+                                            count++;
                                         <div class="menu-item-wrapper">
                                             <div class="menu-item">
                                                 <figure class="item-img"
@@ -63,48 +80,48 @@
                                                         var sizes = String.Join(" | ", allSizes.Select(x => x.Size).ToList());
                                                         var allPrices = string.Join(" | ", allSizes.Select(x => String.Format("{0:C}", x.Cost).Replace("$", "").Replace(".00", "")).ToList());
                                                     }
-                                                    <p class="en-name">@sizes</p>
-                                                    <p class="price">@allPrices</p>
+                                                    <p>
+
+                                                        <ul class="pagination @position">
+
+                                                            @{
+                                                                for (int index = 0; index < allSizes.Count; index++)
+                                                                {
+                                                                    var status = index == 0 ? "isSelected" : "";
+                                                                    <li style="" class="page size coffeeSize @status price-product-@item.Id" id="price-product-@item.Id-@allSizes[index].SizeId" data-id="@item.Id" onclick="loadPrice(@item.Id, '@allSizes[index].SizeId', '@allSizes[index].Cost.ToString("N0")')">
+                                                                        @allSizes[index].Size
+                                                                    </li>
+                                                                }
+                                                            }
+
+                                                        </ul>
+
+                                                    </p>
+
+                                                    <p class="price" id="_price_product_@item.Id">@allSizes[0].Cost.ToString("N0")</p>
                                                     @{
-                                                        var sizeId = 0;
-                                                        if (item.Sizes.Count == 1 || item.Sizes.Count == 2)
-                                                        {
-                                                            sizeId = item.Sizes.FirstOrDefault().SizeId;
-                                                        }
-                                                        else
-                                                        {
-                                                            sizeId = item.Sizes[2].SizeId;
-                                                        }
+                                                        var sizeId = item.Sizes.FirstOrDefault().SizeId;
+
                                                     }
-                                                    <a class="atc-btn btn-secondary add-to-cart-hoang" data-id="@item.Id" data-size="@sizeId">
+
+                                                    <a class="atc-btn btn-secondary add-to-cart-hoang" id="btn-add-price-product-@item.Id" data-id="@item.Id" value="@sizeId">
                                                         Thêm
                                                         vào giỏ
                                                     </a>
+                                                    <script>
+                                                        loadPrice('@item.Id', '@sizeId');
+                                                    </script>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="cart-modal modal" id="add-product-cart">
-                                            <div class="form-group">
-                                                <label for="exampleInputEmail1">Email address</label>
-                                                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Password</label>
-                                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    }
+
+                                        }
+                                                       
                                 }
 
                             </div>
                         </div>
-                    }
+                                                        }
 
                 }
 

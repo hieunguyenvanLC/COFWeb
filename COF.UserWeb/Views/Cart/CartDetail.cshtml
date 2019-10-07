@@ -8,88 +8,64 @@
 
 }
 
-<div class="modal-content">
-    <div class="modal-head">
-        Giỏ hàng
-        <a class="close-modal btn"><img src="asset/img/close.svg"></a>
+<div class="modal-content" >
+    <div class="modal-head" style="width:1000px" >
+        <h3 id="CartDetailLabel">Giỏ hàng</h3> 
+        <a  class="close-modal btn"><img src="asset/img/close.svg"></a>
     </div>
+   
     <div class="modal-body">
+        
         <div class="order-box">
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            Tên sản phẩm
-                        </th>
-                        <th>
-                            Size
-                        </th>
-                        <th>
-                            Số lượng
-                        </th>
-                        <th>
-                            Thành tiền
-                        </th>
-                        <th>
 
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
+            @{
+                var total = allDatas.Sum(x => x.Price * x.Quantity).ToString("N0");
+                foreach (var item in allDatas)
+                {
 
 
-                        foreach (var item in allDatas)
-                        {
-                            var total = (item.Price * @item.Quantity).ToString("N0");
-
-                    <tr>
-                        <td>
+                    <ul class="order-prod">
+                        <li class="order-info order-figure">
                             <figure class="prod-img" style="background-image:
                                     url('@item.ImageUrl')"></figure>
-                        </td>
-                        <td>
-                            <p class="prod-title"><b>@item.Product</b></p>
-                            <p class="prod-price">@item.Price.ToString("N0")</p>
-                        </td>
-                        <td>
-                            @item.Size.Size
-                        </td>
-
-                        <td>
-                            <p class="info-value">
-                                <input type="number" data-productid="@item.ProductId" data-sizeid="@item.Size.SizeId"  class="qty-input" value="@item.Quantity">
+                        </li>
+                        <li class="order-info title">
+                            <p class="info-title">
+                                Tên sản phẩm
                             </p>
-                        </td>
-                        <td id="@string.Concat(item.ProductId,"_",item.Size.SizeId)">
-                            @total
-                        </td>
-                        <td>
-                            <a  data-productid="@item.ProductId" data-sizeid="@item.Size.SizeId" class="btn-flat btnRemoveItem">Xóa</a>
-                        </td>
-                    </tr>
-                    }
-                    }
-                    <tr>
-                        <td colspan="5" style="align-items:flex-end">
-                           
-                        </td>
-                        <td>
-                            <label>Tổng tiền</label>
-                            <span class="value" id="total"> <b>
-                            @Model.Sum(x => x.Quantity * x.Price).ToString("N0")
-                        </b></span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-           
+                            <p class="prod-title" style="overflow-wrap: break-word; width:200px">@item.Product</p>
+                            <p class="prod-price">@item.Price.ToString("N0")</p>
+                        </li>
+                        <li class="order-info">
+                            <p class="info-title">
+                                SL
+                            </p>
+                            <p class="info-value">
+                                <input type="number" class="qty-input" data-productid="@item.ProductId" data-sizeid="@item.Size.SizeId" value="@item.Quantity">
+                            </p>
+                        </li>
+                        <li class="order-info">
+                            <p class="info-title">
+                                Giá
+                            </p>
+                            <p class="info-value">29.000đ</p>
+                        </li>
+                        <li class="order-info">
+                            <p class="info-title helper"></p>
+                            <p class="info-value">
+                                <a class="btn-flat btnRemoveItem" data-sizeid="@item.Size.SizeId"  data-productid="@item.ProductId"  >Xóa</a>
+                            </p>
+                        </li>
+                    </ul>
+                }
+                <div class="order-total">
+                    <label>Tổng tiền</label>
+                    <span class="value" id="total">@total</span>
+                </div>
+            }
 
-          
+
         </div>
     </div>
     <!-- <div class="modal-footer">
@@ -112,7 +88,7 @@
                     if (res.Status) {
                         var data = res.Data;
                         $('#' + productId + "_" + size).text(data.UnitTotalPrice);
-                        $('#total').text(data.Total);
+                        $('#total').html( data.Total);
                     }
                     else {
 
@@ -140,6 +116,11 @@
             }
 
         })
+    });
+
+    $('#btn-checkout').off('click').on('click', function () {
+        $('#customerInfo').show();
+        $('#cart-table').hide();
     });
 
 </script>

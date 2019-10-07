@@ -1945,6 +1945,22 @@ html {
   border: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
+.cusomize-text-input {
+    width: 280px;
+    height: 30px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-left: 5px;
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
 .btn.close-modal, .close-modal.btn-primary, .close-modal.btn-secondary, .close-modal.btn-round, .close-modal.btn-round-secondary, .close-modal.btn-outline-white, .close-modal.btn-text-primary, .close-modal.btn-flat {
   position: absolute;
   right: 20px;
