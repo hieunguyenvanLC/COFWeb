@@ -26,4 +26,18 @@ namespace COF.UserWeb.Models
         public string Size { get; set; }
         public int SizeId { get; set; }
     }
+
+    public class OrderInfoModel
+    {
+        public int? CustomerId { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
+        public string Note { get; set; }
+    }
+
+    public class AccessTokenModel
+    {
+        public string access_token { get; set; }
+    }
 }

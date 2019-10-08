@@ -8,14 +8,14 @@
 
 }
 
-<div class="modal-content" >
-    <div class="modal-head" style="width:1000px" >
-        <h3 id="CartDetailLabel">Giỏ hàng</h3> 
-        <a  class="close-modal btn"><img src="asset/img/close.svg"></a>
+<div class="modal-content">
+    <div class="modal-head" style="width:1000px">
+        <h3 id="CartDetailLabel">Giỏ hàng</h3>
+        <a class="close-modal btn"><img src="asset/img/close.svg"></a>
     </div>
-   
-    <div class="modal-body">
-        
+
+    <div class="modal-body" id="">
+
         <div class="order-box">
 
 
@@ -34,7 +34,7 @@
                             <p class="info-title">
                                 Tên sản phẩm
                             </p>
-                            <p class="prod-title" style="overflow-wrap: break-word; width:200px">@item.Product</p>
+                            <p class="prod-title" style="overflow-wrap: break-word; width:200px">@item.Product (@item.Size.Size)</p>
                             <p class="prod-price">@item.Price.ToString("N0")</p>
                         </li>
                         <li class="order-info">
@@ -54,7 +54,7 @@
                         <li class="order-info">
                             <p class="info-title helper"></p>
                             <p class="info-value">
-                                <a class="btn-flat btnRemoveItem" data-sizeid="@item.Size.SizeId"  data-productid="@item.ProductId"  >Xóa</a>
+                                <a class="btn-flat btnRemoveItem" data-sizeid="@item.Size.SizeId" data-productid="@item.ProductId">Xóa</a>
                             </p>
                         </li>
                     </ul>
@@ -71,8 +71,15 @@
     <!-- <div class="modal-footer">
         <a class="close-modal btn-primary">Đóng</a>
     </div> -->
+    <div class="modal-footer">
+        @*<a class="btn btn-flat close-modal">Tiếp tục mua hàng</a>*@
+        <a class="btn-primary" id="btnCheckout">Tiếp tục thanh toán</a>
+    </div>
 
 </div>
+
+
+
 <script>
     $('.qty-input').off('keyup').on('keyup', function () {
         var value = $(this).val();
@@ -118,6 +125,9 @@
         })
     });
 
+    $('#btnCheckout').off('click').on('click', function () {
+        $('#checkout-info').addClass('show');
+    });
     $('#btn-checkout').off('click').on('click', function () {
         $('#customerInfo').show();
         $('#cart-table').hide();

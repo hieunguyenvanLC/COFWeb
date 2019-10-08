@@ -1,10 +1,17 @@
-﻿using COF.BusinessLogic.Services;
+﻿using COF.BusinessLogic.Models.Order;
+using COF.BusinessLogic.Services;
+using COF.Common.Helper;
 using COF.UserWeb.Constants;
 using COF.UserWeb.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -321,6 +328,85 @@ namespace COF.UserWeb.Controllers
                 viewResult.View.Render(viewContext, sw);
                 return sw.GetStringBuilder().ToString();
             }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SubmitOrderInfo(OrderInfoModel model)
+        {
+            Session["CustomerInfo"] = model;
+            HttpClient client = CreateHttpClient();
+            var username = ConfigurationManager.AppSettings["COF-Username"];
+            var password = ConfigurationManager.AppSettings["COF-Password"];
+            string body = $"grant_type=password&username={username}&password={password}";
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/api/oauth/token");
+            request.Content = new StringContent(body,
+                                                Encoding.UTF8,
+                                                "application/x-www-form-urlencoded");//CONTENT-TYPE header
+
+            var response = await client.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+
+            var accessTokenModel = JsonConvert.DeserializeObject<AccessTokenModel>(content);
+            var cart = Session[CommonConstants.CartSession] as List<ShoppingCartViewModel>;
+            await SubmitOrder(model, cart, accessTokenModel.access_token);
+            Session[CommonConstants.CartSession] = new List<ShoppingCartViewModel>();
+            return Json(new
+            {
+                Success = true
+            });
+        }
+        private HttpClient CreateHttpClient()
+        {
+            HttpClientHandler handler = new HttpClientHandler() { UseDefaultCredentials = false };
+            HttpClient client = new HttpClient(handler);
+            client.BaseAddress = new Uri(ConfigurationManager.AppSettings["COF-Admin"]);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+            return client;
+        }
+
+        private async Task SubmitOrder(OrderInfoModel model, List<ShoppingCartViewModel> cartDetails , string token)
+        {
+            try
+            {
+                var total = (double)cartDetails.Sum(x => x.Quantity * x.Price);
+                var order = new OrderCreateModel
+                {
+                    OrderCode = $"ONLINE-{DateTimeHelper.CurentVnTime.ToString("ddMMyy")}-{DateTimeHelper.CurentVnTime.ToString("hhmmss")}",
+                    DeliveryCustomer = model.Name,
+                    DeliveryAddress = model.Address,
+                    DeliveryPhone = model.PhoneNumber,
+                    Notes = model.Note,
+                    DiscountType = DataAccess.EF.Models.DiscountType.None,
+                    CustomerId = model.CustomerId,
+                    CheckInDate = DateTimeHelper.CurentVnTime,
+                    TotalAmount = total,
+                    FinalAmount = total,
+                    StoreId = 7,
+                    OrderStatus = DataAccess.EF.Models.OrderStatus.New,
+                    OrderDetailViewModels = cartDetails.Select(x => new OrderDetailModel
+                    {
+                        ProductSizeId = x.Size.ProductSizeId,
+                        Quantity = x.Quantity
+                    }).ToList()
+                };
+
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["COF-Admin"]);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var json = JsonConvert.SerializeObject(order);
+                var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+                var result = await client.PostAsync("/api/order/create", stringContent);
+            }
+            catch (Exception exception)
+            {
+
+               
+            }
+           
+            
         }
     }
 }

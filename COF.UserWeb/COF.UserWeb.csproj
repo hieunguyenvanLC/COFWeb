@@ -391,6 +391,7 @@
     <Content Include="Views\Cart\HeaderCart.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
     <Content Include="Views\Cart\CartDetail.cshtml" />
+    <Content Include="stylesheet\components\_textfield.scss" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -412,6 +413,10 @@
     <ProjectReference Include="..\COF.BusinessLogic\COF.BusinessLogic.csproj">
       <Project>{0FF42E2C-A09C-4283-8D54-52E927D51A13}</Project>
       <Name>COF.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\COF.Common\COF.Common.csproj">
+      <Project>{AEA3713D-4335-4B95-A0B3-17BE0FACE969}</Project>
+      <Name>COF.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\COF.DataAccess.EF\COF.DataAccess.EF.csproj">
       <Project>{35293B2D-4C59-41DB-BC50-1A4713EB4B6E}</Project>

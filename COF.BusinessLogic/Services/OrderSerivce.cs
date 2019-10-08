@@ -128,6 +128,7 @@ namespace COF.BusinessLogic.Services
                         DeliveryAddress = model.DeliveryAddress,
                         DeliveryStatus = model.DeliveryStatus,
                         DeliveryCustomer = model.DeliveryCustomer,
+                        DeliveryPhone = model.DeliveryPhone,
                         TotalInvoicePrint = model.TotalInvoicePrint,
                         VAT = model.VAT,
                         VATAmount = model.VATAmount,

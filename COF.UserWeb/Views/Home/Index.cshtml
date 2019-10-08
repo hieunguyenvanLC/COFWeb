@@ -123,8 +123,32 @@
     <div id="cart-modal" class="cart-modal modal">
 
     </div>
-    
 
+    <div class="input-info-modal modal" id="checkout-info">
+        <div class="modal-content">
+            <div class="modal-head">
+                Thông tin thanh toán
+            </div>
+            <div class="modal-body">
+                <div class="textfield">
+                    <input type="text" placeholder="Tên của bạn" id="txtCustomerName">
+                </div>
+                <div class="textfield">
+                    <input type="number" placeholder="Số điện thoại" id="txtCustomerPhoneNumber">
+                </div>
+                <div class="textfield">
+                    <input type="text" placeholder="Địa chỉ" id="txtCustomerAddress">
+                </div>
+                <div class="textfield">
+                    <textarea placeholder="Ghi chú" id="txtCustomerNote"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-flat close-modal">Đóng</a>
+                <a class="btn-primary" id="btnSubmit">Đặt Hàng</a>
+            </div>
+        </div>
+    </div>
 </body>
 
 
@@ -194,6 +218,10 @@
                 baseController.loadCartDetail();
                
             })
+
+            $('#btnSubmit').off('click').on('click', function () {
+                baseController.submitOrder();
+            });
         },
         loadHeaderCart: function () {
             $.ajax({
@@ -222,6 +250,28 @@
                 }
             });
 
+        },
+        submitOrder: function () {
+            $.LoadingOverlay("show");
+            var data = {
+                Name: $('#txtCustomerName').val(),
+                PhoneNumber: $('#txtCustomerPhoneNumber').val(),
+                Address: $('#txtCustomerAddress').val(),
+                Note: $('#txtCustomerNote').val()
+            };
+
+            $.ajax({
+                url: '/Cart/SubmitOrderInfo',
+                type: 'post',
+                data: { model: data },
+                success: function (res) {
+                    if (res.Success) {
+                        toastr.success("Tạo mới đơn hàng thành công.");
+                        document.location.reload();
+                    }
+                    $.LoadingOverlay("hide");
+                }
+            })
         }
     };
 

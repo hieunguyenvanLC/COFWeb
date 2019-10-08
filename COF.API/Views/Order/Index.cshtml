@@ -113,7 +113,11 @@
                             <thead>
                                 <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
                                     <td><b>Mã đơn hàng</b></td>
+                                    <td><b>Tên tài khoản</b></td>
                                     <td><b>Tên khách hàng</b></td>
+                                    <td><b>Giao tại</b></td>
+                                    <td><b>Số điện thoại</b></td>
+                                    <td><b>Ghi chú </b></td>
                                     <td><b>Tổng số tiền</b></td>
                                     <td><b>Voucher</b></td>
                                     <td><b>Thời gian tạo</b></td>
@@ -145,6 +149,10 @@
     <tr style="text-align:center;vertical-align: middle;">
         <td>{{OrderCode}}</td>
         <td>{{CustomerName}}</td>
+        <td>{{DeliveryCustomer}}</td>
+        <td>{{Address}}</td>
+        <td>{{PhoneNumber}}</td>
+        <td><b style="color:red">{{Notes}}</b></td>
         <td>{{TotalCost}}</td>
         <td>{{DiscountType}}</td>
         <td>{{CreatedDate}}</td>
@@ -158,7 +166,7 @@
     </tr>
 
     <tr id="detail_{{Id}}" hidden>
-        <td colspan="10">
+        <td colspan="14">
         <table class="table table-bordered">
             <thead >
                 <tr style="background-color:#EFFBFB;">
@@ -281,7 +289,9 @@
                                 CancelDateTime : item.CancelDateTime,
                                 CancelBy: item.CancelBy,
                                 OrderStatus: item.OrderStatusDisplay,
-                                DiscountType: item.DiscountTypeDisplay
+                                DiscountType: item.DiscountTypeDisplay,
+                                DeliveryCustomer: item.DeliveryCustomer,
+                                Notes: item.Notes
                             });
 
                         });

@@ -12,6 +12,7 @@ namespace COF.BusinessLogic.Models.Order
         public int Id { get; set; }
         public string OrderCode { get; set; }
         public string CustomerName { get; set; }
+        public string DeliveryCustomer { get; set; }
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string StaffName { get; set; }
@@ -67,6 +68,7 @@ namespace COF.BusinessLogic.Models.Order
                 return description;
             }
         }
+        public string Notes { get; set; }
     }
     public class OrderCreateModel
     {

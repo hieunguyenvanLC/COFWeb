@@ -19,15 +19,17 @@ DECLARE @query NVARCHAR(MAX) ='
 		o.Id,
 		o.OrderCode,
 		customer.FullName as CustomerName,
-		customer.PhoneNumber,
-		customer.Address,
+		o.DeliveryCustomer,
+		o.DeliveryPhone as PhoneNumber,
+		o.DeliveryAddress as Address,
 		u.FullName as StaffName,
 		o.CreatedOnUtc as CreatedDate,
 		o.FinalAmount as TotalCost,
 		o.CancelDate,
 		o.CancelBy,
 		o.OrderStatus,
-		o.DiscountType
+		o.DiscountType,
+		o.Notes
 		from [Order] o
 		left join [Customer] customer on o.CustomerId = customer.Id
 		inner join [User] u on o.UserId = u.Id
@@ -51,6 +53,7 @@ DECLARE @query NVARCHAR(MAX) ='
 		0 Id,
 		null OrderCode,
 		null CustomerName,
+		null DeliveryCustomer,
 		null PhoneNumber,
 		null Address,
 	    null StaffName,
@@ -59,7 +62,8 @@ DECLARE @query NVARCHAR(MAX) ='
 		null CancelDate,
 		null CancelBy,
 		0 OrderStatus,
-		0 DiscountType
+		0 DiscountType,
+		null Notes
 	from paging p
 
 	union all
