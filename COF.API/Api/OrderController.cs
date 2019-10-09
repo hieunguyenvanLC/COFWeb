@@ -1,4 +1,5 @@
 ﻿using COF.API.Core;
+using COF.API.Hubs;
 using COF.API.Models.Order;
 using COF.BusinessLogic.Services;
 using COF.BusinessLogic.Settings;
@@ -6,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -22,15 +24,19 @@ namespace COF.API.Api
         #region fields
         private readonly IOrderService _orderService;
         private readonly IWorkContext _workContext;
+        private readonly IUserService _userService;
+      
         #endregion
 
         #region ctor
         public OrderController(
             IOrderService orderService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IUserService userService)
         {
             _orderService = orderService;
             _workContext = workContext;
+            _userService = userService;
         }
         #endregion
 
@@ -50,6 +56,11 @@ namespace COF.API.Api
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+
+                if (logicResult.Result.OrderCode.ToLower().Contains("online"))
+                {
+                    MessageHub.PushOrderToUser(ConfigurationManager.AppSettings["COF-Listener-ToKi"], model, null);
                 }
                 return SuccessResult();
             }

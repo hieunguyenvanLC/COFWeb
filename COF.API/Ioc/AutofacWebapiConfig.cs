@@ -18,6 +18,8 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using Hangfire;
+using COF.API.Hubs;
+
 namespace COF.API.Ioc
 {
     public class AutofacWebapiConfig
@@ -42,6 +44,7 @@ namespace COF.API.Ioc
             builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
             builder.RegisterModule(new AutofacWebTypesModule());
             builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+            builder.RegisterType<MessageHub>().AsSelf().InstancePerLifetimeScope();
 
 
             // Repositories
