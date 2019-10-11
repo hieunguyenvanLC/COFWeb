@@ -12,7 +12,7 @@ namespace COF.AzureFunctions.Functions
         {
             HttpClient client = new HttpClient();
             await client.GetAsync("http://cof.coffee/");
-            await client.GetAsync("http://cof.coffee/");
+            await client.GetAsync("http://quantri.cof.coffee");
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
         }
     }
