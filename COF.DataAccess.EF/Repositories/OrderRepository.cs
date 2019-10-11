@@ -20,7 +20,9 @@ namespace COF.DataAccess.EF.Repositories
 
         int  GetTotalOrder(int partnerId);
         Task<Order> GetByOrderCode(string orderCode);
-       
+        List<Order> GetAllOrdersInRangeByShop(int shopId, DateTime fromDate, DateTime toDate);
+        List<Order> GetAllOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
+
     }
 
     public partial class OrderRepository : EFRepository<Order>, IOrderRepository
@@ -87,6 +89,25 @@ namespace COF.DataAccess.EF.Repositories
         public async Task<Order> GetByOrderCode(string orderCode)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.OrderCode == orderCode);
+        }
+
+        public List<Order> GetAllOrdersInRangeByShop(int shopId, DateTime fromDate, DateTime toDate)
+        {
+            var result = _dbSet
+                .Include(x => x.OrderDetails)
+                .Where(x => x.ShopId == shopId &&
+                DbFunctions.TruncateTime(x.CreatedOnUtc) >= fromDate.Date && DbFunctions.TruncateTime(x.CreatedOnUtc) <= toDate
+                ).ToList();
+            return result;
+        }
+
+        public List<Order> GetAllOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate)
+        {
+            var result = _dbSet
+                .Include(x => x.OrderDetails)
+                .Where(x => x.PartnerId == partnerId &&
+                DbFunctions.TruncateTime(x.CreatedOnUtc) >= fromDate.Date && DbFunctions.TruncateTime(x.CreatedOnUtc) <= toDate.Date).ToList();
+            return result;
         }
     }
 }

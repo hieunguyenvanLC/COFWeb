@@ -216,7 +216,7 @@
                                     <label for="daterange-btn">Khoảng ngày: </label>
                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-default" data-filtertype="3" id="date-time-display" ></button>
+                                        <button type="button" class="btn btn-default" data-filtertype="2" id="date-time-display" ></button>
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                                             <span class="caret"></span>
                                             <span class="sr-only">Toggle Dropdown</span>
@@ -455,6 +455,7 @@
             $('#date-time-display').data('fromdate', start);
             $('#date-time-display').data('todate', end);
             $('#date-time-display').html(html);
+            
             refreshFilterDetail();
         }
 
@@ -499,8 +500,9 @@
         $('#btnFilterDetail').click(function () {
             var startTime = $('#fromDate').val();
             var endDate = $('#toDate').val();
+            $('#date-time-display').data('filtertype', 4);
             renderRangeFilter(startTime, endDate);
-            $('#searchDateTime').modal('hide');
+            
         });
         function getGeneralInfo() {
 
@@ -534,16 +536,18 @@
                 type: 'post',
                 success: function (res) {
                     if (res.status) {
+                        $('#searchDateTime').modal('hide');
                         var result = res.data;
                         $('#revenue-bar-chart').empty();
                         $('#totalOrder').text(0);
                         $('#totalMoney').text(0);
                         var html = '';
                         var template = $('#data-template').html();
-         
+
 
                         html += '<tr style="background-color: #ddd; text-align: center">';
-                        if (filterType == 2) {
+                        if (filterType == 2 || filterType == 4) {
+
                             html += '<td> <b>Ngày </b></td>';
                         }
                         else if (filterType == 3) {
@@ -559,7 +563,7 @@
                             $.each(result, function (i, item) {
                                 html += Mustache.render(template, {
                                     Header: item.Header,
-                                    Id : i,
+                                    Id: i,
                                     TotalOrder: commonController.formatMoney(item.TotalOrder),
                                     TotalCost: commonController.formatMoney(item.TotalMoney),
                                     Details: renderRevenueDetails(item.Details),
@@ -587,13 +591,16 @@
                         }
                         $('#tblRevenueDetail').html(html);
                     }
+                    else {
+                        toastr.error(res.errorMessage);
+                    }
                 }
             });
         };
 
         loadShopRevenue();
         getGeneralInfo();
-        renderRangeFilter(moment().startOf('year').format('DD-MM-YYYY'), moment().endOf('year').format('DD-MM-YYYY'));
+        renderRangeFilter(moment().startOf('month').format('DD-MM-YYYY'), moment().endOf('month').format('DD-MM-YYYY'));
 
         function renderRevenueDetails (data) {
             var html = '';

@@ -26,6 +26,10 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId);
         int GetTotalOrder(int partnerId);
         Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode, string cancelByUserId, string reason);
+
+
+        BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId,DateTime fromDate, DateTime toDate);
+        BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
     }
 
     public class OrderService : IOrderService
@@ -406,6 +410,26 @@ namespace COF.BusinessLogic.Services
                     ";
             var result = await _unitOfWork.Context.Database.SqlQuery<OrderDetailModelVm>(sql, string.Join(",", orderIds)).ToListAsync();
             return result;
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId, DateTime fromDate, DateTime toDate)
+        {
+            var result = _orderRepository.GetAllOrdersInRangeByShop(shopId, fromDate, toDate);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Success = true,
+                Result = result
+            };
+        }
+
+        public BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate)
+        {
+            var result = _orderRepository.GetAllOrdersInRange(partnerId, fromDate, toDate);
+            return new BusinessLogicResult<List<Order>>
+            {
+                Success = true,
+                Result = result
+            };
         }
         #endregion
 

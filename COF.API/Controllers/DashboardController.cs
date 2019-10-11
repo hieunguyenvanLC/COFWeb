@@ -68,11 +68,39 @@ namespace COF.API.Controllers
             switch (model.Type)
             {
                 case FilterType.InMonth:
-                    result = _reportService.GetShopRevenueReportImMonthModels(user.PartnerId.GetValueOrDefault(), model.ShopId);
+                    result = _reportService.GetShopRevenueReportImMonthModels(
+                        user.PartnerId.GetValueOrDefault(), 
+                        model.ShopId);
                     break;
                 case FilterType.InYear:
-                    result = _reportService.GetShopRevenueReportInYearModels(user.PartnerId.GetValueOrDefault(), model.ShopId);
+                    result = _reportService.GetShopRevenueReportInYearModels(
+                        user.PartnerId.GetValueOrDefault(), 
+                        model.ShopId);
                     break;
+                case FilterType.Customize:
+                 {
+                        if (model._fromDate is null || model._toDate is null)
+                        {
+                            return HttpPostErrorResponse("Phải nhập ngày bắt đầu và ngày kết thúc.");
+                        }
+
+                        if (model._fromDate > model._toDate)
+                        {
+                            return HttpPostErrorResponse("Ngày kết thúc phải trễ hơn ngày bắt đầu.");
+                        }
+                        if ((model._toDate.Value - model._fromDate.Value).Days > 30)
+                        {
+                            return HttpPostErrorResponse("Chỉ cho phép tìm kiếm trong 30 ngày.");
+                        }
+
+                        result = _reportService.GetShopRevenueReportInRange(
+                        user.PartnerId.GetValueOrDefault(),
+                        model.ShopId,
+                        model._fromDate.GetValueOrDefault(),
+                        model._toDate.GetValueOrDefault());
+                        break;
+                 }
+                    
             }
             return HttpPostSuccessResponse(result);
         }

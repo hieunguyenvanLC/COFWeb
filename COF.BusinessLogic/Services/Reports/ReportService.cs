@@ -18,6 +18,7 @@ namespace COF.BusinessLogic.Services.Reports
         List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId);
         List<ShopRevenueReportModel> GetShopRevenueReportImMonthModels(int partnerId,int? shopId);
         List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId);
+        List<ShopRevenueReportModel> GetShopRevenueReportInRange(int partnerId, int? shopId, DateTime fromDate, DateTime toDate);
 
     }
     public class ReportService : IReportService
@@ -121,6 +122,43 @@ namespace COF.BusinessLogic.Services.Reports
             }).ToList();
 
             return result;
+        }
+
+        public List<ShopRevenueReportModel> GetShopRevenueReportInRange(int partnerId, int? shopId, DateTime fromDate, DateTime toDate)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInRangeShopId(shopId.Value,fromDate,toDate);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInRange(partnerId,fromDate,toDate);
+                allOrders = queryRes.Result;
+            }
+            allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
+
+            var groupByData = allOrders.GroupBy(x => x.CreatedOnUtc.Date).OrderBy(x => x.Key).ToList();
+
+            var result = new List<ShopRevenueReportModel>();
+            foreach (var item in groupByData)
+            {
+                var orders = item.ToList();
+                var tmp = new ShopRevenueReportModel
+                {
+                    Header = $"{item.Key.ToString("dd/MM/yy")}",
+                    Details = GetOrderDetails(orders),
+                    TotalMoney = orders
+                                 .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum(),
+                    TotalOrder = orders.Count()
+                };
+                tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
+                result.Add(tmp);
+            }
+            return result;
+
         }
 
         public List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId)
