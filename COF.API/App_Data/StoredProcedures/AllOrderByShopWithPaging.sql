@@ -22,7 +22,7 @@ DECLARE @query NVARCHAR(MAX) ='
 		customer.PhoneNumber,
 		customer.Address,
 		u.FullName as StaffName,
-		o.CreatedOnUtc as CreatedDate,
+		o.CheckInDate as CreatedDate,
 		o.FinalAmount as TotalCost,
 		o.CancelDate,
 		o.CancelBy,

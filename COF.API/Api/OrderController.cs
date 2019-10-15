@@ -59,6 +59,38 @@ namespace COF.API.Api
             }
         }
 
+
+        [HttpPost]
+        [Route("create-unpublished-order")]
+        public async Task<HttpResponseMessage> CreateUnpublishedOrderAsync([FromBody] ServiceModels.Order.OrderCreateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ErrorResult(ModelStateErrorMessage());
+                }
+
+                var order = await _orderService.GetByOrderCodeAsync(model.OrderCode);
+
+                if (order.Result != null)
+                {
+                    return ErrorResult("OrderCode da ton tai.");
+                }
+
+                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
+                if (logicResult.Validations != null)
+                {
+                    return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+                return SuccessResult();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResult(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("cancel")]
         public async Task<HttpResponseMessage> CancelOrder(OrderCancelModel model)

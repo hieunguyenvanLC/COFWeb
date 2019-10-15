@@ -26,8 +26,7 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInYearByShopId(int shopId);
         int GetTotalOrder(int partnerId);
         Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode, string cancelByUserId, string reason);
-
-
+        Task<BusinessLogicResult<Order>> GetByOrderCodeAsync(string orderCode);
         BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId,DateTime fromDate, DateTime toDate);
         BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
     }
@@ -426,6 +425,16 @@ namespace COF.BusinessLogic.Services
         {
             var result = _orderRepository.GetAllOrdersInRange(partnerId, fromDate, toDate);
             return new BusinessLogicResult<List<Order>>
+            {
+                Success = true,
+                Result = result
+            };
+        }
+
+        public async Task<BusinessLogicResult<Order>> GetByOrderCodeAsync(string orderCode)
+        {
+            var result = await _orderRepository.GetByOrderCode(orderCode);
+            return new BusinessLogicResult<Order>
             {
                 Success = true,
                 Result = result
