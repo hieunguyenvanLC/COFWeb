@@ -100,7 +100,9 @@ namespace COF.DataAccess.EF.Models
     {
         None = 0,
         OneGetOne = 1,
-        _20kDiscount = 2
+        _20kDiscount = 2,
+        FiveGetOne = 3,
+        Delivery = 4
     }
 
 }
