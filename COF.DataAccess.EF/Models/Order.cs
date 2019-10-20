@@ -102,7 +102,8 @@ namespace COF.DataAccess.EF.Models
         OneGetOne = 1,
         _20kDiscount = 2,
         FiveGetOne = 3,
-        Delivery = 4
+        Delivery = 4,
+        Sharing = 5
     }
 
 }
