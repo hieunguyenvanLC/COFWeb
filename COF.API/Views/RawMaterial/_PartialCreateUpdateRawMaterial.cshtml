@@ -1,0 +1,49 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="addOrUpdateRmModal" tabindex="-1" role="dialog" aria-labelledby="addPriceModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="box-title" id="lblTitle"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <input id="txtHiddenId" value="0" hidden type="text" />
+                            <label for="txtName" class="col-sm-2 control-label">Tên</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="txtName" placeholder="Nhập tên danh mục ....">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                           
+                            <label for="txtName" class="col-sm-2 control-label">Đơn vị</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="ddlRawMaterialUnits">
+                                    <option>
+                                        Đơn vị
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtDescription" class="col-sm-2 control-label">Mô tả</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ...."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCancel" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnSave" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>

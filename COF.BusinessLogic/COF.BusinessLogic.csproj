@@ -149,6 +149,8 @@
     <Compile Include="Models\Customer\CustomerModel.cs" />
     <Compile Include="Models\Order\OrderModel.cs" />
     <Compile Include="Models\Product\ProductByCategoryModel.cs" />
+    <Compile Include="Models\RawMaterial\RawMaterialModel.cs" />
+    <Compile Include="Models\RawMaterial\RawMaterialRequestModel.cs" />
     <Compile Include="Models\Report\PartnerDailyOrderReport.cs" />
     <Compile Include="Models\Report\PartnerRevenueMonthlyReport.cs" />
     <Compile Include="Models\Shop\ShopModel.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="Services\OrderSerivce.cs" />
     <Compile Include="Services\PartnerService.cs" />
     <Compile Include="Services\ProductCategoryService.cs" />
+    <Compile Include="Services\RawMateterialService.cs" />
     <Compile Include="Services\Reports\ReportService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\ScheduleTaskService.cs" />

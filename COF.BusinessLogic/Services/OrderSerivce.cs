@@ -103,6 +103,20 @@ namespace COF.BusinessLogic.Services
                 }
 
                 var order = await _orderRepository.GetByOrderCode(model.OrderCode);
+
+                // validate use Active Bonus Point
+                if (model.DiscountType == DiscountType.UseActiveBonus)
+                {
+                    if ((decimal) model.FinalAmount >= customer.ActiveBonusPoint * 1000.0m)
+                    {
+                        return new BusinessLogicResult<Order>
+                        {
+                            Success = false,
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Tổng số điểm hiện tại không đủ để trừ.") })
+                        };
+                    }
+                }
+
                 if (order is null)
                 {
 
@@ -199,6 +213,7 @@ namespace COF.BusinessLogic.Services
                     var allLevels = await _bonusLevelRepository.GetAllAsync();
                     var point = Math.Round((decimal) model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
 
+
                     var orderHistory = new BonusPointHistory
                     {
                         PartnerId = customer.PartnerId,
@@ -208,7 +223,16 @@ namespace COF.BusinessLogic.Services
                     };
 
                     customer.TotalBonusPoint += point;
-                    customer.ActiveBonusPoint += point;
+
+                    if (model.DiscountType == DiscountType.UseActiveBonus)
+                    {
+                        customer.ActiveBonusPoint -= point;
+                    }
+                    else
+                    {
+                        customer.ActiveBonusPoint += point;
+                    }
+                    
                     var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
                     customer.BonusLevelId = newLevel.Id;
 

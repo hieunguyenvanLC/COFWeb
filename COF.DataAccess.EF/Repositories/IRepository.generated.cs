@@ -13,6 +13,10 @@ namespace COF.DataAccess.EF.Repositories
 	using COF.DataAccess.EF.Infrastructure;
 	using Models = COF.DataAccess.EF.Models;
 	
+	public partial interface IRawMaterialUnitRepository : IRepository<Models.RawMaterialUnit> {}
+	
+	public partial class RawMaterialUnitRepository : EFRepository<Models.RawMaterialUnit>, IRawMaterialUnitRepository { public RawMaterialUnitRepository(EFContext context) : base(context){} }
+	
 	public partial interface IShopRepository : IRepository<Models.Shop> {}
 	
 	public partial class ShopRepository : EFRepository<Models.Shop>, IShopRepository { public ShopRepository(EFContext context) : base(context){} }
@@ -60,6 +64,10 @@ namespace COF.DataAccess.EF.Repositories
 	public partial interface ISizeRepository : IRepository<Models.Size> {}
 	
 	public partial class SizeRepository : EFRepository<Models.Size>, ISizeRepository { public SizeRepository(EFContext context) : base(context){} }
+	
+	public partial interface IRawMaterialRepository : IRepository<Models.RawMaterial> {}
+	
+	public partial class RawMaterialRepository : EFRepository<Models.RawMaterial>, IRawMaterialRepository { public RawMaterialRepository(EFContext context) : base(context){} }
 	
 	public partial interface IBonusLevelRepository : IRepository<Models.BonusLevel> {}
 	

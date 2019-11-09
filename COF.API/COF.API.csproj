@@ -308,6 +308,7 @@
     <Compile Include="Api\CustomerController.cs" />
     <Compile Include="Api\ExportController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\RawMaterialController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Filter\Hangfire\HangfireAuthFilter.cs" />
     <Compile Include="Models\Customer\CustomerCreateModel.cs" />
@@ -351,6 +352,7 @@
   <ItemGroup>
     <Content Include="App_Data\databaseUpgradeByCodeFirst.txt" />
     <Content Include="App_Data\Functions\nop_splitstring_to_table.sql" />
+    <Content Include="App_Data\StoredProcedures\AllRawMaterialByShopWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllUserByPartnerIdWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllCustomerByPartnerIdWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllOrderByShopWithPaging.sql" />
@@ -7218,6 +7220,8 @@
     <Content Include="Views\Shared\_MenuPartial.cshtml" />
     <Content Include="Views\Staff\_PartialCreateUpdateStaff.cshtml" />
     <Content Include="Views\Staff\_ParitalResetPassword.cshtml" />
+    <Content Include="Views\RawMaterial\Index.cshtml" />
+    <Content Include="Views\RawMaterial\_PartialCreateUpdateRawMaterial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filter\Mvc\" />

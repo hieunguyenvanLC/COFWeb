@@ -12,6 +12,8 @@ namespace COF.BusinessLogic.Models.Customer
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
+        public decimal ActiveBonusPoint { get; set; }
+        public string BonusLevel { get; set; }
     }
     public class CustomerCreateModel
     {

@@ -38,6 +38,8 @@
         public DbSet<ScheduleTask> ScheduleTasks { get; set; }
         public DbSet<BonusLevel> BonusLevels { get; set; }
         public DbSet<BonusPointHistory> BonusPointHistories { get; set; }
+        public DbSet<RawMaterial> RawMaterials { get; set; }
+        public DbSet<RawMaterialUnit> MaterialUnits { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

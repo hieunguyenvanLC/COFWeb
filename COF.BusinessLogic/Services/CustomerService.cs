@@ -100,7 +100,10 @@ namespace COF.BusinessLogic.Services
                 {
                     Id = customer.Id,
                     FullName = customer.FullName,
-                    PhoneNumber = customer.PhoneNumber
+                    PhoneNumber = customer.PhoneNumber,
+                    ActiveBonusPoint = customer.ActiveBonusPoint,
+                    Address = customer.Address,
+                    BonusLevel = customer.BonusLevel.Name
                 };
             }
             return resut;

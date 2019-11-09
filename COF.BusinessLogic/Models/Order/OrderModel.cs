@@ -133,7 +133,8 @@ namespace COF.BusinessLogic.Models.Order
     public enum OrderType
     {
          AtShop = 1,
-         Online = 2
+         Online = 2,
+         MobileApplication = 3
     }
 
     
