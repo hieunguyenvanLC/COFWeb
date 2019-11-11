@@ -17,6 +17,10 @@ namespace COF.DataAccess.EF.Repositories
 	
 	public partial class RawMaterialUnitRepository : EFRepository<Models.RawMaterialUnit>, IRawMaterialUnitRepository { public RawMaterialUnitRepository(EFContext context) : base(context){} }
 	
+	public partial interface IRawMaterialHistoryRepository : IRepository<Models.RawMaterialHistory> {}
+	
+	public partial class RawMaterialHistoryRepository : EFRepository<Models.RawMaterialHistory>, IRawMaterialHistoryRepository { public RawMaterialHistoryRepository(EFContext context) : base(context){} }
+	
 	public partial interface IShopRepository : IRepository<Models.Shop> {}
 	
 	public partial class ShopRepository : EFRepository<Models.Shop>, IShopRepository { public ShopRepository(EFContext context) : base(context){} }

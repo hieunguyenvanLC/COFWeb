@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,21 @@ namespace COF.DataAccess.EF.Models
         public int RawMaterialId { get; set; }
         public RawMaterial RawMaterial { get; set; }
         public int TotalQtyAtTimeAccess { get; set; }
+        [NotMapped]
+        public int OldQty
+        {
+            get
+            {
+                if (TransactionTypeId == TransactionType.Increasement)
+                {
+                    return TotalQtyAtTimeAccess - Quantity;
+                }
+                else
+                {
+                    return TotalQtyAtTimeAccess + Quantity;
+                }
+            }
+        }
         public int PartnerId { get; set; }
     }
     public enum TransactionType

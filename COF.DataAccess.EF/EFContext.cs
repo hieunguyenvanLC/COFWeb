@@ -40,6 +40,7 @@
         public DbSet<BonusPointHistory> BonusPointHistories { get; set; }
         public DbSet<RawMaterial> RawMaterials { get; set; }
         public DbSet<RawMaterialUnit> MaterialUnits { get; set; }
+        public DbSet<RawMaterialHistory> RawMaterialHistories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

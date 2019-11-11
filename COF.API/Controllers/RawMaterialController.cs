@@ -129,5 +129,85 @@ namespace COF.API.Controllers
                 return HttpPostErrorResponse(ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("nguyen-lieu/{id}")]
+        public async Task<ActionResult> Detail(int id)
+        {
+            try
+            {
+                var queryRes = await _rawMateterialService.GetByIdAsync(id);
+                var rm = queryRes.Result;
+                var res = new RawMaterialDetailModel
+                {
+                    Id = rm.Id,
+                    Name = rm.Name,
+                    Description = rm.Description,
+                    RawMaterialUnitId = rm.RawMaterialUnitId,
+                    RawMaterialUnitName = rm.RawMaterialUnit.Name,
+                    AutoTotalQty = rm.AutoTotalQty,
+                    UserInputTotalQty = rm.UserInputTotalQty,
+                    ShopId = rm.ShopId,
+                    Shop = rm.Shop.ShopName
+                };
+                return View(res);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateQty(RmUpdateQtyModel model)
+        {
+            try
+            {
+                var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                var logicRes = await _rawMateterialService.UpdateRmQty( user.PartnerId.GetValueOrDefault() , model.Id, model.Qty, user.FullName);
+                if (logicRes.Validations != null)
+                {
+                    return HttpPostErrorResponse(logicRes.Validations.Errors[0].ErrorMessage);
+                }
+                return HttpPostSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> RmHistoriesWithPaging(int id, int pageSize = 15, int pageIndex = 1)
+        {
+            try
+            {
+                var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+                var logicRes = await _rawMateterialService.GetHistoriesWithPaging(id,pageIndex,pageSize,"");
+                if (!logicRes.Success)
+                {
+                    return HttpGetErrorResponse(logicRes.Validations.Errors[0].ToString());
+                }
+                var totalData = logicRes.Result;
+                var record = totalData.FirstOrDefault();
+                var totalRecord = record.RowCounts;
+
+                totalData.Remove(record);
+                var res = new PaginationSet<ServiceModels.RawMaterial.RawMaterialHistoryDetailModel>
+                {
+                    Items = totalData,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    TotalRows = totalRecord.GetValueOrDefault()
+                };
+                return HttpGetSuccessResponse(res);
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(ex.Message);
+            }
+        }
     }
 }

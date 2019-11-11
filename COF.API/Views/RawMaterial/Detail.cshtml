@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using COF.BusinessLogic.Models.RawMaterial;
+@model RawMaterialDetailModel
+
+<section class="content-header">
+    <h1>
+        @Model.Name 
+
+    </h1>
+    @*<ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
+            <li><a href="#">Tables</a></li>
+            <li class="active">Simple</li>
+        </ol>*@
+</section>
+
+<section class="content">
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="tableContent" class="box-body table-responsive">
+                          
+                        <div class="nav-tabs-custom">
+
+
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#tab_mainInfo"
+                                       data-id="" class="shop-tab" data-toggle="tab" aria-expanded="true">Thông tin chính</a>
+                                </li>
+                                <li>
+                                    <a href="#tab_transactionHistory"
+                                       data-id="" class="shop-tab" data-toggle="tab" aria-expanded="true">Lịch sử</a>
+                                </li>
+                            </ul>
+
+
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_mainInfo">
+                                    <div class="form-horizontal">
+                                        <div class="box-body">
+                                            <div class="form-group">
+                                                <input id="txtHiddenId" value="0" hidden type="text" />
+                                                <label for="txtName" class="col-sm-2 control-label">Tên</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="txtName" placeholder="Nhập tên danh mục ...." value="@Model.Name">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+
+                                                <label for="txtName" class="col-sm-2 control-label">Đơn vị</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" id="ddlRawMaterialUnits">
+                                                        <option>
+                                                            Đơn vị
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="txtDescription" class="col-sm-2 control-label">Mô tả</label>
+                                                <div class="col-sm-10">
+                                                    <textarea class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ...." >@Model.Description</textarea>
+                                                </div>
+                                            </div>
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_transactionHistory">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_3">
+
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div>
+
+                        <div>
+
+                          
+                        </div>
+
+
+                    </div>
+                   
+
+                </div>
+
+            </div>
+            <!-- ./box-body -->
+
+        </div>
+
+
+    </div>
+</section>
+
+

@@ -20,4 +20,10 @@ namespace COF.BusinessLogic.Models.RawMaterial
         [Required(ErrorMessage = "Chi nhánh là bắt buộc")]
         public int ShopId { get; set; }
     }
+
+    public class RmUpdateQtyModel
+    {
+        public int Id { get; set; }
+        public int Qty { get; set; }
+    }
 }

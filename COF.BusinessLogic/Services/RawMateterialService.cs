@@ -1,5 +1,6 @@
 ﻿using COF.BusinessLogic.Models.RawMaterial;
 using COF.BusinessLogic.Settings;
+using COF.Common.Helper;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
@@ -17,6 +18,10 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllWithPaging(int shopId, int pageIndex, int pageSize, string keyword);
         Task<BusinessLogicResult<bool>> CreateAsync(int shopId, RawMaterialRequestModel model);
         Task<BusinessLogicResult<List<RawMaterialUnitModel>>> GetAllRmUnitsAsync();
+        Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id);
+        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, int qty, string updateBy);
+
+        Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword);
     }
     public class RawMateterialService : IRawMateterialService
     {
@@ -25,6 +30,7 @@ namespace COF.BusinessLogic.Services
         private readonly IRawMaterialRepository _rawMaterialRepository;
         private readonly IRawMaterialUnitRepository _rawMaterialUnitRepository;
         private readonly IShopRepository _shopRepository;
+        private readonly IRawMaterialHistoryRepository _rawMaterialHistoryRepository;
         #endregion
 
         #region ctor
@@ -32,12 +38,14 @@ namespace COF.BusinessLogic.Services
             IUnitOfWork unitOfWork,
             IRawMaterialRepository rawMaterialRepository,
             IRawMaterialUnitRepository rawMaterialUnitRepository,
-            IShopRepository shopRepository
+            IShopRepository shopRepository,
+            IRawMaterialHistoryRepository rawMaterialHistoryRepository
             )
         {
             _unitOfWork = unitOfWork;
             _rawMaterialRepository = rawMaterialRepository;
             _rawMaterialUnitRepository = rawMaterialUnitRepository;
+            _rawMaterialHistoryRepository = rawMaterialHistoryRepository;
             _shopRepository = shopRepository;
         }
         #endregion
@@ -71,9 +79,6 @@ namespace COF.BusinessLogic.Services
             try
             {
                 var shop = await _shopRepository.GetByIdAsync(shopId);
-
-                
-
                 var rawMaterialUnit = await _rawMaterialUnitRepository.GetByIdAsync(model.RawMaterialUnitId);
                 if (rawMaterialUnit is null)
                 {
@@ -133,6 +138,111 @@ namespace COF.BusinessLogic.Services
             catch (Exception ex)
             {
                 return new BusinessLogicResult<List<RawMaterialUnitModel>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id)
+        {
+            try
+            {
+                var res = await _rawMaterialRepository.GetByIdAsync(id);
+                return new BusinessLogicResult<RawMaterial>
+                {
+                    Success = true,
+                    Result = res
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new BusinessLogicResult<RawMaterial>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+
+       
+
+        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, int qty, string updateBy)
+        {
+            try
+            {
+                var rm = await _rawMaterialRepository.GetByIdAsync(id);
+                if (rm is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Id", "Nguyên liệu không tồn tại.") })
+                    };
+                }
+
+                var diffrentQty = qty - rm.AutoTotalQty;
+
+                rm.AutoTotalQty = qty;
+                rm.UserInputTotalQty = qty;
+                _rawMaterialRepository.Update(rm, updateBy);
+
+                #region log history
+
+                
+
+                var rawMaterialHistory = new RawMaterialHistory
+                {
+                    TimeAccess = DateTimeHelper.CurentVnTime,
+                    PartnerId = parnterId,
+                    RawMaterialId = rm.Id,
+                    Quantity = Math.Abs(diffrentQty),
+                    TransactionTypeId = diffrentQty > 0 ? TransactionType.Increasement : TransactionType.Decreasement,
+                    TotalQtyAtTimeAccess = qty,
+                    CreatedBy = updateBy,
+                    InputTypeId = InputType.UserInput
+                };
+
+                _rawMaterialHistoryRepository.Add(rawMaterialHistory, updateBy);
+
+                #endregion
+
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword)
+        {
+            try
+            {
+                var sql = "exec AllRawMaterialHistoriesWithPaging @p0, @p1, @p2, @p3";
+                var result = await _unitOfWork.Context.Database.SqlQuery<RawMaterialHistoryDetailModel>(sql, id, pageIndex, pageSize, keyword)
+                    .ToListAsync();
+
+                return new BusinessLogicResult<List<RawMaterialHistoryDetailModel>>
+                {
+                    Result = result,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<RawMaterialHistoryDetailModel>>
                 {
                     Success = false,
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })

@@ -352,6 +352,7 @@
   <ItemGroup>
     <Content Include="App_Data\databaseUpgradeByCodeFirst.txt" />
     <Content Include="App_Data\Functions\nop_splitstring_to_table.sql" />
+    <Content Include="App_Data\StoredProcedures\AllRawMaterialHistoriesWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllRawMaterialByShopWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllUserByPartnerIdWithPaging.sql" />
     <Content Include="App_Data\StoredProcedures\AllCustomerByPartnerIdWithPaging.sql" />
@@ -7222,6 +7223,7 @@
     <Content Include="Views\Staff\_ParitalResetPassword.cshtml" />
     <Content Include="Views\RawMaterial\Index.cshtml" />
     <Content Include="Views\RawMaterial\_PartialCreateUpdateRawMaterial.cshtml" />
+    <Content Include="Views\RawMaterial\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filter\Mvc\" />

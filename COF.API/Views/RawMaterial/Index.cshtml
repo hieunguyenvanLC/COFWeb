@@ -109,6 +109,7 @@
                                     <td><b>Tên nguyên liệu</b></td>
                                     <td><b>Mô tả</b></td>
                                     <td><b>Đơn vị</b></td>
+                                    <td><b>Số lượng</b></td>
                                     <td><b>Thao tác</b></td>
                                 </tr>
                             </thead>
@@ -134,46 +135,33 @@
         <td>{{Name}}</td>
         <td>{{Description}}</td>
         <td>{{RawMaterialUnitName}}</td>
+        <td style="width:10%"><span id="currentQty_{{Id}}">
+    {{AutoTotalQtyFormat}}
+</span>
+        <input type="tel" class="form-control qtyInput"  style="display:none" data-id="{{Id}}" id="inputCurrentQty_{{Id}}" value="{{AutoTotalQty}}"/>
+        
+        </td>
+        <td style="width:15%">
+            <div id="mainControl_{{Id}}">
+                <a class="btn btn-success btnUpdateInventory" data-id="{{Id}}"> Cập nhật tồn kho</a>
+                <a class="btn btn-primary" href="/nguyen-lieu/{{Id}}"> Chi tiết</a>
+            </div>
 
-        <td>
-            <button data-id="{{Id}}" class="btn btn-primary btnDetail"><i class="fa fa-edit"></i></button>
+            <div id="saveQtyControl_{{Id}}" hidden>
+                <a class="btn btn-success btnSaveQuantity" data-id="{{Id}}"> Cập nhật</a>
+                <a class="btn btn-default btnCancel" id="btnCancel_{{Id}}" data-originalqty="{{AutoTotalQty}}" data-id="{{Id}}"> Hủy</a>
+            </div>
+            
+
         </td>
     </tr>
-
-    @*<tr id="detail_{{Id}}" hidden>
-            <td colspan="10">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr style="background-color:#EFFBFB;">
-                            <th><b>Tên nguyên liệu</b></th>
-                            <th><b>Mô tả</b></th>
-                            <th><b>Đơn vị</b></th>
-                            <th><b>Đơn giá</b></th>
-                            <th><b>Thành tiền</b></th>
-                            <th><b>Ghi chú</b></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{{OrderDetails}}}
-                        <tr>
-                            <td colspan="4"><b>Tổng</b></td>
-                            <td><b>{{TotalCost}}</b></td>
-                            <td><b></b></td>
-                        </tr>
-
-
-                    </tbody>
-                </table>
-                <button style="float:right" type="button" data-id="{{Id}}" class="btn btn-danger btnCloseDetail">Đóng</button>
-            </td>
-
-        </tr>*@
 </script>
 
 @{
     Html.RenderPartial("_PartialCreateUpdateRawMaterial");
 }
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.12.0/jquery.mask.min.js"></script>
 <script>
     var homeconfig = {
         pageSize: 10,
@@ -249,6 +237,38 @@
                 };
                 rawMaterialController.saveData(data);
             });
+
+            $('.qtyInput').mask('000.000.000.000.000', { reverse: true });
+            $('.btnUpdateInventory').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#currentQty_' + id).hide();
+                $('#inputCurrentQty_' + id).show();
+
+                $('#saveQtyControl_' + id).show();
+                $('#mainControl_' + id).hide();
+            });
+
+            $('.btnCancel').off('click').on('click', function () {
+                var id = $(this).data('id');
+                $('#currentQty_' + id).val($(this).data('originalqty'))
+                $('#currentQty_' + id).show();
+                $('#inputCurrentQty_' + id).hide();
+
+                $('#saveQtyControl_' + id).hide();
+                $('#mainControl_' + id).show();
+            });
+
+            $('.btnSaveQuantity').off('click').on('click', function () {
+                var id = $(this).data('id');
+                var quantity = $('#inputCurrentQty_' + id).val().split('.').join('');
+                rawMaterialController.updateRawMaterialQty(id, quantity);
+            });
+
+
+        },
+        formatMoney: function (value) {
+            var ressult = accounting.formatMoney(value, "", 0, ".", ","); // €4.999,99
+            return ressult;
         },
         loadData: function (shopId, changePageSize) {
             homeconfig.allCategories = [];
@@ -279,7 +299,9 @@
                                 Id: item.Id,
                                 Name: item.Name,
                                 Description: item.Description,
-                                RawMaterialUnitName: item.RawMaterialUnitName
+                                RawMaterialUnitName: item.RawMaterialUnitName,
+                                AutoTotalQty: item.AutoTotalQty,
+                                AutoTotalQtyFormat: rawMaterialController.formatMoney(item.AutoTotalQty)
                             });
 
                         });
@@ -328,20 +350,6 @@
                     setTimeout(callback, 200);
                 }
             });
-        },
-        renderOrderDetails: function (data) {
-            var html = '';
-            $.each(data, function (i, item) {
-                html += '<tr style="">';
-                html += '<td>' + item.ProductName + '</td>';
-                html += '<td>' + item.Size + '</td>';
-                html += '<td>' + item.Quantity + '</td>';
-                html += '<td>' + commonController.formatMoney(item.Cost) + '</td>';
-                html += '<td>' + commonController.formatMoney(item.Total) + '</td>';
-                html += '<td>' + item.Description + '</td>';
-                html += '</tr>';
-            });
-            return html;
         },
         loadRawMaterialUnits: function () {
             $.ajax({
@@ -396,6 +404,27 @@
                 })
             }
         },
+        updateRawMaterialQty(id, qty) {
+            $.ajax({
+                url: '/rawmaterial/updateqty',
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    model: { Id: id, Qty: qty }
+                },
+                success: function (res) {
+                    if (res.status) {
+                        toastr.success("Cập nhật tồn kho thành công.");
+                        $('#currentQty_' + id).data('originalqty', qty);
+                        $('#currentQty_' + id).text(rawMaterialController.formatMoney(qty));
+                        $('#btnCancel_' + id).click();
+                        
+                    } else {
+                        toastr.error("Cập nhật tồn kho không thành công.")
+                    }
+                }
+            })
+        }
     };
     rawMaterialController.run();
 
