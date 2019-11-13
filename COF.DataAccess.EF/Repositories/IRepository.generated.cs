@@ -80,5 +80,13 @@ namespace COF.DataAccess.EF.Repositories
 	public partial interface ICustomerRepository : IRepository<Models.Customer> {}
 	
 	public partial class CustomerRepository : EFRepository<Models.Customer>, ICustomerRepository { public CustomerRepository(EFContext context) : base(context){} }
+	
+	public partial interface IProductHasRawMaterialRepository : IRepository<Models.ProductHasRawMaterial> {}
+	
+	public partial class ProductHasRawMaterialRepository : EFRepository<Models.ProductHasRawMaterial>, IProductHasRawMaterialRepository { public ProductHasRawMaterialRepository(EFContext context) : base(context){} }
+	
+	public partial interface IProductSizeRawMaterialRepository : IRepository<Models.ProductSizeRawMaterial> {}
+	
+	public partial class ProductSizeRawMaterialRepository : EFRepository<Models.ProductSizeRawMaterial>, IProductSizeRawMaterialRepository { public ProductSizeRawMaterialRepository(EFContext context) : base(context){} }
 }
 

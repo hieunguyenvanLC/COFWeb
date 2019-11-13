@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COF.BusinessLogic.Models.Product;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,7 +24,10 @@ namespace COF.API.Models.Product
 
         public bool IsActive { get; set; }
         public string Image { get; set; }
+        public List<ProductRmUpdateModel> Rms { get; set; } 
     }
+    
+    
 
     public class ProductSizeCreateModel
     {

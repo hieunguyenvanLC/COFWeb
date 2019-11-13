@@ -313,6 +313,7 @@
     <Compile Include="Filter\Hangfire\HangfireAuthFilter.cs" />
     <Compile Include="Models\Customer\CustomerCreateModel.cs" />
     <Compile Include="Models\Dashboard\FilterRevenueModel.cs" />
+    <Compile Include="Models\Product\ProductSizeFormularModel.cs" />
     <Compile Include="Models\Shared\PaginationSet.cs" />
     <Compile Include="Api\Core\ServiceFactory.cs" />
     <Compile Include="Api\OrderController.cs" />
@@ -7224,6 +7225,7 @@
     <Content Include="Views\RawMaterial\Index.cshtml" />
     <Content Include="Views\RawMaterial\_PartialCreateUpdateRawMaterial.cshtml" />
     <Content Include="Views\RawMaterial\Detail.cshtml" />
+    <Content Include="Views\Product\_PartialUpdateProductRm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filter\Mvc\" />

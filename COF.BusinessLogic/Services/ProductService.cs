@@ -1,4 +1,5 @@
 ﻿using COF.BusinessLogic.Models.Product;
+using COF.BusinessLogic.Models.RawMaterial;
 using COF.BusinessLogic.Settings;
 using COF.DataAccess.EF.Infrastructure;
 using COF.DataAccess.EF.Models;
@@ -26,6 +27,11 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<bool>> UpdateProductSizeAsync(int id, ProductSizeRequestModel model);
 
         List<ProductByCategoryModel> GetAllProducts(string keyword, int shopId);
+
+        Task<BusinessLogicResult<List<ProductFormularForAllSize>>> GetFormularByProductId(int productId);
+        Task<BusinessLogicResult<List<RawMaterialModel>>> GetRms(int productId);
+
+        Task<BusinessLogicResult<bool>> UpdateFormularByProductId(List<ProductSizeRawMaterial> model);
     }
     public class ProductService : IProductService
     {
@@ -37,6 +43,8 @@ namespace COF.BusinessLogic.Services
         private readonly IShopRepository _shopRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly IProductSizeRepository _productSizeRepository;
+        private readonly IProductHasRawMaterialRepository _productHasRawMaterialRepository;
+        private readonly IProductSizeRawMaterialRepository _productSizeRawMaterialRepository;
         #endregion
 
         #region ctor
@@ -47,7 +55,9 @@ namespace COF.BusinessLogic.Services
             ICategoryRepository categoryRepository,
             IShopRepository shopRepository,
             ISizeRepository sizeRepository,
-            IProductSizeRepository productSizeRepository
+            IProductSizeRepository productSizeRepository,
+            IProductHasRawMaterialRepository productHasRawMaterialRepository,
+            IProductSizeRawMaterialRepository productSizeRawMaterialRepository
         )
         {
             _productRepository = productRepository;
@@ -56,6 +66,8 @@ namespace COF.BusinessLogic.Services
             _shopRepository = shopRepository;
             _sizeRepository = sizeRepository;
             _productSizeRepository = productSizeRepository;
+            _productHasRawMaterialRepository = productHasRawMaterialRepository;
+            _productSizeRawMaterialRepository = productSizeRawMaterialRepository;
 
         }
         #endregion
@@ -145,6 +157,11 @@ namespace COF.BusinessLogic.Services
                         SizeId = z.SizeId,
                         Cost = z.Cost,
                         Size = z.Size.Name
+                    }).ToList(),
+                    Rms = product.ProductHasRawMaterials.Select(x => new ProductRmUpdateModel
+                    {
+                        Id = x.RawMaterialId,
+                        Name = x.RawMaterial.Name
                     }).ToList()
                 };
             }
@@ -182,10 +199,19 @@ namespace COF.BusinessLogic.Services
                     Description = model.Description,
                     ShopId = model.ShopId,
                     PartnerId = model.PartnerId,
-                    ProductImage = model.Image
+                    ProductImage = model.Image,
+                    ProductHasRawMaterials = model.Rms.Select(x => new ProductHasRawMaterial
+                    {
+                        RawMaterialId = x.Id,
+                        PartnerId = model.PartnerId
+                    }).ToList()
                 };
 
                 _productRepository.Add(product);
+
+
+
+
                  await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Product>
                 {
@@ -312,6 +338,18 @@ namespace COF.BusinessLogic.Services
                 product.Description = model.Description;
                 product.IsActive = model.IsActive;
                 product.ProductImage = model.Image;
+
+                _productHasRawMaterialRepository.RemoveMultiple(product.ProductHasRawMaterials.ToList());
+
+                var newRms = model.Rms.Select(x => new ProductHasRawMaterial
+                {
+                    ProductId = product.Id,
+                    PartnerId = product.PartnerId,
+                    RawMaterialId = x.Id
+                }).ToList();
+
+                _productHasRawMaterialRepository.AddMultiple(newRms);
+
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Product>
                 {
@@ -443,6 +481,93 @@ namespace COF.BusinessLogic.Services
 
             }).ToList();
             return result;
+        }
+
+        public async Task<BusinessLogicResult<List<ProductFormularForAllSize>>> GetFormularByProductId(int productId)
+        {
+            try
+            {
+                var productSizes = await _productSizeRepository.GetByFilterAsync(x => x.ProductId == productId);
+                var result = productSizes.Select(x => new ProductFormularForAllSize
+                {
+                    ProductSizeId = x.Id,
+                    Size = x.Size.Name,
+                    SizeId = x.SizeId,
+                    Formulars = x.ProductSizeRawMaterials.Select(y => new ProductRmFormularDetailModel
+                    {
+                        Id = y.Id,
+                        RawMaterialId = y.RawMaterialId,
+                        Amount = y.Amount
+                    }).ToList()
+                }).ToList();
+
+                return new BusinessLogicResult<List<ProductFormularForAllSize>>
+                {
+                    Success = true,
+                    Result = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<ProductFormularForAllSize>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<List<RawMaterialModel>>> GetRms(int productId)
+        {
+            try
+            {
+                var rms =  await _productHasRawMaterialRepository.GetByFilterAsync(filter: x => x.ProductId == productId);
+                var result = rms.Select(x => new RawMaterialModel
+                {
+                    Id = x.RawMaterialId,
+                    Name = x.RawMaterial.Name,
+                    RawMaterialUnitName = x.RawMaterial.RawMaterialUnit.Name
+                }).ToList();
+                return new BusinessLogicResult<List<RawMaterialModel>>
+                {
+                    Result = result,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<RawMaterialModel>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<bool>> UpdateFormularByProductId( List<ProductSizeRawMaterial> model)
+        {
+            try
+            {
+                var productSizeIds = model.Select(x => x.ProductSizeId).Distinct().ToList();
+                var productSizeRms = await _productSizeRawMaterialRepository.GetByFilterAsync(x => productSizeIds.Contains(x.ProductSizeId));
+                _productSizeRawMaterialRepository.RemoveMultiple(productSizeRms);
+                _productSizeRawMaterialRepository.AddMultiple(model);
+                await  _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Result = true,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra : ", ex.Message) })
+                };
+            }
         }
 
         #endregion

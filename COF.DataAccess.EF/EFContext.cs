@@ -41,6 +41,8 @@
         public DbSet<RawMaterial> RawMaterials { get; set; }
         public DbSet<RawMaterialUnit> MaterialUnits { get; set; }
         public DbSet<RawMaterialHistory> RawMaterialHistories { get; set; }
+        public DbSet<ProductHasRawMaterial> ProductHasRawMaterials { get; set; }
+        public DbSet<ProductSizeRawMaterial> ProductSizeRawMaterials { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

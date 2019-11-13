@@ -1,0 +1,76 @@
+﻿<!-- Modal -->
+@using COF.API.Models.Product
+@model ProductSizeFormularModel
+<div class="modal fade" id="updateProductRms" tabindex="-1" role="dialog" aria-labelledby="addPriceModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="box-title" id="lblTitle">TỈ LỆ NGUYÊN LIỆU CHO SẢN PHẨM</h3>
+             
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        @{
+                            if (Model.Rms.Any())
+                            {
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                            <th>Size</th>
+                                            @foreach (var item in Model.Rms)
+                                            {
+                                                <th>@item.Name (@item.RawMaterialUnitName)</th>
+                                            }
+                                            <th>Thao tác</th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Details)
+                                        {
+                                            <tr>
+                                                <td>@item.Size</td>
+                                                @{
+                                                    foreach (var rm in Model.Rms)
+                                                    {
+                                                        var detail = item.Formulars.FirstOrDefault(x => x.RawMaterialId == rm.Id);
+                                                        var amount = detail?.Amount ?? 0;
+                                                        <td>
+                                                            <span class="formularQtyLabel_@item.ProductSizeId">@amount</span>
+                                                            <input style="width:60px;text-align:center" type="number" data-originalvalue="@amount" data-id="@item.ProductSizeId" data-rmid="@rm.Id" class="formularInputQty formularInputQty_@item.ProductSizeId" hidden value="@amount" />
+                                                        </td>
+                                                    }
+                                                    <td style="width:10%">
+                                                        <a class="btn btn-success btnEditProductSizeFormular" id="btnEditProductSizeFormular_@item.ProductSizeId" data-id="@item.ProductSizeId" data-qtylabel="formularQtyLabel_@item.ProductSizeId" data-input="formularInputQty_@item.ProductSizeId">Điều chỉnh</a>
+                                                        <a class="btn btn-default btnCancelProductSizeFormular" style="display:none" id="btnCancelProductSizeFormular_@item.ProductSizeId" data-id="@item.ProductSizeId" data-qtylabel="formularQtyLabel_@item.ProductSizeId" data-input="formularInputQty_@item.ProductSizeId">Hủy</a>
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            }
+                           else { 
+                                                        <h3>Bạn cần chọn nguyên liệu cho sản phẩm...</h3>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" id="btnCancel" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                @{
+                    if (Model.Rms.Any())
+                    {
+                        <button type="button" id="btnSaveFormulars" class="btn btn-primary">Lưu</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

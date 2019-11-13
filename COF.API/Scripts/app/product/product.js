@@ -3,7 +3,9 @@
     pageIndex: 1,
     allShops: [],
     allSizes: [],
-    allProducts : []
+    allProducts: [],
+    rms: [], // raw materials,
+    selectedRms : [] // selected raw materials
 };
 
 var productController = {
@@ -14,6 +16,7 @@ var productController = {
         productController.loadData(homeconfig.shopId);
 
         productController.loadCategories(homeconfig.shopId);
+        productController.loadAllRms(homeconfig.shopId);
         productController.getAllSizes();
         productController.registerEvent();
 
@@ -29,6 +32,7 @@ var productController = {
             homeconfig.shopId = dataId;
             productController.loadData(homeconfig.shopId);
             productController.loadCategories(homeconfig.shopId);
+            productController.loadAllRms(homeconfig.shopId);
         });
 
         $('#btnAdd').off('click').on('click', function () {
@@ -53,7 +57,8 @@ var productController = {
                 ShopId: homeconfig.shopId,
                 Description: $('#txtDescription').val(),
                 IsActive: $('#chkActive').is(":checked"),
-                Image: $('#bigView').attr('src')
+                Image: $('#bigView').attr('src'),
+                Rms: homeconfig.selectedRms
             };
             productController.saveData(data);
         });
@@ -186,6 +191,81 @@ var productController = {
             } else {
                 alert("FormData is not supported.");
             }
+        });
+
+        $('#ddlRms').off('change').on('change', function () {
+            var id = $(this).val();
+            if (id == 0)
+                return;
+            var item = homeconfig.rms.find(x => x.Id == id);
+            if (homeconfig.selectedRms.length === 0) {
+                homeconfig.selectedRms.push(item);
+
+            }
+            else {
+                var exist = homeconfig.selectedRms.find(x => x.Id == item.Id);
+                if (exist) {
+                    toastr.error("'" + item.Name.toUpperCase() + "' đã tồn tại.");
+                    return;
+                }
+                else {
+                    homeconfig.selectedRms.push(item);
+                }
+                
+            }
+
+            item.Index = homeconfig.selectedRms.length;
+            productController.loadSelectedRmsToTable(homeconfig.selectedRms);
+
+        });
+
+        $('#btnUpdateProductFormular').off('click').on('click', function () {
+            var id =  parseInt($('#txtHiddenId').val());
+            productController.renderRmsFormular(id,true);
+        });
+
+        $('.btnEditProductSizeFormular').off('click').on('click', function ()
+        {
+            var id = $(this).data('id');
+            $('#btnEditProductSizeFormular_' + id).hide();
+            $('#btnCancelProductSizeFormular_' + id).show();
+            var labelClassName = $(this).data('qtylabel');
+            var inputClassName = $(this).data('input');
+            console.log(labelClassName);
+            console.log(inputClassName);
+            $('.' + labelClassName).hide();
+            $('.' + inputClassName).show();
+        });
+
+        $('.btnCancelProductSizeFormular').off('click').on('click', function () {
+            var id = $(this).data('id');
+            var labelClassName = $(this).data('qtylabel');
+            var inputClassName = $(this).data('input');
+
+            $('#btnEditProductSizeFormular_' + id).show();
+            $('#btnCancelProductSizeFormular_' + id).hide();
+
+            var inputs = $('.' + inputClassName);
+            $.each(inputs, function (i, item) {
+                $(item).val($(item).data('originalvalue'));
+            });
+            $('.' + labelClassName).show();
+            $('.' + inputClassName).hide();
+        });
+
+        $('#btnSaveFormulars').off('click').on('click', function () {
+            var allInputs = $('.formularInputQty');
+            var model = [];
+            $.each(allInputs, function (i, item) {
+                var detail = {
+                    ProductSizeId: $(item).data('id'),
+                    RawMaterialId: $(item).data('rmid'),
+                    Amount: $(item).val()
+                };
+                model.push(detail);
+            });
+            productController.updateRmsFormular(model);
+            
         });
     },
     loadData: function (shopId) {
@@ -470,19 +550,19 @@ var productController = {
     },
     loadProductSizes: function (sizes) {
         var html = '';
-        html += '<tr>';
+        html += '<tr style="background-color:#ddd;text-align:center;vertical-align: middle;">';
 
-        html += '<td> # </td>';
-        html += '<td>Size</td>';
-        html += '<td>Giá</td>';
-        html += '<td></td>';
+        html += '<td> <b> # </b></td>';
+        html += '<td><b>Size</b></td>';
+        html += '<td><b>Giá</b></td>';
+        html += '<td style="width:100px"></td>';
         html += '</tr>';
         $.each(sizes, function (i, item) {
-            html += '<tr>';
+            html += '<tr style="text-align:center;vertical-align: middle;">';
             html += '<td>' + (i + 1 ) + '</td>';
             html += '<td>' + item.Size + '</td>';
             html += '<td>' + productController.formatMoney(item.Cost) + '</td>';
-            html += '<td>';
+            html += '<td >';
             html += '<button data-id="' + item.Id + '" data-cost= "' + item.Cost + '" data-sizeid ="' + item.SizeId + '" class="btn btn-primary btnEditProductSize"><i class="fa fa-edit"></i></button> &nbsp;';
             html += '<button  data-id="' + item.Id + '" class="btn btn-danger btnRemoveProductSize"><i class="fa fa-remove"></i></button>';
             html += '</td > ';
@@ -542,7 +622,9 @@ var productController = {
                                 $('#bigView').show();
                                 $('#bigView').attr('src',  row.Image);
                             }
-                            
+                            homeconfig.selectedRms = row.Rms;
+
+                            productController.loadSelectedRmsToTable(homeconfig.selectedRms);
                             productController.loadProductSizes(row.Sizes);
                         } else {
                             toastr.error(res.errorMessage, "Lỗi");
@@ -565,11 +647,70 @@ var productController = {
             success: function (res) {
                 if (res.status) {
                     var data = res.data;
-                    console.log(data);
+                    homeconfig.rms = data;
+                    var html = '';
+                    html += '<option value="0"> -- Thêm nguyên liệu -- </option>';
+                    $.each(data, function (i, item) {
+                        html += '<option value="' + item.Id + '">' + item.Name + '</option>';
+                    });
+                    $('#ddlRms').html(html);
                 } else {
                     toastr.error(res.errorMessage, "Lỗi");
                 }
             }
+        });
+    },
+    loadSelectedRmsToTable(data) {
+        var html = '';
+        var template = $('#data-rms-template').html();
+        $.each(data, function (i, item) {
+            html += Mustache.render(template, {
+                Id: item.Id,
+                Name: item.Name.toUpperCase(),
+                Index : item.Index
+            });
+
+        });
+        $('#tblRms').html(html);
+    },
+    removeRm: function (id) {
+        console.log(id);
+        console.log(homeconfig.selectedRms);
+        var newList = homeconfig.selectedRms.filter(x => x.Id != id);
+        homeconfig.selectedRms = newList;
+        productController.loadSelectedRmsToTable(newList);
+    },
+    renderRmsFormular: function (productId,isShowPopup) {
+        $.ajax({
+            url: '/product/GetProductFormularTable',
+            dataType: 'json',
+            type: 'get',
+            data: { productId: productId },
+            success: function (res) {
+                if (res.status) {
+                    $('#updateRmFormular_').html(res.data);
+                    $('#updateProductRms').modal('show');
+                    productController.registerEvent();
+                }
+            }
+
+        });
+    },
+    updateRmsFormular: function (data) {
+        $.ajax({
+            url: '/product/UpdateProductFormularTable',
+            type: 'post',
+            data: { model: data },
+            success: function (res) {
+                if (res.status) {
+                    toastr.success("Cập nhật thành phần nguyên liệu thành công.");
+                    $('#updateProductRms').modal('hide');
+                }
+                else {
+                    alert("LỖI");
+                }
+            }
+
         });
     }
 };

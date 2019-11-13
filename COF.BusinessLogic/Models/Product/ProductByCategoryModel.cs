@@ -27,7 +27,11 @@ namespace COF.BusinessLogic.Models.Product
         public string Description { get; set; }
         public bool IsActive { get; set; }
         public List<ProductSize> Sizes { get; set;}
+        public List<ProductRmUpdateModel> Rms { get; set; }
     }
+
+
+    
 
     public class ProductSize
     {
@@ -63,6 +67,30 @@ namespace COF.BusinessLogic.Models.Product
         public int PartnerId { get; set; }
         public bool IsActive { get; set; }
         public string Image { get; set; }
+        public List<ProductRmUpdateModel> Rms { get; set; }
+    }
+
+    public class ProductFormularForAllSize
+    {
+        public int ProductSizeId { get; set; }
+        public int SizeId { get; set; }
+        public string Size { get; set; }
+        public List<ProductRmFormularDetailModel> Formulars { get; set; }
+        
+    }
+    public class ProductRmFormularDetailModel
+    {
+        public int Id { get; set; }
+        public int RawMaterialId { get; set; }
+        public string RawMaterialName { get; set; }
+        public decimal Amount { get; set; }
+    }
+
+
+    public class ProductRmUpdateModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class ProductSizeRequestModel

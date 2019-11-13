@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using COF.API.Models.Product;
 using ServiceModels = COF.BusinessLogic.Models;
+using COF.BusinessLogic.Models.Product;
+using COF.DataAccess.EF.Models;
+
 namespace COF.API.Controllers
 {
     [Authorize]
@@ -20,6 +23,7 @@ namespace COF.API.Controllers
         private readonly IUserService _userService;
         private readonly IShopService _shopService;
         private readonly ISizeService _sizeService;
+        private readonly IRawMateterialService _rawMateterialService;
         #endregion
 
 
@@ -28,12 +32,14 @@ namespace COF.API.Controllers
             IProductService productService, 
             IUserService userService,
             IShopService shopService,
-            ISizeService sizeService)
+            ISizeService sizeService,
+            IRawMateterialService rawMateterialService)
         {
             _productService = productService;
             _userService = userService;
             _shopService = shopService;
             _sizeService = sizeService;
+            _rawMateterialService = rawMateterialService;
         }
 
         #endregion
@@ -78,7 +84,7 @@ namespace COF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProduct(ProductCreateModel model)
+        public async Task<ActionResult> AddProduct(COF.API.Models.Product.ProductCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +107,8 @@ namespace COF.API.Controllers
                     Description = model.Description,
                     ShopId = model.ShopId,
                     PartnerId = user.PartnerId.GetValueOrDefault(),
-                    Image = model.Image
+                    Image = model.Image,
+                    Rms = model.Rms
                 };
 
                 var logicResult = await _productService.AddProductAsync(productModel);
@@ -127,7 +134,7 @@ namespace COF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProductSize(ProductSizeCreateModel model)
+        public async Task<ActionResult> AddProductSize(COF.API.Models.Product.ProductSizeCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -158,7 +165,7 @@ namespace COF.API.Controllers
 
         }
 
-        public async Task<ActionResult> UpdateProduct(ProductCreateModel model)
+        public async Task<ActionResult> UpdateProduct(COF.API.Models.Product.ProductCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -182,7 +189,8 @@ namespace COF.API.Controllers
                     ShopId = model.ShopId,
                     IsActive = model.IsActive,
                     PartnerId = user.PartnerId.GetValueOrDefault(),
-                    Image = model.Image
+                    Image = model.Image,
+                    Rms = model.Rms
                 };
 
                 var logicResult = await _productService.UpdatProductAsync(model.Id.GetValueOrDefault(), productModel);
@@ -246,6 +254,58 @@ namespace COF.API.Controllers
             catch (Exception ex) 
             {
                 return HttpPostErrorResponse($"Xảy ra lỗi : " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductFormularTable(int productId)
+        {
+            try
+            {
+                var allRmsQuery = await _productService.GetRms(productId);
+                var productRmsQuery = await _productService.GetFormularByProductId(productId);
+
+                var allRms = allRmsQuery.Result;
+                var productRms = productRmsQuery.Result;
+                var model = new ProductSizeFormularModel
+                {
+                    Rms = allRms,
+                    Details = productRms
+                };
+
+                var data = RenderPartialViewToString("_PartialUpdateProductRm", model);
+                return HttpGetSuccessResponse(data);
+            }
+            catch (Exception ex)
+            {
+                return HttpGetErrorResponse(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateProductFormularTable(List<ProductSizeRawMaterialUpdateFormularModel> model)
+        {
+            try
+            {
+                var productSizeRms = model.Select(x => new ProductSizeRawMaterial
+                {
+                    ProductSizeId = x.ProductSizeId,
+                    RawMaterialId = x.RawMaterialId,
+                    Amount = x.Amount
+                }).ToList();
+
+                var res = await _productService.UpdateFormularByProductId(productSizeRms);
+
+                if (res.Validations != null)
+                {
+                    return HttpPostErrorResponse(res.Validations.Errors[0].ErrorMessage);
+                }
+                return HttpPostSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                return HttpPostErrorResponse(ex.Message);
             }
         }
     }
