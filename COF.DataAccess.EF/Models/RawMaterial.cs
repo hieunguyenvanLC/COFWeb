@@ -20,6 +20,7 @@ namespace COF.DataAccess.EF.Models
 
         public virtual ICollection<ProductHasRawMaterial> ProductHasRawMaterials { get; set; }
         public virtual ICollection<RawMaterialHistory> RawMaterialHistories { get; set; }
+        public virtual ICollection<ProductSizeRawMaterial> ProductSizeRawMaterials { get; set; }
         public int PartnerId { get; set ; }
     }
 }

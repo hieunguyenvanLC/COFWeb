@@ -523,7 +523,7 @@ var productController = {
         });
     },
     loadProductDetail: function (id) {
-
+         productController.loadAllRms(homeconfig.shopId);
          $.ajax({
              url: '/product/getProductDetail',
                     type: 'get',
@@ -555,6 +555,22 @@ var productController = {
     formatMoney: function (value) {
         var ressult = accounting.formatMoney(value, "", 0, ".", ","); // €4.999,99
         return ressult;
+    },
+    loadAllRms: function (shopId) {
+        $.ajax({
+            url: '/rawmaterial/GetAllRmsAsync',
+            type: 'get',
+            dataType: 'json',
+            data: { shopId: shopId },
+            success: function (res) {
+                if (res.status) {
+                    var data = res.data;
+                    console.log(data);
+                } else {
+                    toastr.error(res.errorMessage, "Lỗi");
+                }
+            }
+        });
     }
 };
 productController.run();

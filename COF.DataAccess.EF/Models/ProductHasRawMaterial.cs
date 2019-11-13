@@ -12,6 +12,7 @@ namespace COF.DataAccess.EF.Models
         public int RawMaterialId { get; set; }
         public int ProductId { get; set; }
         public int RawMaterialUnitId { get; set; }
+        public decimal Amount { get; set; }
 
         public virtual RawMaterial RawMaterial { get; set; }
         public virtual Product Product { get; set; }

@@ -20,6 +20,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<RawMaterialUnitModel>>> GetAllRmUnitsAsync();
         Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id);
         Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, int qty, string updateBy);
+        Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId);
 
         Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword);
     }
@@ -247,6 +248,30 @@ namespace COF.BusinessLogic.Services
                     Success = false,
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
                 };
+            }
+        }
+
+        public async Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId)
+        {
+            try
+            {
+                var rms = await _rawMaterialRepository.GetByFilterAsync(filter: x => x.ShopId == shopId);
+                var result = rms.Select(x => new RawMaterialModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description
+                }).ToList();
+                return new BusinessLogicResult<List<RawMaterialModel>>
+                {
+                    Success = true,
+                    Result = result
+                };
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

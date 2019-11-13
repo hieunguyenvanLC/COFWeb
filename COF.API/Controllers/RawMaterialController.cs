@@ -79,7 +79,7 @@ namespace COF.API.Controllers
         }
 
         [HttpPost]
-        public  async Task<ActionResult> CreateAsync(RawMaterialRequestModel model)
+        public async Task<ActionResult> CreateAsync(RawMaterialRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -179,7 +179,7 @@ namespace COF.API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult> RmHistoriesWithPaging(int id, int pageSize = 15, int pageIndex = 1)
         {
             try
@@ -206,6 +206,27 @@ namespace COF.API.Controllers
             }
             catch (Exception ex)
             {
+                return HttpPostErrorResponse(ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetAllRmsAsync(int shopId)
+        {
+            try
+            {
+                var queryRes = await _rawMateterialService.GetAllAsync(shopId);
+                if (queryRes.Validations != null)
+                {
+                    return HttpGetSuccessResponse(queryRes.Validations.Errors[0].ErrorMessage);
+                }
+
+                return HttpGetSuccessResponse(queryRes.Result);
+            }
+            catch (Exception ex)
+            {
+
                 return HttpPostErrorResponse(ex.Message);
             }
         }

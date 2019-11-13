@@ -38,6 +38,8 @@ namespace COF.DataAccess.EF.Models
         public virtual Size Size { get; set; }
         public decimal Cost { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<ProductSizeRawMaterial> ProductSizeRawMaterials { get; set; }
+
     }
 
     public class Size : BaseEntity
