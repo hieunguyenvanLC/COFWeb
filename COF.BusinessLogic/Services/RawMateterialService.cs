@@ -19,7 +19,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<bool>> CreateAsync(int shopId, RawMaterialRequestModel model);
         Task<BusinessLogicResult<List<RawMaterialUnitModel>>> GetAllRmUnitsAsync();
         Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id);
-        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, int qty, string updateBy);
+        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy);
         Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId);
 
         Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword);
@@ -170,7 +170,7 @@ namespace COF.BusinessLogic.Services
 
        
 
-        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, int qty, string updateBy)
+        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy)
         {
             try
             {

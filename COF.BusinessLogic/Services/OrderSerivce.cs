@@ -29,6 +29,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<Order>> GetByOrderCodeAsync(string orderCode);
         BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId,DateTime fromDate, DateTime toDate);
         BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
+        Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId);
     }
 
     public class OrderService : IOrderService
@@ -43,6 +44,9 @@ namespace COF.BusinessLogic.Services
         private readonly ICustomerRepository _customerRepository;
         private readonly IPartnerService _partnerService;
         private readonly IBonusPointHistoryRepository _bonusPointHistoryRepository;
+        private readonly IRawMaterialRepository _rawMaterialRepository;
+        private readonly IProductSizeRawMaterialRepository _productSizeRawMaterialRepository;
+        private readonly IRawMaterialHistoryRepository _materialHistoryRepository;
         #endregion
 
         #region ctor
@@ -55,8 +59,11 @@ namespace COF.BusinessLogic.Services
             ICustomerRepository customerRepository,
             IPartnerService partnerService,
             IBonusLevelRepository bonusLevelRepository,
-            IBonusPointHistoryRepository bonusPointHistoryRepository
-            
+            IBonusPointHistoryRepository bonusPointHistoryRepository,
+            IRawMaterialRepository rawMaterialRepository,
+            IProductSizeRawMaterialRepository productSizeRawMaterialRepository,
+            IRawMaterialHistoryRepository materialHistoryRepository
+
            )
         {
             _orderRepository = orderRepository;
@@ -68,6 +75,9 @@ namespace COF.BusinessLogic.Services
             _partnerService = partnerService;
             _bonusLevelRepository = bonusLevelRepository;
             _bonusPointHistoryRepository = bonusPointHistoryRepository;
+            _rawMaterialRepository = rawMaterialRepository;
+            _productSizeRawMaterialRepository = productSizeRawMaterialRepository;
+            _materialHistoryRepository = materialHistoryRepository;
         }
 
        
@@ -240,6 +250,9 @@ namespace COF.BusinessLogic.Services
                     orderHistory.Point = customer.ActiveBonusPoint;
                     _bonusPointHistoryRepository.Add(orderHistory);
                     _customerRepository.Update(customer);
+
+                    await CalculateRmsAfterOrderFinshed(orderId: order.Id);
+
                 }
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
@@ -464,6 +477,52 @@ namespace COF.BusinessLogic.Services
                 Result = result
             };
         }
+
+        public async Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId)
+        {
+            try
+            {
+                var order = await _orderRepository.GetByIdAsync(orderId);
+                var orderDetails = order.OrderDetails;
+                var productSizeIds = orderDetails.Select(x => x.ProductSizeId).Distinct().ToList();
+                
+                var allRms = await _productSizeRawMaterialRepository.GetByFilterAsync(x => productSizeIds.Contains(x.ProductSizeId));
+                foreach (var detail in orderDetails)
+                {             
+                    var rms = allRms.Where(x => x.ProductSizeId == x.ProductSizeId).ToList();
+                    foreach (var rawMaterial in rms)
+                    {
+                        var currentRm = await _rawMaterialRepository.GetByIdAsync(rawMaterial.Amount);
+                        var amount = rawMaterial.Amount * detail.Quantity;
+                        currentRm.AutoTotalQty -= amount;
+                        var transaction = new RawMaterialHistory
+                        {
+                            PartnerId = order.PartnerId,
+                            InputTypeId = InputType.Auto,
+                            Quantity = amount,
+                            TotalQtyAtTimeAccess = currentRm.AutoTotalQty,
+                            TimeAccess = DateTimeHelper.CurentVnTime,
+                            RawMaterialId = rawMaterial.Id,
+                            TransactionTypeId = TransactionType.Decreasement,
+                            CreatedBy = order.CreatedBy,
+                            Description = $"Đơn hàng #{order.OrderCode}, Id: {order.Id}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}"
+                        };
+                        _materialHistoryRepository.Add(transaction);
+                        await _unitOfWork.SaveChangesAsync();
+
+                    }
+                }
+                
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
         #endregion
 
     }

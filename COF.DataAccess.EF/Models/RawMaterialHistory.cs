@@ -11,13 +11,13 @@ namespace COF.DataAccess.EF.Models
     {
         public DateTime TimeAccess { get; set; }
         public TransactionType TransactionTypeId { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public InputType InputTypeId { get; set; }
         public int RawMaterialId { get; set; }
         public RawMaterial RawMaterial { get; set; }
-        public int TotalQtyAtTimeAccess { get; set; }
+        public decimal TotalQtyAtTimeAccess { get; set; }
         [NotMapped]
-        public int OldQty
+        public decimal OldQty
         {
             get
             {
@@ -32,6 +32,7 @@ namespace COF.DataAccess.EF.Models
             }
         }
         public int PartnerId { get; set; }
+        public string Description { get; set; }
     }
     public enum TransactionType
     {

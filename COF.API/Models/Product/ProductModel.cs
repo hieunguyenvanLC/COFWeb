@@ -24,6 +24,7 @@ namespace COF.API.Models.Product
 
         public bool IsActive { get; set; }
         public string Image { get; set; }
+        [Required(ErrorMessage = "Thành phần nguyên liệu là bắt buộc.")]
         public List<ProductRmUpdateModel> Rms { get; set; } 
     }
     

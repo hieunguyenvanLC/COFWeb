@@ -131,8 +131,20 @@ namespace COF.API.Api
 
         #endregion
 
+        [AllowAnonymous]
+        [Route("calculaterms/{id}")]
+        public async Task<IHttpActionResult> CalculateRmsByOrderId([FromUri] int id)
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
 
-
+            }
+            return null;
+        }
 
         #region private methods
         #endregion

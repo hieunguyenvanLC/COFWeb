@@ -32,10 +32,10 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int AutoTotalQty { get; set; }
+        public decimal AutoTotalQty { get; set; }
         public int RawMaterialUnitId { get; set; }
         public string RawMaterialUnitName { get; set; }
-        public int UserInputTotalQty { get; set; }
+        public decimal UserInputTotalQty { get; set; }
         public int ShopId { get; set; }
         public string Shop { get; set; }
     }

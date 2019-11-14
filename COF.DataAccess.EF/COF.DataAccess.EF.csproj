@@ -184,6 +184,14 @@
     <Compile Include="Migrations\201911121510444_AddProductSizeRawMaterialTable.Designer.cs">
       <DependentUpon>201911121510444_AddProductSizeRawMaterialTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911141553560_ChangeRmQtyDataType.cs" />
+    <Compile Include="Migrations\201911141553560_ChangeRmQtyDataType.Designer.cs">
+      <DependentUpon>201911141553560_ChangeRmQtyDataType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911141559333_AddDescriptionForRmHistory.cs" />
+    <Compile Include="Migrations\201911141559333_AddDescriptionForRmHistory.Designer.cs">
+      <DependentUpon>201911141559333_AddDescriptionForRmHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -323,6 +331,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911121510444_AddProductSizeRawMaterialTable.resx">
       <DependentUpon>201911121510444_AddProductSizeRawMaterialTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911141553560_ChangeRmQtyDataType.resx">
+      <DependentUpon>201911141553560_ChangeRmQtyDataType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911141559333_AddDescriptionForRmHistory.resx">
+      <DependentUpon>201911141559333_AddDescriptionForRmHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
