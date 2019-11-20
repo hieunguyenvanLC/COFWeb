@@ -12,10 +12,10 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int AutoTotalQty { get; set; }
+        public decimal AutoTotalQty { get; set; }
         public int RawMaterialUnitId { get; set; }
         public string RawMaterialUnitName { get; set; }
-        public int UserInputTotalQty { get; set; }
+        public decimal UserInputTotalQty { get; set; }
         public int ShopId { get; set; }
         public string Shop { get; set; }
         public long? RowCounts { get; set; }
@@ -43,12 +43,13 @@ namespace COF.BusinessLogic.Models.RawMaterial
     public class RawMaterialHistoryDetailModel
     {
         public DateTime TimeAccess { get; set; }
+        public string TimeAccessDisplay => TimeAccess.ToString("dd-MM-yyyy HH:mm:ss");
         public TransactionType TransactionTypeId { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public InputType InputTypeId { get; set; }
-        public int RawMaterialId { get; set; }
-        public int TotalQtyAtTimeAccess { get; set; }
-        public int OldQty
+        public decimal RawMaterialId { get; set; }
+        public decimal TotalQtyAtTimeAccess { get; set; }
+        public decimal OldQty
         {
             get
             {
@@ -62,6 +63,8 @@ namespace COF.BusinessLogic.Models.RawMaterial
                 }
             }
         }
+        public string CreatedBy { get; set; }
+        public string Description { get; set; }
         public long? RowCounts { get; set; }
     }
 }

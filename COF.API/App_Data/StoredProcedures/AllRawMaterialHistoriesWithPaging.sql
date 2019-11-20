@@ -21,7 +21,9 @@ DECLARE @query NVARCHAR(MAX) ='
 		rmh.TransactionTypeId,
 		rmh.Quantity,
 		rmh.InputTypeId,
-		rmh.TotalQtyAtTimeAccess
+		rmh.TotalQtyAtTimeAccess,
+		rmh.CreatedBy,
+		rmh.Description
 
 		from [RawMaterialHistory] rmh
 		
@@ -39,7 +41,9 @@ DECLARE @query NVARCHAR(MAX) ='
 		0 TransactionTypeId,
 	    0 Quantity,
 		0 InputTypeId,
-		0 TotalQtyAtTimeAccess
+		0 TotalQtyAtTimeAccess,
+		null CreatedBy,
+        null Description
 	from paging p
 
 	union all

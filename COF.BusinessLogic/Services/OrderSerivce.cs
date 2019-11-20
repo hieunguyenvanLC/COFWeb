@@ -216,45 +216,47 @@ namespace COF.BusinessLogic.Services
                     order.OrderStatus = model.OrderStatus;
                     _orderRepository.Update(order);
                 }
-                if (customer != null  && order.OrderStatus != 
+                if (order.OrderStatus != 
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
                     order.OrderStatus !=  OrderStatus.PreCancel)
                 {
-                    var allLevels = await _bonusLevelRepository.GetAllAsync();
-                    var point = Math.Round((decimal) model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
-
-
-                    var orderHistory = new BonusPointHistory
+                    if (customer != null)
                     {
-                        PartnerId = customer.PartnerId,
-                        CustomerId = customer.Id,
-                        OldLevel = customer.BonusLevel.Name,
-                        OldPoint = customer.ActiveBonusPoint
-                    };
+                        var allLevels = await _bonusLevelRepository.GetAllAsync();
+                        var point = Math.Round((decimal)model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
 
-                    customer.TotalBonusPoint += point;
 
-                    if (model.DiscountType == DiscountType.UseActiveBonus)
-                    {
-                        customer.ActiveBonusPoint -= point;
+                        var orderHistory = new BonusPointHistory
+                        {
+                            PartnerId = customer.PartnerId,
+                            CustomerId = customer.Id,
+                            OldLevel = customer.BonusLevel.Name,
+                            OldPoint = customer.ActiveBonusPoint
+                        };
+
+                        customer.TotalBonusPoint += point;
+
+                        if (model.DiscountType == DiscountType.UseActiveBonus)
+                        {
+                            customer.ActiveBonusPoint -= point;
+                        }
+                        else
+                        {
+                            customer.ActiveBonusPoint += point;
+                        }
+
+                        var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
+                        customer.BonusLevelId = newLevel.Id;
+
+                        orderHistory.Level = newLevel.Name;
+                        orderHistory.Point = customer.ActiveBonusPoint;
+                        _bonusPointHistoryRepository.Add(orderHistory);
+                        _customerRepository.Update(customer);
                     }
-                    else
-                    {
-                        customer.ActiveBonusPoint += point;
-                    }
-                    
-                    var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
-                    customer.BonusLevelId = newLevel.Id;
-
-                    orderHistory.Level = newLevel.Name;
-                    orderHistory.Point = customer.ActiveBonusPoint;
-                    _bonusPointHistoryRepository.Add(orderHistory);
-                    _customerRepository.Update(customer);
-
-                    await CalculateRmsAfterOrderFinshed(orderId: order.Id);
-
+                    await CalculateRmsAfterOrderFinshed(order.Id);
+                    await _unitOfWork.SaveChangesAsync();
                 }
-                await _unitOfWork.SaveChangesAsync();
+                
                 return new BusinessLogicResult<Order>
                 {
                     Result = order,
@@ -481,7 +483,7 @@ namespace COF.BusinessLogic.Services
         public async Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId)
         {
             try
-            {
+            {  
                 var order = await _orderRepository.GetByIdAsync(orderId);
                 var orderDetails = order.OrderDetails;
                 var productSizeIds = orderDetails.Select(x => x.ProductSizeId).Distinct().ToList();
@@ -492,7 +494,7 @@ namespace COF.BusinessLogic.Services
                     var rms = allRms.Where(x => x.ProductSizeId == x.ProductSizeId).ToList();
                     foreach (var rawMaterial in rms)
                     {
-                        var currentRm = await _rawMaterialRepository.GetByIdAsync(rawMaterial.Amount);
+                        var currentRm = await _rawMaterialRepository.GetByIdAsync(rawMaterial.RawMaterialId);
                         var amount = rawMaterial.Amount * detail.Quantity;
                         currentRm.AutoTotalQty -= amount;
                         var transaction = new RawMaterialHistory
@@ -502,10 +504,10 @@ namespace COF.BusinessLogic.Services
                             Quantity = amount,
                             TotalQtyAtTimeAccess = currentRm.AutoTotalQty,
                             TimeAccess = DateTimeHelper.CurentVnTime,
-                            RawMaterialId = rawMaterial.Id,
+                            RawMaterialId = currentRm.Id,
                             TransactionTypeId = TransactionType.Decreasement,
                             CreatedBy = order.CreatedBy,
-                            Description = $"Đơn hàng #{order.OrderCode}, Id: {order.Id}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}"
+                            Description = $"Đơn hàng #{order.OrderCode}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}, Số lượng : {detail.Quantity}"
                         };
                         _materialHistoryRepository.Add(transaction);
                         await _unitOfWork.SaveChangesAsync();
@@ -515,10 +517,9 @@ namespace COF.BusinessLogic.Services
                 
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
         }
 

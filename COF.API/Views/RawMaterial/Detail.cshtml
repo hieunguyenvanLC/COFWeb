@@ -38,7 +38,7 @@
                                        data-id="" class="shop-tab" data-toggle="tab" aria-expanded="true">Thông tin chính</a>
                                 </li>
                                 <li>
-                                    <a href="#tab_transactionHistory"
+                                    <a href="#tab_transactionHistory" id="tab_transactionHistory_huhu"
                                        data-id="" class="shop-tab" data-toggle="tab" aria-expanded="true">Lịch sử</a>
                                 </li>
                             </ul>
@@ -53,7 +53,7 @@
                                                 <input id="txtHiddenId" value="0" hidden type="text" />
                                                 <label for="txtName" class="col-sm-2 control-label">Tên</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="txtName" placeholder="Nhập tên danh mục ...." value="@Model.Name">
+                                                    <input type="text"  readonly class="form-control" id="txtName" placeholder="Nhập tên danh mục ...." value="@Model.Name">
                                                 </div>
                                             </div>
 
@@ -61,7 +61,7 @@
 
                                                 <label for="txtName" class="col-sm-2 control-label">Đơn vị</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="ddlRawMaterialUnits">
+                                                    <select class="form-control" id="ddlRawMaterialUnits" disabled>
                                                         <option>
                                                             Đơn vị
                                                         </option>
@@ -72,7 +72,7 @@
                                             <div class="form-group">
                                                 <label for="txtDescription" class="col-sm-2 control-label">Mô tả</label>
                                                 <div class="col-sm-10">
-                                                    <textarea class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ...." >@Model.Description</textarea>
+                                                    <textarea readonly class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ...." >@Model.Description</textarea>
                                                 </div>
                                             </div>
 
@@ -84,7 +84,23 @@
                                 </div>
                                 <!-- /.tab-pane -->
                                 <div class="tab-pane" id="tab_transactionHistory">
-
+                                    <table class="table table-responsive">
+                                        <thead>
+                                            <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                                <td><b>Thời gian</b></td>
+                                                <td><b>Lượng thay đổi</b></td>
+                                                <td><b>Loại thay đổi</b></td>
+                                                <td><b>Trước</b></td>
+                                                <td><b>Sau</b></td>
+                                                <td><b>Loại điều chỉnh</b></td>
+                                                <td><b>Người thay đổi</b></td>
+                                                <td><b>Mô tả</b></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblHistoryData"></tbody>
+                                    </table>
+                                    <div style="" id="pagination" class="pagination">
+                                    </div>
                                 </div>
                                 <!-- /.tab-pane -->
                                 <div class="tab-pane" id="tab_3">
@@ -115,4 +131,132 @@
     </div>
 </section>
 
+<script id="data-template" type="x-tmpl-mustache">
+    <tr style="text-align:center;vertical-align: middle;">
+        <td>{{TimeAccess}}</td>
+        <td>{{Quantity}}</td>
+        <td>
+            {{TransactionType}}
+        </td>
+        <td>
+            {{BeforeQty}}
+        </td>
+        <td>
+            {{AfterQty}}
+        </td>
+        <td>
+            {{InputType}}
+        </td>
+        <td>
+            {{CreatedBy}}
+        </td>
+        <td style="width:30%"><p style="text-wrap:inherit">
+    {{Description}}
+</p></td>
+    </tr>
+</script>
 
+<script>
+
+    var homeconfig = {
+        pageSize: 10,
+        pageIndex: 1,
+        allShops: [],
+        rmId : @Model.Id
+    };
+
+    var rawMaterialController = {
+
+        run: function () {
+            rawMaterialController.loadData(homeconfig.rmId);
+        },
+        // register event for elements
+        registerEvent: function () {
+            // event for search button,
+
+            $('#tab_transactionHistory_huhu').off('click').on('click', function () {
+                rawMaterialController.loadData(homeconfig.rmId,true);
+            })
+
+        },
+        formatMoney: function (value) {
+            var ressult = accounting.formatMoney(value, "", 0, ".", ","); // €4.999,99
+            return ressult;
+        },
+        loadData: function (rmId, changePageSize) {
+            homeconfig.allCategories = [];
+            $.ajax({
+                url: '/RawMaterial/RmHistoriesWithPaging',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    Id: rmId, pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex,
+                },
+                success: function (res) {
+                    if (res.status) {
+
+                        var paginInfo = "";
+                        if (res.data.Items.length > 0) {
+                            var begin = (homeconfig.pageIndex - 1) * homeconfig.pageSize + 1;
+                            paginInfo = begin + " - " + (begin + res.data.Items.length - 1) + " trên " + res.data.TotalRows + " đơn hàng";
+                        }
+
+                        $('#pagingInfo').html(paginInfo);
+                        console.log(paginInfo);
+                        var data = res.data;
+                        var html = '';
+                        var template = $('#data-template').html();
+                        $.each(data.Items, function (i, item) {
+                            html += Mustache.render(template, {
+                                TimeAccess: item.TimeAccessDisplay,
+                                Quantity: item.Quantity,
+                                TransactionType: item.TransactionTypeId == 1 ? "Tăng" : "Giảm",
+                                AfterQty: item.TotalQtyAtTimeAccess,
+                                BeforeQty: item.OldQty,
+                                InputType: item.InputTypeId == 1 ? "Điều chỉnh" : "Tự động",
+                                CreatedBy: item.CreatedBy,
+                                Description: item.Description
+                            });
+
+                        });
+                        $('#tblHistoryData').html(html);
+                        try {
+                            rawMaterialController.paging(data.TotalRows, function () {
+                                rawMaterialController.loadData(shopId);
+                            }, changePageSize);
+                        } catch (e) {
+
+                        }
+
+                        rawMaterialController.registerEvent();
+                    }
+                }
+            });
+
+        },
+        paging: function (totalRow, callback, changePageSize) {
+            var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
+            //Unbind pagination if it existed or click change pagesize
+            if ($('#pagination a').length === 0 || changePageSize === true) {
+                $('#pagination').empty();
+                $('#pagination').removeData("twbs-pagination");
+                $('#pagination').unbind("page");
+            }
+            $('#pagination').twbsPagination({
+                totalPages: totalPage,
+                first: "Đầu",
+                next: "Tiếp",
+                last: "Cuối",
+                prev: "Trước",
+                visiblePages: 10,
+                onPageClick: function (event, page) {
+                    homeconfig.pageIndex = page;
+                    setTimeout(callback, 200);
+                }
+            });
+        },
+    };
+    rawMaterialController.run();
+
+
+</script>
