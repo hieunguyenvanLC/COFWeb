@@ -85,7 +85,8 @@ namespace COF.BusinessLogic.Services
                 Id = x.Id,
                 FullName = x.FullName,
                 PhoneNumber = x.PhoneNumber,
-                Address = x.Address
+                Address = x.Address,
+                ActiveBonusPoint = x.ActiveBonusPoint
             }).ToList();
             return result;
         }
