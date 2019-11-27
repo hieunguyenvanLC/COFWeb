@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,40 @@ namespace COF.BusinessLogic.Models.RawMaterial
     public class RmUpdateQtyModel
     {
         public int Id { get; set; }
-        public int Qty { get; set; }
+        public decimal Qty { get; set; }
+        public string Note { get; set; }
+    }
+
+    public class RmHistorySearchModel
+    {
+        public int Id { get; set; }
+        public int PageIndex { get; set; } = 15;
+        public int PageSize { get; set; } = 1;
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public bool? IsAuto { get; set; }
+
+        public DateTime? _fromDate
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(StartDate))
+                {
+                    return DateTime.ParseExact(StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
+                return null;
+            }
+        }
+        public DateTime? _toDate
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(EndDate))
+                {
+                    return DateTime.ParseExact(EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
+                return null;
+            }
+        }
     }
 }

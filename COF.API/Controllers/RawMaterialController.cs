@@ -179,13 +179,13 @@ namespace COF.API.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult> RmHistoriesWithPaging(int id, int pageSize = 15, int pageIndex = 1)
+        [HttpPost]
+        public async Task<ActionResult> RmHistoriesWithPaging(RmHistorySearchModel model)
         {
             try
             {
                 var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
-                var logicRes = await _rawMateterialService.GetHistoriesWithPaging(id,pageIndex,pageSize,"");
+                var logicRes = await _rawMateterialService.GetHistoriesWithPaging(model.Id,model.PageIndex,model.PageSize,model._fromDate,model._toDate,model.IsAuto);
                 if (!logicRes.Success)
                 {
                     return HttpGetErrorResponse(logicRes.Validations.Errors[0].ToString());
@@ -198,8 +198,8 @@ namespace COF.API.Controllers
                 var res = new PaginationSet<ServiceModels.RawMaterial.RawMaterialHistoryDetailModel>
                 {
                     Items = totalData,
-                    PageIndex = pageIndex,
-                    PageSize = pageSize,
+                    PageIndex = model.PageIndex,
+                    PageSize = model.PageSize,
                     TotalRows = totalRecord.GetValueOrDefault()
                 };
                 return HttpGetSuccessResponse(res);

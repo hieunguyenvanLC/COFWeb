@@ -7,9 +7,18 @@
 @using COF.BusinessLogic.Models.RawMaterial;
 @model RawMaterialDetailModel
 
+<script src="~/Content/bower_components/moment/min/moment.min.js"></script>
+<!-- bootstrap datepicker -->
+<script src="~/Content/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- bootstrap color picker -->
+<script src="~/Content/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+<!-- iCheck for checkboxes and radio inputs -->
+<link rel="stylesheet" href="~/Content/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+
 <section class="content-header">
     <h1>
-        @Model.Name 
+        @Model.Name
 
     </h1>
     @*<ol class="breadcrumb">
@@ -28,7 +37,7 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div id="tableContent" class="box-body table-responsive">
-                          
+
                         <div class="nav-tabs-custom">
 
 
@@ -53,7 +62,7 @@
                                                 <input id="txtHiddenId" value="0" hidden type="text" />
                                                 <label for="txtName" class="col-sm-2 control-label">Tên</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text"  readonly class="form-control" id="txtName" placeholder="Nhập tên danh mục ...." value="@Model.Name">
+                                                    <input type="text" readonly class="form-control" id="txtName" placeholder="Nhập tên danh mục ...." value="@Model.Name">
                                                 </div>
                                             </div>
 
@@ -72,7 +81,7 @@
                                             <div class="form-group">
                                                 <label for="txtDescription" class="col-sm-2 control-label">Mô tả</label>
                                                 <div class="col-sm-10">
-                                                    <textarea readonly class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ...." >@Model.Description</textarea>
+                                                    <textarea readonly class="form-control" id="txtDescription" placeholder="Nhập mô tả thêm ....">@Model.Description</textarea>
                                                 </div>
                                             </div>
 
@@ -84,6 +93,50 @@
                                 </div>
                                 <!-- /.tab-pane -->
                                 <div class="tab-pane" id="tab_transactionHistory">
+
+
+                                    <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                        <div class="form-row col-md-12" style="margin-top:15px">
+                                            <div class="col-md-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Từ : </label>
+
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="fromDate">
+                                                    </div>
+                                                    <!-- /.input group -->
+
+                                                    <label> Đến :</label>
+
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="toDate">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <br />
+
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                                    &nbsp;
+                                                    <button id="btnResetFilter" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <br />
+                                    <br />
+
                                     <table class="table table-responsive">
                                         <thead>
                                             <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
@@ -113,12 +166,12 @@
 
                         <div>
 
-                          
+
                         </div>
 
 
                     </div>
-                   
+
 
                 </div>
 
@@ -150,9 +203,11 @@
         <td>
             {{CreatedBy}}
         </td>
-        <td style="width:30%"><p style="text-wrap:inherit">
-    {{Description}}
-</p></td>
+        <td style="width:30%">
+            <p style="text-wrap:inherit">
+                {{Description}}
+            </p>
+        </td>
     </tr>
 </script>
 
@@ -169,6 +224,13 @@
 
         run: function () {
             rawMaterialController.loadData(homeconfig.rmId);
+
+            $('#fromDate').datepicker({
+                format: 'dd/mm/yyyy',
+            });
+            $('#toDate').datepicker({
+                format: 'dd/mm/yyyy',
+            });
         },
         // register event for elements
         registerEvent: function () {
@@ -177,6 +239,10 @@
             $('#tab_transactionHistory_huhu').off('click').on('click', function () {
                 rawMaterialController.loadData(homeconfig.rmId,true);
             })
+
+            $('#btnSearch').off('click').on('click', function () {
+                rawMaterialController.loadData(homeconfig.rmId, true);
+            });
 
         },
         formatMoney: function (value) {
@@ -187,11 +253,17 @@
             homeconfig.allCategories = [];
             $.ajax({
                 url: '/RawMaterial/RmHistoriesWithPaging',
-                type: 'get',
+                type: 'post',
                 dataType: 'json',
                 data: {
-                    Id: rmId, pageSize: homeconfig.pageSize, pageIndex: homeconfig.pageIndex,
-                },
+                        model: {
+                            Id: rmId,
+                            PageSize: homeconfig.pageSize,
+                            PageIndex: homeconfig.pageIndex,
+                            StartDate: $('#fromDate').val(),
+                            EndDate: $('#toDate').val()
+                    }
+                   },
                 success: function (res) {
                     if (res.status) {
 
@@ -222,7 +294,7 @@
                         $('#tblHistoryData').html(html);
                         try {
                             rawMaterialController.paging(data.TotalRows, function () {
-                                rawMaterialController.loadData(shopId);
+                                rawMaterialController.loadData(homeconfig.rmId);
                             }, changePageSize);
                         } catch (e) {
 

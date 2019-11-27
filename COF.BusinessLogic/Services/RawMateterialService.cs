@@ -22,7 +22,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy);
         Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId);
 
-        Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword);
+        Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, bool? isAuto);
     }
     public class RawMateterialService : IRawMateterialService
     {
@@ -227,12 +227,13 @@ namespace COF.BusinessLogic.Services
             }
         }
 
-        public async Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, string keyword)
+        public async Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, bool? isAuto)
         {
             try
             {
-                var sql = "exec AllRawMaterialHistoriesWithPaging @p0, @p1, @p2, @p3";
-                var result = await _unitOfWork.Context.Database.SqlQuery<RawMaterialHistoryDetailModel>(sql, id, pageIndex, pageSize, keyword)
+                
+                var sql = "exec AllRawMaterialHistoriesWithPaging @p0, @p1, @p2, @p3, @p4";
+                var result = await _unitOfWork.Context.Database.SqlQuery<RawMaterialHistoryDetailModel>(sql, id, pageIndex, pageSize, fromDate, toDate)
                     .ToListAsync();
 
                 return new BusinessLogicResult<List<RawMaterialHistoryDetailModel>>

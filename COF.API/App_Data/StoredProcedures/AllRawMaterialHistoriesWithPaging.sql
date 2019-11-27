@@ -2,7 +2,8 @@
 	@id INT,
 	@pageIndex INT,
 	@pageSize INT, 
-	@keyword NVARCHAR(MAX)
+	@startDate date,
+	@endDate date
 )
 AS
 BEGIN
@@ -29,6 +30,20 @@ DECLARE @query NVARCHAR(MAX) ='
 		
 	    WHERE 1 = 1 '
 		 
+    IF NULLIF(@startDate, '') IS NOT NULL
+	Begin
+	set @query = @query + ' and CAST(rmh.TimeAccess as Date) >= '  + '''' + CONVERT(NVARCHAR(10), @startDate) + ''''  
+	End
+
+	IF NULLIF(@endDate, '') IS NOT NULL
+	Begin
+	set @query = @query + ' and CAST(rmh.TimeAccess as Date) <= ' + ''''   + CONVERT(NVARCHAR(10), @endDate) + ''''  
+	End
+
+	--IF NULLIF(@isAuto, '') IS NOT NULL
+	--Begin
+	--set @query = @query + ' and CONVERT(rmh.TimeAccess as Date) <= ' + ''''   + CONVERT(NVARCHAR(10), @endDate) + ''''  
+	--End
 
 	--IF NULLIF(@keyword, '') IS NOT NULL
 	--Begin
