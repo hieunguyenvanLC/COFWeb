@@ -70,7 +70,7 @@ namespace COF.BusinessLogic.Services.Reports
             var shops = partner.Result.Shops.ToList();
             
 
-            var sql = "select Id, FinalAmount, ShopId,OrderStatus from [Order] where PartnerId = @p0 and Year(CreatedOnUtc) = @p1 and Month(CreatedOnUtc) = @p2";
+            var sql = "select Id, FinalAmount, ShopId,OrderStatus from [Order] where PartnerId = @p0 and Year(CheckInDate) = @p1 and Month(CheckInDate) = @p2";
             var allOrders =  _unitOfWork.Context.Database.SqlQuery<OrderQueryModel>(sql, partnerId, DateTimeHelper.CurentVnTime.Year, DateTimeHelper.CurentVnTime.Month).ToList();
             allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
             var result = shops.Select(shop => new ShopRevenueMonthlyReport
@@ -111,11 +111,11 @@ namespace COF.BusinessLogic.Services.Reports
                 var tmp = new ShopRevenueReportModel
                 {
                     Header = x.Date.ToString("dd/MM"),
-                    Details = GetOrderDetails(allOrders.Where(y => y.CreatedOnUtc.Date == x.Date).ToList()),
-                    TotalMoney = allOrders.Where(y => y.CreatedOnUtc.Date == x.Date)
+                    Details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Date == x.Date).ToList()),
+                    TotalMoney = allOrders.Where(y => y.CheckInDate.Date == x.Date)
                                 .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum()
                                 ,
-                    TotalOrder = allOrders.Where(y => y.CreatedOnUtc.Date == x.Date).Count(),
+                    TotalOrder = allOrders.Where(y => y.CheckInDate.Date == x.Date).Count(),
                 };
                 tmp.TotalUnit = tmp.Details.Sum(y => y.TotalUnit);
                 return tmp;
@@ -140,7 +140,7 @@ namespace COF.BusinessLogic.Services.Reports
             }
             allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
 
-            var groupByData = allOrders.GroupBy(x => x.CreatedOnUtc.Date).OrderBy(x => x.Key).ToList();
+            var groupByData = allOrders.GroupBy(x => x.CheckInDate.Date).OrderBy(x => x.Key).ToList();
 
             var result = new List<ShopRevenueReportModel>();
             foreach (var item in groupByData)
@@ -183,10 +183,10 @@ namespace COF.BusinessLogic.Services.Reports
                 var tmp = new ShopRevenueReportModel
                 {
                     Header = $"Tháng {i}",
-                    Details = GetOrderDetails(allOrders.Where(y => y.CreatedOnUtc.Month == i).ToList()),
-                    TotalMoney = allOrders.Where(x => x.CreatedOnUtc.Month == i)
+                    Details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Month == i).ToList()),
+                    TotalMoney = allOrders.Where(x => x.CheckInDate.Month == i)
                                  .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum(),
-                    TotalOrder = allOrders.Where(x => x.CreatedOnUtc.Month == i).Count()
+                    TotalOrder = allOrders.Where(x => x.CheckInDate.Month == i).Count()
                 };
                 tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
                 result.Add(tmp);

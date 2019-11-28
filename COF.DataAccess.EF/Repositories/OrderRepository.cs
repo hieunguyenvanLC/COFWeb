@@ -35,7 +35,7 @@ namespace COF.DataAccess.EF.Repositories
                 .Include(x => x.Customer)
                 .Include(x => x.User)
                 .Include(x => x.Shop)
-                .Where(x => x.PartnerId == partnerId && DbFunctions.TruncateTime(x.CreatedOnUtc) == today).ToList();
+                .Where(x => x.PartnerId == partnerId && DbFunctions.TruncateTime(x.CheckInDate) == today).ToList();
             return result;
         }
 
@@ -46,7 +46,7 @@ namespace COF.DataAccess.EF.Repositories
                 .Include(x => x.OrderDetails)
                 .Include(x => x.Shop)
                 .Where(x => x.PartnerId == partnerId && 
-                x.CreatedOnUtc.Month == today.Month && x.CreatedOnUtc.Year == today.Year
+                x.CheckInDate.Month == today.Month && x.CheckInDate.Year == today.Year
                 ).ToList();
             return result;
         }
@@ -57,7 +57,7 @@ namespace COF.DataAccess.EF.Repositories
             var result = _dbSet
                 .Include(x => x.OrderDetails)
                 .Where(x => x.ShopId == shopId &&
-                x.CreatedOnUtc.Month == today.Month && x.CreatedOnUtc.Year == today.Year
+                x.CheckInDate.Month == today.Month && x.CheckInDate.Year == today.Year
                 ).ToList();
             return result;
         }
@@ -68,7 +68,7 @@ namespace COF.DataAccess.EF.Repositories
             var result = _dbSet
                 .Include(x => x.Shop)
                 .Include(x => x.OrderDetails)
-                .Where(x => x.PartnerId == partnerId && x.CreatedOnUtc.Year == today.Year
+                .Where(x => x.PartnerId == partnerId && x.CheckInDate.Year == today.Year
                 ).ToList();
             return result;
         }
@@ -78,7 +78,7 @@ namespace COF.DataAccess.EF.Repositories
             var today = DateTime.UtcNow.Date.AddHours(7);
             var result = _dbSet
                 .Include(x => x.OrderDetails)
-                .Where(x => x.ShopId == shopId && x.CreatedOnUtc.Year == today.Year
+                .Where(x => x.ShopId == shopId && x.CheckInDate.Year == today.Year
                 ).ToList();
             return result;
         }
@@ -97,7 +97,7 @@ namespace COF.DataAccess.EF.Repositories
             var result = _dbSet
                 .Include(x => x.OrderDetails)
                 .Where(x => x.ShopId == shopId &&
-                DbFunctions.TruncateTime(x.CreatedOnUtc) >= fromDate.Date && DbFunctions.TruncateTime(x.CreatedOnUtc) <= toDate
+                DbFunctions.TruncateTime(x.CheckInDate) >= fromDate.Date && DbFunctions.TruncateTime(x.CheckInDate) <= toDate
                 ).ToList();
             return result;
         }
@@ -107,7 +107,7 @@ namespace COF.DataAccess.EF.Repositories
             var result = _dbSet
                 .Include(x => x.OrderDetails)
                 .Where(x => x.PartnerId == partnerId &&
-                DbFunctions.TruncateTime(x.CreatedOnUtc) >= fromDate.Date && DbFunctions.TruncateTime(x.CreatedOnUtc) <= toDate.Date).ToList();
+                DbFunctions.TruncateTime(x.CheckInDate) >= fromDate.Date && DbFunctions.TruncateTime(x.CheckInDate) <= toDate.Date).ToList();
             return result;
         }
 
