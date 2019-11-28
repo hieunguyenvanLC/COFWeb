@@ -198,7 +198,7 @@ namespace COF.BusinessLogic.Services
                     if (order.DiscountType == DiscountType.OneGetOne)
                     {
                         var lowestUnit = order.OrderDetails.OrderBy(x => x.UnitPrice).FirstOrDefault();
-
+                        lowestUnit.UnitPrice = 0;
                         lowestUnit.Description = "Sản phẩm thuộc diện mua 1 tặng 1";
                     }
 

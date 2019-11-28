@@ -10,7 +10,7 @@ BEGIN
 
 
 --get key sort
-declare @orderBy nvarchar(max) = 'o.Id desc'
+declare @orderBy nvarchar(max) = 'o.CheckInDate desc'
 
 DECLARE @query NVARCHAR(MAX) ='
 ;with paging as (
