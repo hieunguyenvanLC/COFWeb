@@ -10,7 +10,7 @@
 
 <section class="content-header">
     <h1>
-        Quản lí nguyên liệu
+        Quản lí xuất nhập tồn kho
 
     </h1>
     @*<ol class="breadcrumb">
@@ -50,74 +50,98 @@
                                 }
                             </ul>
 
+                            <div class="nav-tabs-custom">
 
 
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="tab_1">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a id="navTodayReport" data-toggle="tab" aria-expanded="true">Thống kê trong ngày</a></li>
 
-                                </div>
-                                <!-- /.tab-pane -->
-                                <div class="tab-pane" id="tab_2">
 
-                                </div>
-                                <!-- /.tab-pane -->
-                                <div class="tab-pane" id="tab_3">
+                                    <li><a id="navRmList" data-toggle="tab" data-id="" aria-expanded="true">Quản lí tồn kho</a></li>
+                                </ul>
 
-                                </div>
-                                <!-- /.tab-pane -->
+
                             </div>
+
+                           
                             <!-- /.tab-content -->
                         </div>
 
                         <div>
 
-                            <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
 
-                                <div class="form-row col-md-12" style="margin-top:15px">
-                                    <div class="col-md-3 col-xs-12">
-                                        <div class="form-group">
-                                            <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control" value="" autocomplete="off">
+                            <div style="background-color:white" id="todayReport">
+                                <table class="table table-responsive">
+                                    <thead style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                        <tr>
+                                            <td><b>Nguyên liệu</b></td>
+                                            <td><b>Đầu ngày</b></td>
+                                            <td><b>Hiện tại</b></td>
+                                            <td><b>Đã sử dụng</b></td>
+                                            <td><b>Tổng số bill</b></td>
+                                            <td><b>Xem chi tiết</b></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblTodayReport">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="rmList" hidden>
+                                <div id="" style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                    <div class="form-row col-md-12" style="margin-top:15px">
+                                        <div class="col-md-3 col-xs-12">
+                                            <div class="form-group">
+                                                <input name="search" id="txtKeySearch" placeholder="Nhập từ khóa ..." class="form-control" value="" autocomplete="off">
+                                            </div>
+
                                         </div>
+                                        <div class="col-md-9 col-xs-12">
+                                            <div class="form-group">
+                                                <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                                &nbsp;
+                                                <button id="btnResetFilter" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                            </div>
 
+                                        </div>
                                     </div>
-                                    <div class="col-md-9 col-xs-12">
-                                        <div class="form-group">
-                                            <button class="btn btn-success" id="btnSearch" type="button"><i class="fa fa-search"></i>Lọc</button>
-                                            &nbsp;
-                                            <button id="btnResetFilter" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
-                                        </div>
+                                </div>
 
+                                <br />
+                                <br />
+                                <button id="btnAdd" class="btn bg-purple margin">Thêm nguyên liệu</button>
+
+                                <div class="col-md-12">
+                                    <span style="text-align:left" id="pagingInfo"></span>
+                                </div>
+
+                                <div class="table table-responsive">
+                                    <table class="table table-responsive" style="padding-top:10px">
+                                        <thead style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                            <tr>
+                                                <td><b>Tên nguyên liệu</b></td>
+                                                <td><b>Mô tả</b></td>
+                                                <td><b>Đơn vị</b></td>
+                                                <td><b>Số lượng</b></td>
+                                                <td><b>Mô tả</b></td>
+                                                <td><b>Thao tác</b></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblData"></tbody>
+                                    </table>
+                                    <div style="" id="pagination" class="pagination">
                                     </div>
                                 </div>
                             </div>
+                           
 
-                            <br />
-                            <br />
-                            <button id="btnAdd" class="btn bg-purple margin">Thêm nguyên liệu</button>
                         </div>
 
 
-                        <div class="col-md-12">
-                            <span style="text-align:left" id="pagingInfo"></span>
-                        </div>
-
+                       
                     </div>
-                    <div class="table table-responsive">
-                        <table class="table table-responsive" style="padding-top:10px">
-                            <thead style="background-color:#ddd;text-align:center;vertical-align: middle;">
-                                <tr>
-                                    <td><b>Tên nguyên liệu</b></td>
-                                    <td><b>Mô tả</b></td>
-                                    <td><b>Đơn vị</b></td>
-                                    <td><b>Số lượng</b></td>
-                                    <td><b>Thao tác</b></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblData"></tbody>
-                        </table>
-                        <div style="" id="pagination" class="pagination">
-                        </div>
-                    </div>
+                   
 
                 </div>
 
@@ -141,6 +165,11 @@
         <input type="tel" class="form-control qtyInput"  style="display:none" data-id="{{Id}}" id="inputCurrentQty_{{Id}}" value="{{AutoTotalQty}}"/>
         
         </td>
+        <td>
+            <textarea class="form-control" style="display:none" id="inputNote_{{Id}}">
+
+</textarea>
+        </td>
         <td style="width:15%">
             <div id="mainControl_{{Id}}">
                 <a class="btn btn-success btnUpdateInventory" data-id="{{Id}}"> Cập nhật tồn kho</a>
@@ -155,6 +184,25 @@
 
         </td>
     </tr>
+</script>
+
+
+<script id="data-today-template" type="x-tmpl-mustache">
+    <tr style="text-align:center;vertical-align: middle;">
+        <td><b>{{Name}}</b></td>
+        <td>{{StartDayAmount}}</td>
+        <td>{{CurrentAmount}}</td>
+        <td>
+            {{OrderUsedAmount}}
+        </td>
+        <td>
+            {{TotalOrder}}
+        </td>
+        <td>
+            <a href="/nguyen-lieu/{{Id}}">Chi tiết </a>
+        </td>
+    </tr>
+    
 </script>
 
 @{
@@ -175,6 +223,7 @@
             homeconfig.allShops = allShop;
             homeconfig.shopId = allShop[0].Id;
             rawMaterialController.loadData(homeconfig.shopId);
+            rawMaterialController.getTodayReport(homeconfig.shopId);
             rawMaterialController.registerEvent();
             rawMaterialController.loadRawMaterialUnits();
         },
@@ -195,8 +244,21 @@
                 homeconfig.shopId = dataId;
                 homeconfig.pageIndex = 1;
                 rawMaterialController.loadData(homeconfig.shopId, true);
+                rawMaterialController.getTodayReport(homeconfig.shopId);
             });
 
+            $('#navRmList').off('click').on('click', function () {
+                $('#rmList').show();
+                $('#todayReport').hide();
+            });
+
+            $('#navTodayReport').off('click').on('click', function () {
+                $('#rmList').hide();
+                $('#todayReport').show();
+                rawMaterialController.getTodayReport(homeconfig.shopId);
+            });
+
+            
 
             $('#txtKeySearch').off('keypress').on('keypress', function (e) {
                 if (e.keyCode === 13) {
@@ -244,6 +306,8 @@
                 $('#currentQty_' + id).hide();
                 $('#inputCurrentQty_' + id).show();
 
+                $('#inputNote_' + id).show();
+
                 $('#saveQtyControl_' + id).show();
                 $('#mainControl_' + id).hide();
             });
@@ -253,6 +317,7 @@
                 $('#currentQty_' + id).val($(this).data('originalqty'))
                 $('#currentQty_' + id).show();
                 $('#inputCurrentQty_' + id).hide();
+                $('#inputNote_' + id).hide();
 
                 $('#saveQtyControl_' + id).hide();
                 $('#mainControl_' + id).show();
@@ -261,7 +326,8 @@
             $('.btnSaveQuantity').off('click').on('click', function () {
                 var id = $(this).data('id');
                 var quantity = $('#inputCurrentQty_' + id).val().split('.').join('');
-                rawMaterialController.updateRawMaterialQty(id, quantity);
+                var note = $('#inputNote_' + id).val();
+                rawMaterialController.updateRawMaterialQty(id, quantity,note);
             });
 
 
@@ -290,7 +356,6 @@
                         }
 
                         $('#pagingInfo').html(paginInfo);
-                        console.log(paginInfo);
                         var data = res.data;
                         var html = '';
                         var template = $('#data-template').html();
@@ -404,13 +469,13 @@
                 })
             }
         },
-        updateRawMaterialQty(id, qty) {
+        updateRawMaterialQty(id, qty,note) {
             $.ajax({
                 url: '/rawmaterial/updateqty',
                 dataType: 'json',
                 type: 'post',
                 data: {
-                    model: { Id: id, Qty: qty }
+                    model: { Id: id, Qty: qty , Note: note }
                 },
                 success: function (res) {
                     if (res.status) {
@@ -421,6 +486,35 @@
                         
                     } else {
                         toastr.error("Cập nhật tồn kho không thành công.")
+                    }
+                }
+            })
+        },
+        getTodayReport: function (shopId) {
+            $.ajax({
+                url: '/RawMaterial/GetTodayReport',
+                type: 'get',
+                data: { shopId: shopId },
+                success: function (res) {
+                    if (res.status) {
+                       var data = res.data;
+                        var html = '';
+                        var template = $('#data-today-template').html();
+                        $.each(data, function (i, item) {
+                            html += Mustache.render(template, {
+                                Id: item.RmId,
+                                Name: item.RmName,
+                                TotalOrder: item.TotalOrder,
+                                StartDayAmount: item.StartDayAmount,
+                                CurrentAmount: item.CurrentAmount,
+                                OrderUsedAmount: item.OrderUsedAmount
+                            });
+
+                        });
+                        $('#tblTodayReport').html(html);
+                    }
+                    else {
+                        toastr.error("Lỗi xảy ra...");
                     }
                 }
             })

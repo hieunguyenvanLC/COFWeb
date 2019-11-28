@@ -7,6 +7,7 @@ using COF.DataAccess.EF.Repositories;
 using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,10 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<bool>> CreateAsync(int shopId, RawMaterialRequestModel model);
         Task<BusinessLogicResult<List<RawMaterialUnitModel>>> GetAllRmUnitsAsync();
         Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id);
-        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy);
+        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note);
         Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId);
-
-        Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, bool? isAuto);
+        Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(int shopId);
+        Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, int? inputTypeId);
     }
     public class RawMateterialService : IRawMateterialService
     {
@@ -170,7 +171,7 @@ namespace COF.BusinessLogic.Services
 
        
 
-        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy)
+        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note)
         {
             try
             {
@@ -203,7 +204,8 @@ namespace COF.BusinessLogic.Services
                     TransactionTypeId = diffrentQty > 0 ? TransactionType.Increasement : TransactionType.Decreasement,
                     TotalQtyAtTimeAccess = qty,
                     CreatedBy = updateBy,
-                    InputTypeId = InputType.UserInput
+                    InputTypeId = InputType.UserInput,
+                    Description = note
                 };
 
                 _rawMaterialHistoryRepository.Add(rawMaterialHistory, updateBy);
@@ -227,14 +229,20 @@ namespace COF.BusinessLogic.Services
             }
         }
 
-        public async Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, bool? isAuto)
+        public async Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, int? inputTypeId)
         {
             try
             {
                 
-                var sql = "exec AllRawMaterialHistoriesWithPaging @p0, @p1, @p2, @p3, @p4";
-                var result = await _unitOfWork.Context.Database.SqlQuery<RawMaterialHistoryDetailModel>(sql, id, pageIndex, pageSize, fromDate, toDate)
-                    .ToListAsync();
+                var sql = "exec AllRawMaterialHistoriesWithPaging @p0, @p1, @p2, @p3, @p4, @p5";
+                var result = await _unitOfWork.Context.Database.SqlQuery<RawMaterialHistoryDetailModel>(
+                                sql, 
+                                id, 
+                                pageIndex, 
+                                pageSize, 
+                                fromDate, 
+                                toDate, 
+                                inputTypeId).ToListAsync();
 
                 return new BusinessLogicResult<List<RawMaterialHistoryDetailModel>>
                 {
@@ -273,6 +281,58 @@ namespace COF.BusinessLogic.Services
             {
 
                 throw;
+            }
+        }
+
+        public async Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(int shopId)
+        {
+            try
+            {
+                var shop = await _shopRepository.GetByIdAsync(shopId);
+                if (shop is null)
+                {
+                    return new BusinessLogicResult<List<TodayRawMaterialReport>>
+                    {
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("ShopId", "ShopId không tồn tại.") })
+                    };
+                }
+
+                var rms = await _rawMaterialRepository.GetByFilterAsync(x => x.ShopId == shopId);
+                var rmIds = rms.Select(x => x.Id).ToList();
+                var allRmsHistories = await _rawMaterialHistoryRepository.GetByFilterAsync(x => DbFunctions.TruncateTime(x.CreatedOnUtc) == DbFunctions.TruncateTime(DateTimeHelper.CurentVnTime) && rmIds.Contains(x.RawMaterialId));
+                
+                var result = new List<TodayRawMaterialReport>();
+                foreach (var rm in rms)
+                {
+                    var allRmsHistory = allRmsHistories.Where(x => x.RawMaterialId == rm.Id).ToList();
+                    var orders = allRmsHistory.Where(x => x.OrderId != null).Select(x => x.OrderId).Count();
+                    var tmp = new TodayRawMaterialReport
+                    {
+                        RmId = rm.Id,
+                        RmName = rm.Name,
+                        TotalOrder = orders,
+                        CurrentAmount = allRmsHistory.OrderByDescending(x => x.Id).FirstOrDefault()?.TotalQtyAtTimeAccess ?? 0,
+                        StartDayAmount = allRmsHistory.OrderBy(x => x.Id).FirstOrDefault()?.OldQty ?? 0,
+                        OrderUsedAmount = allRmsHistory.Where(x => x.OrderId != null).Select(x => x.Quantity).Sum()
+                    };
+
+                    result.Add(tmp);
+                }
+
+                return new BusinessLogicResult<List<TodayRawMaterialReport>>
+                {
+                    Result = result,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<List<TodayRawMaterialReport>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
             }
         }
     }

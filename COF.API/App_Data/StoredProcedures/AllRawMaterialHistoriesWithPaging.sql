@@ -3,7 +3,8 @@
 	@pageIndex INT,
 	@pageSize INT, 
 	@startDate date,
-	@endDate date
+	@endDate date,
+	@inputType int
 )
 AS
 BEGIN
@@ -39,6 +40,11 @@ DECLARE @query NVARCHAR(MAX) ='
 	Begin
 	set @query = @query + ' and CAST(rmh.TimeAccess as Date) <= ' + ''''   + CONVERT(NVARCHAR(10), @endDate) + ''''  
 	End
+
+	if nullif(@inputType,'') is not null
+	begin
+	set @query = @query + ' and rmh.InputTypeId = ' + CONVERT(NVARCHAR(10), @inputType) 
+	end
 
 	--IF NULLIF(@isAuto, '') IS NOT NULL
 	--Begin

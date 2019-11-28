@@ -253,8 +253,9 @@ namespace COF.BusinessLogic.Services
                         _bonusPointHistoryRepository.Add(orderHistory);
                         _customerRepository.Update(customer);
                     }
-                    await CalculateRmsAfterOrderFinshed(order.Id);
                     await _unitOfWork.SaveChangesAsync();
+                    await CalculateRmsAfterOrderFinshed(order.Id);
+                    
                 }
                 
                 return new BusinessLogicResult<Order>
@@ -507,7 +508,8 @@ namespace COF.BusinessLogic.Services
                             RawMaterialId = currentRm.Id,
                             TransactionTypeId = TransactionType.Decreasement,
                             CreatedBy = order.CreatedBy,
-                            Description = $"Đơn hàng #{order.OrderCode}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}, Số lượng : {detail.Quantity}"
+                            Description = $"Đơn hàng #{order.OrderCode}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}, Số lượng : {detail.Quantity}",
+                            OrderId = order.Id
                         };
                         _materialHistoryRepository.Add(transaction);
                         await _unitOfWork.SaveChangesAsync();

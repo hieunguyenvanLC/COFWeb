@@ -67,4 +67,15 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public string Description { get; set; }
         public long? RowCounts { get; set; }
     }
+
+    public class TodayRawMaterialReport
+    {
+        public int RmId { get; set; }
+        public string RmName { get; set; }
+        public int TotalOrder { get; set; }
+        public decimal OrderUsedAmount { get; set; }
+        public decimal StartDayAmount { get; set; }
+        public decimal CurrentAmount { get; set; }
+        public int TotalUsedRms { get; set; }
+    }
 }

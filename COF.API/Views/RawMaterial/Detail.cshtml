@@ -19,22 +19,14 @@
 <section class="content-header">
     <h1>
         @Model.Name
-
     </h1>
-    @*<ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
-        </ol>*@
+
 </section>
 
 <section class="content">
-    <!-- /.row -->
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
-
-                <!-- /.box-header -->
                 <div class="box-body">
                     <div id="tableContent" class="box-body table-responsive">
 
@@ -118,6 +110,27 @@
                                                         </div>
                                                         <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="toDate">
                                                     </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Loại điều chỉnh : </label>
+
+                                                    <div class="form-group">
+                                                        <select class="form-control" id="ddlInputType">
+                                                            <option value="">
+                                                                -- Tất cả --
+                                                            </option>
+                                                            <option value="1">
+                                                                Bằng tay
+                                                            </option>
+                                                            <option value="2">
+                                                                Tự động
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
                                                 </div>
 
                                             </div>
@@ -244,6 +257,13 @@
                 rawMaterialController.loadData(homeconfig.rmId, true);
             });
 
+            $('#btnResetFilter').off('click').on('click', function () {
+                $('#fromDate').val('');
+                $('#toDate').val('');
+                $('#ddlInputType').val('').change();
+                rawMaterialController.loadData(homeconfig.rmId, true);
+            })
+
         },
         formatMoney: function (value) {
             var ressult = accounting.formatMoney(value, "", 0, ".", ","); // €4.999,99
@@ -261,7 +281,8 @@
                             PageSize: homeconfig.pageSize,
                             PageIndex: homeconfig.pageIndex,
                             StartDate: $('#fromDate').val(),
-                            EndDate: $('#toDate').val()
+                            EndDate: $('#toDate').val(),
+                            InputTypeId: $('#ddlInputType').val()
                     }
                    },
                 success: function (res) {

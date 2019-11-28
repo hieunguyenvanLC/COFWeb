@@ -20,6 +20,7 @@ namespace COF.API.Controllers
         private readonly IRawMateterialService _rawMateterialService;
         private readonly IUserService _userService;
         private readonly IShopService _shopService;
+        
         #endregion
 
         #region ctor
@@ -165,7 +166,7 @@ namespace COF.API.Controllers
             try
             {
                 var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
-                var logicRes = await _rawMateterialService.UpdateRmQty( user.PartnerId.GetValueOrDefault() , model.Id, model.Qty, user.FullName);
+                var logicRes = await _rawMateterialService.UpdateRmQty( user.PartnerId.GetValueOrDefault() , model.Id, model.Qty, user.FullName, model.Note);
                 if (logicRes.Validations != null)
                 {
                     return HttpPostErrorResponse(logicRes.Validations.Errors[0].ErrorMessage);
@@ -185,7 +186,7 @@ namespace COF.API.Controllers
             try
             {
                 var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
-                var logicRes = await _rawMateterialService.GetHistoriesWithPaging(model.Id,model.PageIndex,model.PageSize,model._fromDate,model._toDate,model.IsAuto);
+                var logicRes = await _rawMateterialService.GetHistoriesWithPaging(model.Id,model.PageIndex,model.PageSize,model._fromDate,model._toDate,model.InputTypeId);
                 if (!logicRes.Success)
                 {
                     return HttpGetErrorResponse(logicRes.Validations.Errors[0].ToString());
@@ -217,6 +218,26 @@ namespace COF.API.Controllers
             try
             {
                 var queryRes = await _rawMateterialService.GetAllAsync(shopId);
+                if (queryRes.Validations != null)
+                {
+                    return HttpGetSuccessResponse(queryRes.Validations.Errors[0].ErrorMessage);
+                }
+
+                return HttpGetSuccessResponse(queryRes.Result);
+            }
+            catch (Exception ex)
+            {
+
+                return HttpPostErrorResponse(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTodayReport(int shopId)
+        {
+            try
+            {
+                var queryRes = await _rawMateterialService.GetTodayReport(shopId);
                 if (queryRes.Validations != null)
                 {
                     return HttpGetSuccessResponse(queryRes.Validations.Errors[0].ErrorMessage);

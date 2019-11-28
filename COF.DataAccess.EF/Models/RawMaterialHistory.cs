@@ -33,6 +33,7 @@ namespace COF.DataAccess.EF.Models
         }
         public int PartnerId { get; set; }
         public string Description { get; set; }
+        public int? OrderId { get; set; }
     }
     public enum TransactionType
     {

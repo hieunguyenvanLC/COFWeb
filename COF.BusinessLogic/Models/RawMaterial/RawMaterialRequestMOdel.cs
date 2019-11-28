@@ -36,7 +36,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int PageSize { get; set; } = 1;
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public bool? IsAuto { get; set; }
+        public int? InputTypeId { get; set; }
 
         public DateTime? _fromDate
         {
