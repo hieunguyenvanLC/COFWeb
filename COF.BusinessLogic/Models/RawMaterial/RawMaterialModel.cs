@@ -77,5 +77,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public decimal StartDayAmount { get; set; }
         public decimal CurrentAmount { get; set; }
         public int TotalUsedRms { get; set; }
+        public decimal DiffrentAmount { get; set; }
+        public decimal AddNewAmount { get; set; }
     }
 }

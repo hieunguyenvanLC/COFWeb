@@ -41,7 +41,7 @@ DECLARE @query NVARCHAR(MAX) ='
 	set @query = @query + ' and CAST(rmh.TimeAccess as Date) <= ' + ''''   + CONVERT(NVARCHAR(10), @endDate) + ''''  
 	End
 
-	if nullif(@inputType,'') is not null
+	if nullif(@inputType,'') is not null or @inputType = 0
 	begin
 	set @query = @query + ' and rmh.InputTypeId = ' + CONVERT(NVARCHAR(10), @inputType) 
 	end
@@ -71,6 +71,7 @@ DECLARE @query NVARCHAR(MAX) ='
 
 	select * from paging p
 	where p.RowCounts > ' + CONVERT(NVARCHAR(10), ((@pageIndex - 1) * @pageSize)) + ' and p.RowCounts <= ' + CONVERT(NVARCHAR(10), (@pageIndex * @pageSize)) + ''
+	print(@inputType)
 	print(@query);
 EXECUTE sp_executesql @query
 

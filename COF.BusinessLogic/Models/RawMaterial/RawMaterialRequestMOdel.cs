@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COF.DataAccess.EF.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -10,6 +11,8 @@ namespace COF.BusinessLogic.Models.RawMaterial
 {
     public class RawMaterialRequestModel
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Tên nguyên liệu là bắt buộc")]
         [StringLength(100)]
         public string Name { get; set; }
@@ -27,6 +30,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int Id { get; set; }
         public decimal Qty { get; set; }
         public string Note { get; set; }
+        public InputType InputType { get; set; } = InputType.UserInput;
     }
 
     public class RmHistorySearchModel
@@ -61,4 +65,35 @@ namespace COF.BusinessLogic.Models.RawMaterial
             }
         }
     }
+
+
+    public class RmReportSearchModel
+    {
+        public int ShopId { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public DateTime? _fromDate
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(StartDate))
+                {
+                    return DateTime.ParseExact(StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
+                return null;
+            }
+        }
+        public DateTime? _toDate
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(EndDate))
+                {
+                    return DateTime.ParseExact(EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
+                return null;
+            }
+        }
+    }
+
 }

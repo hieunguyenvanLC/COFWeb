@@ -52,12 +52,9 @@
 
                             <div class="nav-tabs-custom">
 
-
                                 <ul class="nav nav-tabs">
-                                    <li class="active"><a id="navTodayReport" data-toggle="tab" aria-expanded="true">Thống kê trong ngày</a></li>
-
-
-                                    <li><a id="navRmList" data-toggle="tab" data-id="" aria-expanded="true">Quản lí tồn kho</a></li>
+                                    <li class="active"><a id="navRmList" data-toggle="tab" data-id="" aria-expanded="true">Quản lí tồn kho</a></li>
+                                    <li><a id="navTodayReport" data-toggle="tab" aria-expanded="true">Thống kê trong ngày</a></li>
                                 </ul>
 
 
@@ -70,24 +67,8 @@
                         <div>
 
 
-                            <div style="background-color:white" id="todayReport">
-                                <table class="table table-responsive">
-                                    <thead style="background-color:#ddd;text-align:center;vertical-align: middle;">
-                                        <tr>
-                                            <td><b>Nguyên liệu</b></td>
-                                            <td><b>Đầu ngày</b></td>
-                                            <td><b>Hiện tại</b></td>
-                                            <td><b>Đã sử dụng</b></td>
-                                            <td><b>Tổng số bill</b></td>
-                                            <td><b>Xem chi tiết</b></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblTodayReport">
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="rmList" hidden>
+                            <div id="rmList" >
                                 <div id="" style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
 
                                     <div class="form-row col-md-12" style="margin-top:15px">
@@ -134,7 +115,66 @@
                                     </div>
                                 </div>
                             </div>
-                           
+                            <div style="background-color:white" id="todayReport" hidden>
+
+
+                                <div style="background-color:white" class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search well well-sm fillter searchForm">
+
+                                    <div class="form-row col-md-12" style="margin-top:15px">
+                                        <div class="col-md-3 col-xs-12">
+                                            <div class="form-group">
+                                                <label>Từ : </label>
+
+                                                <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="fromDate">
+                                                </div>
+                                                <!-- /.input group -->
+
+                                                <label> Đến :</label>
+
+                                                <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="toDate">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-md-12 col-xs-12">
+                                            <div class="form-group">
+                                                <button class="btn btn-success" id="btnSearchReport" type="button"><i class="fa fa-search"></i>Lọc</button>
+                                                &nbsp;
+                                                <button id="btnResetFilterReport" type="button" class="btn btn-default ng-binding"><i class="fa fa-remove"></i>Bỏ lọc</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br />
+                                <br />
+
+                                <table class="table table-responsive">
+                                    <thead style="background-color:#ddd;text-align:center;vertical-align: middle;">
+                                        <tr>
+                                            <td><b>Nguyên liệu</b></td>
+                                            <td><b>Bắt đầu</b></td>
+                                            <td><b>Kết thúc</b></td>
+                                            <td><b>Nhập vào</b></td>
+                                            <td><b>Tự động trừ</b></td>
+                                            <td><b>Chênh lệch</b></td>
+                                            <td><b>Xem chi tiết</b></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblTodayReport"></tbody>
+                                </table>
+                            </div>
 
                         </div>
 
@@ -166,9 +206,15 @@
         
         </td>
         <td>
-            <textarea class="form-control" style="display:none" id="inputNote_{{Id}}">
-
+            <div id="input_{{Id}}" hidden>
+                <textarea class="form-control" style="display:none" id="inputNote_{{Id}}">
+            
 </textarea>
+                <br />
+                Thêm hàng mới <input hidden type="checkbox" id="inputType_{{Id}}"> <br>
+            </div>
+           
+           
         </td>
         <td style="width:15%">
             <div id="mainControl_{{Id}}">
@@ -192,12 +238,12 @@
         <td><b>{{Name}}</b></td>
         <td>{{StartDayAmount}}</td>
         <td>{{CurrentAmount}}</td>
+        <td>{{AddNewAmount}}</td>
         <td>
             {{OrderUsedAmount}}
         </td>
-        <td>
-            {{TotalOrder}}
-        </td>
+   
+        <td>{{DiffrentAmount}}</td>
         <td>
             <a href="/nguyen-lieu/{{Id}}">Chi tiết </a>
         </td>
@@ -229,7 +275,12 @@
         },
         // register event for elements
         registerEvent: function () {
-            // event for search button,
+            $('#fromDate').datepicker({
+                format: 'dd/mm/yyyy',
+            });
+            $('#toDate').datepicker({
+                format: 'dd/mm/yyyy',
+            });
 
             $('#btnAdd').off('click').on('click', function () {
                 rawMaterialController.resetParitalView();
@@ -305,9 +356,9 @@
                 var id = $(this).data('id');
                 $('#currentQty_' + id).hide();
                 $('#inputCurrentQty_' + id).show();
-
+                $('#input_' + id).show();
                 $('#inputNote_' + id).show();
-
+                $('#inputType_' + id).show();
                 $('#saveQtyControl_' + id).show();
                 $('#mainControl_' + id).hide();
             });
@@ -318,7 +369,8 @@
                 $('#currentQty_' + id).show();
                 $('#inputCurrentQty_' + id).hide();
                 $('#inputNote_' + id).hide();
-
+                $('#input_' + id).hide();
+                $('#inputType_' + id).hide();
                 $('#saveQtyControl_' + id).hide();
                 $('#mainControl_' + id).show();
             });
@@ -327,9 +379,21 @@
                 var id = $(this).data('id');
                 var quantity = $('#inputCurrentQty_' + id).val().split('.').join('');
                 var note = $('#inputNote_' + id).val();
-                rawMaterialController.updateRawMaterialQty(id, quantity,note);
+                var inputType = $('#inputType_' + id).is(':checked') ? 0 : 1;
+                console.log()
+                
+                rawMaterialController.updateRawMaterialQty(id, quantity, note, inputType);
             });
 
+            $('#btnSearchReport').off('click').on('click', function () {
+                rawMaterialController.getTodayReport(homeconfig.shopId);
+            });
+
+            $('#btnResetFilterReport').off('click').on('click', function () {
+                $('#fromDate').val('');
+                $('#toDate').val('');
+                rawMaterialController.getTodayReport(homeconfig.shopId);
+            });
 
         },
         formatMoney: function (value) {
@@ -469,13 +533,13 @@
                 })
             }
         },
-        updateRawMaterialQty(id, qty,note) {
+        updateRawMaterialQty(id, qty,note,inputType) {
             $.ajax({
                 url: '/rawmaterial/updateqty',
                 dataType: 'json',
                 type: 'post',
                 data: {
-                    model: { Id: id, Qty: qty , Note: note }
+                    model: { Id: id, Qty: qty, Note: note, InputType: inputType  }
                 },
                 success: function (res) {
                     if (res.status) {
@@ -485,7 +549,7 @@
                         $('#btnCancel_' + id).click();
                         
                     } else {
-                        toastr.error("Cập nhật tồn kho không thành công.")
+                        toastr.error(res.errorMessage);
                     }
                 }
             })
@@ -493,8 +557,15 @@
         getTodayReport: function (shopId) {
             $.ajax({
                 url: '/RawMaterial/GetTodayReport',
-                type: 'get',
-                data: { shopId: shopId },
+                type: 'POST',
+                data: {
+                    model: {
+                        ShopId: shopId,
+                        StartDate: $('#fromDate').val(),
+                        EndDate: $('#toDate').val()
+                    }
+
+                },
                 success: function (res) {
                     if (res.status) {
                        var data = res.data;
@@ -507,7 +578,9 @@
                                 TotalOrder: item.TotalOrder,
                                 StartDayAmount: item.StartDayAmount,
                                 CurrentAmount: item.CurrentAmount,
-                                OrderUsedAmount: item.OrderUsedAmount
+                                OrderUsedAmount: item.OrderUsedAmount,
+                                DiffrentAmount: item.DiffrentAmount,
+                                AddNewAmount: item.AddNewAmount
                             });
 
                         });

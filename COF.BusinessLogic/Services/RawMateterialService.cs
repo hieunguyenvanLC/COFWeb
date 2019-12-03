@@ -20,10 +20,11 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<bool>> CreateAsync(int shopId, RawMaterialRequestModel model);
         Task<BusinessLogicResult<List<RawMaterialUnitModel>>> GetAllRmUnitsAsync();
         Task<BusinessLogicResult<RawMaterial>> GetByIdAsync(int id);
-        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note);
+        Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note, InputType inputType);
         Task<BusinessLogicResult<List<RawMaterialModel>>> GetAllAsync(int shopId);
-        Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(int shopId);
+        Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(RmReportSearchModel model);
         Task<BusinessLogicResult<List<RawMaterialHistoryDetailModel>>> GetHistoriesWithPaging(int id, int pageIndex, int pageSize, DateTime? fromDate, DateTime? toDate, int? inputTypeId);
+        Task<BusinessLogicResult<bool>> UpdateAsync(RawMaterialRequestModel model);
     }
     public class RawMateterialService : IRawMateterialService
     {
@@ -171,7 +172,7 @@ namespace COF.BusinessLogic.Services
 
        
 
-        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note)
+        public async Task<BusinessLogicResult<bool>> UpdateRmQty(int parnterId, int id, decimal qty, string updateBy, string note, InputType inputType)
         {
             try
             {
@@ -183,6 +184,19 @@ namespace COF.BusinessLogic.Services
                         Success = false,
                         Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Id", "Nguyên liệu không tồn tại.") })
                     };
+                }
+
+
+                if (inputType == InputType.AddNew)
+                {
+                    if (qty < rm.AutoTotalQty)
+                    {
+                        return new BusinessLogicResult<bool>
+                        {
+                            Success = false,
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Amount", "Giá trị nguyên liệu sau khi thêm vào không hợp lệ.") })
+                        };
+                    }
                 }
 
                 var diffrentQty = qty - rm.AutoTotalQty;
@@ -204,7 +218,7 @@ namespace COF.BusinessLogic.Services
                     TransactionTypeId = diffrentQty > 0 ? TransactionType.Increasement : TransactionType.Decreasement,
                     TotalQtyAtTimeAccess = qty,
                     CreatedBy = updateBy,
-                    InputTypeId = InputType.UserInput,
+                    InputTypeId = inputType,
                     Description = note
                 };
 
@@ -284,11 +298,11 @@ namespace COF.BusinessLogic.Services
             }
         }
 
-        public async Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(int shopId)
+        public async Task<BusinessLogicResult<List<TodayRawMaterialReport>>> GetTodayReport(RmReportSearchModel model)
         {
             try
             {
-                var shop = await _shopRepository.GetByIdAsync(shopId);
+                var shop = await _shopRepository.GetByIdAsync(model.ShopId);
                 if (shop is null)
                 {
                     return new BusinessLogicResult<List<TodayRawMaterialReport>>
@@ -298,9 +312,14 @@ namespace COF.BusinessLogic.Services
                     };
                 }
 
-                var rms = await _rawMaterialRepository.GetByFilterAsync(x => x.ShopId == shopId);
+                var rms = await _rawMaterialRepository.GetByFilterAsync(x => x.ShopId == model.ShopId);
                 var rmIds = rms.Select(x => x.Id).ToList();
-                var allRmsHistories = await _rawMaterialHistoryRepository.GetByFilterAsync(x => DbFunctions.TruncateTime(x.CreatedOnUtc) == DbFunctions.TruncateTime(DateTimeHelper.CurentVnTime) && rmIds.Contains(x.RawMaterialId));
+                var allRmsHistories = await _rawMaterialHistoryRepository.GetByFilterAsync(x => 
+                (model._toDate ==  null || DbFunctions.TruncateTime(x.CreatedOnUtc) <= DbFunctions.TruncateTime(model._toDate))
+                
+                && (model._fromDate == null ||  DbFunctions.TruncateTime(x.CreatedOnUtc) >= DbFunctions.TruncateTime(model._fromDate))
+
+                && rmIds.Contains(x.RawMaterialId));
                 
                 var result = new List<TodayRawMaterialReport>();
                 foreach (var rm in rms)
@@ -314,9 +333,24 @@ namespace COF.BusinessLogic.Services
                         TotalOrder = orders,
                         CurrentAmount = allRmsHistory.OrderByDescending(x => x.Id).FirstOrDefault()?.TotalQtyAtTimeAccess ?? 0,
                         StartDayAmount = allRmsHistory.OrderBy(x => x.Id).FirstOrDefault()?.OldQty ?? 0,
-                        OrderUsedAmount = allRmsHistory.Where(x => x.OrderId != null).Select(x => x.Quantity).Sum()
+                        OrderUsedAmount = allRmsHistory.Where(x => x.OrderId != null).Select(x => x.Quantity).Sum(),
+                        AddNewAmount = allRmsHistory.Where(x => x.InputTypeId == InputType.AddNew).Select(x => x.Quantity).Sum()
                     };
-
+                    tmp.DiffrentAmount = allRmsHistory.Sum(x =>
+                    {
+                        if (x.InputTypeId != InputType.AddNew)
+                        {
+                            if (x.TransactionTypeId == TransactionType.Decreasement)
+                            {
+                                return -1.0m * x.Quantity;
+                            }
+                            else
+                            {
+                                return x.Quantity;
+                            }
+                        }
+                        return 0;
+                    });
                     result.Add(tmp);
                 }
 
@@ -329,6 +363,43 @@ namespace COF.BusinessLogic.Services
             catch (Exception ex)
             {
                 return new BusinessLogicResult<List<TodayRawMaterialReport>>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
+            }
+        }
+
+        public async Task<BusinessLogicResult<bool>> UpdateAsync(RawMaterialRequestModel model)
+        {
+            try
+            {
+                var rm = await _rawMaterialRepository.GetByIdAsync(model.Id);
+                if (rm is null)
+                {
+                    return new BusinessLogicResult<bool>
+                    {
+                        Result = false,
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Id", "Id không tồn tại.") })
+                    };
+                }
+
+                rm.RawMaterialUnitId = model.RawMaterialUnitId;
+                rm.Name = model.Name;
+                rm.Description = model.Description;
+
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Success = true,
+                    Result = true
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new BusinessLogicResult<bool>
                 {
                     Success = false,
                     Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })

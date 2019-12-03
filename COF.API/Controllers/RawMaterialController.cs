@@ -137,6 +137,16 @@ namespace COF.API.Controllers
         {
             try
             {
+
+                var unitRes = await _rawMateterialService.GetAllRmUnitsAsync();
+                if (unitRes.Validations != null)
+                {
+                    return HttpGetSuccessResponse(unitRes.Validations.Errors[0].ErrorMessage);
+                }
+
+                TempData["Units"] = unitRes.Result;
+
+
                 var queryRes = await _rawMateterialService.GetByIdAsync(id);
                 var rm = queryRes.Result;
                 var res = new RawMaterialDetailModel
@@ -166,7 +176,7 @@ namespace COF.API.Controllers
             try
             {
                 var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
-                var logicRes = await _rawMateterialService.UpdateRmQty( user.PartnerId.GetValueOrDefault() , model.Id, model.Qty, user.FullName, model.Note);
+                var logicRes = await _rawMateterialService.UpdateRmQty( user.PartnerId.GetValueOrDefault() , model.Id, model.Qty, user.FullName, model.Note,model.InputType);
                 if (logicRes.Validations != null)
                 {
                     return HttpPostErrorResponse(logicRes.Validations.Errors[0].ErrorMessage);
@@ -232,22 +242,41 @@ namespace COF.API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetTodayReport(int shopId)
+        [HttpPost]
+        public async Task<ActionResult> GetTodayReport(RmReportSearchModel model)
         {
             try
             {
-                var queryRes = await _rawMateterialService.GetTodayReport(shopId);
+                var queryRes = await _rawMateterialService.GetTodayReport(model);
                 if (queryRes.Validations != null)
                 {
                     return HttpGetSuccessResponse(queryRes.Validations.Errors[0].ErrorMessage);
                 }
 
-                return HttpGetSuccessResponse(queryRes.Result);
+                return HttpPostSuccessResponse(queryRes.Result);
             }
             catch (Exception ex)
             {
 
+                return HttpPostErrorResponse(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateRawMaterial(RawMaterialRequestModel model)
+        {
+            try
+            {
+                var logicRes = await _rawMateterialService.UpdateAsync(model);
+                if (logicRes.Validations != null)
+                {
+                    return HttpPostErrorResponse(logicRes.Validations.Errors[0].ErrorMessage);
+                }
+                return HttpPostSuccessResponse();
+            }
+            catch (Exception ex)
+            {
                 return HttpPostErrorResponse(ex.Message);
             }
         }

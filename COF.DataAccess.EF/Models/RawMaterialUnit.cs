@@ -15,4 +15,6 @@ namespace COF.DataAccess.EF.Models
         public string Description { get; set; }
         public virtual ICollection<RawMaterial> RawMaterials { get; set; }
     }
+
+   
 }

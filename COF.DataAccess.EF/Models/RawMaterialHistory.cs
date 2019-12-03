@@ -42,6 +42,7 @@ namespace COF.DataAccess.EF.Models
     }
     public enum InputType
     {
+        AddNew = 0,
         UserInput = 1,
         Auto = 2
     }
