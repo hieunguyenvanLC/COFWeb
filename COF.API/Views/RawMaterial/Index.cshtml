@@ -54,7 +54,7 @@
 
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a id="navRmList" data-toggle="tab" data-id="" aria-expanded="true">Quản lí tồn kho</a></li>
-                                    <li><a id="navTodayReport" data-toggle="tab" aria-expanded="true">Thống kê trong ngày</a></li>
+                                    <li><a id="navTodayReport" data-toggle="tab" aria-expanded="true">Thống kê</a></li>
                                 </ul>
 
 
@@ -235,7 +235,7 @@
 
 <script id="data-today-template" type="x-tmpl-mustache">
     <tr style="text-align:center;vertical-align: middle;">
-        <td><b>{{Name}}</b></td>
+        <td><b>{{Name}}</b>  ({{RawMaterialUnitName}})</td>
         <td>{{StartDayAmount}}</td>
         <td>{{CurrentAmount}}</td>
         <td>{{AddNewAmount}}</td>
@@ -281,6 +281,9 @@
             $('#toDate').datepicker({
                 format: 'dd/mm/yyyy',
             });
+
+            $("#fromDate").datepicker("setDate", new Date());
+            $("#toDate").datepicker("setDate", new Date());
 
             $('#btnAdd').off('click').on('click', function () {
                 rawMaterialController.resetParitalView();
@@ -580,7 +583,8 @@
                                 CurrentAmount: item.CurrentAmount,
                                 OrderUsedAmount: item.OrderUsedAmount,
                                 DiffrentAmount: item.DiffrentAmount,
-                                AddNewAmount: item.AddNewAmount
+                                AddNewAmount: item.AddNewAmount,
+                                RawMaterialUnitName: item.RawMaterialUnitName
                             });
 
                         });

@@ -79,5 +79,6 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int TotalUsedRms { get; set; }
         public decimal DiffrentAmount { get; set; }
         public decimal AddNewAmount { get; set; }
+        public string RawMaterialUnitName { get; set; }
     }
 }

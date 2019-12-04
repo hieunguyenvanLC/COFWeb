@@ -334,11 +334,12 @@ namespace COF.BusinessLogic.Services
                         CurrentAmount = allRmsHistory.OrderByDescending(x => x.Id).FirstOrDefault()?.TotalQtyAtTimeAccess ?? 0,
                         StartDayAmount = allRmsHistory.OrderBy(x => x.Id).FirstOrDefault()?.OldQty ?? 0,
                         OrderUsedAmount = allRmsHistory.Where(x => x.OrderId != null).Select(x => x.Quantity).Sum(),
-                        AddNewAmount = allRmsHistory.Where(x => x.InputTypeId == InputType.AddNew).Select(x => x.Quantity).Sum()
+                        AddNewAmount = allRmsHistory.Where(x => x.InputTypeId == InputType.AddNew).Select(x => x.Quantity).Sum(),
+                        RawMaterialUnitName = rm.RawMaterialUnit.Name
                     };
                     tmp.DiffrentAmount = allRmsHistory.Sum(x =>
                     {
-                        if (x.InputTypeId != InputType.AddNew)
+                        if (x.InputTypeId ==  InputType.UserInput)
                         {
                             if (x.TransactionTypeId == TransactionType.Decreasement)
                             {
