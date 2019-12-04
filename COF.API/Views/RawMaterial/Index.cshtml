@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Danh mục nguyên liệu";
+    ViewBag.Title = "Quản lí xuất nhập tồn kho";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var allShops = TempData["Shops"] as List<COF.BusinessLogic.Models.Shop.ShopModel>;
@@ -13,11 +13,6 @@
         Quản lí xuất nhập tồn kho
 
     </h1>
-    @*<ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> </a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
-        </ol>*@
 </section>
 
 <section class="content">
@@ -40,11 +35,11 @@
                                         var shop = allShops[i];
                                         if (i == 0)
                                         {
-                                            <li class="active"><a href="#tab_@shop.Id" data-id="@shop.Id" class="shop-tab" data-toggle="tab" aria-expanded="true">@shop.Name</a></li>
+                                            <li class="active"><a href="#tab_@shop.Id" data-id="@shop.Id" class="shop-tab" data-toggle="tab" aria-expanded="true"><b>@shop.Name.ToUpper()</b> </a></li>
                                         }
                                         else
                                         {
-                                            <li><a href="#tab_@shop.Id" data-toggle="tab" data-id="@shop.Id" class="shop-tab" aria-expanded="true">@shop.Name</a></li>
+                                            <li><a href="#tab_@shop.Id" data-toggle="tab" data-id="@shop.Id" class="shop-tab" aria-expanded="true"><b>@shop.Name.ToUpper()</b></a></li>
                                         }
                                     }
                                 }
@@ -106,7 +101,7 @@
                                                 <td><b>Đơn vị</b></td>
                                                 <td><b>Số lượng</b></td>
                                                 <td><b>Mô tả</b></td>
-                                                <td><b>Thao tác</b></td>
+                                                <td style="width:20%"><b>Thao tác</b></td>
                                             </tr>
                                         </thead>
                                         <tbody id="tblData"></tbody>
@@ -419,7 +414,7 @@
                         var paginInfo = "";
                         if (res.data.Items.length > 0) {
                             var begin = (homeconfig.pageIndex - 1) * homeconfig.pageSize + 1;
-                            paginInfo = begin + " - " + (begin + res.data.Items.length - 1) + " trên " + res.data.TotalRows + " đơn hàng";
+                            paginInfo = begin + " - " + (begin + res.data.Items.length - 1) + " trên " + res.data.TotalRows + " nguyên liệu";
                         }
 
                         $('#pagingInfo').html(paginInfo);
