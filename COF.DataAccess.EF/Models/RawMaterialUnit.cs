@@ -13,6 +13,7 @@ namespace COF.DataAccess.EF.Models
         [MaxLength(256)]
         public string Name { get; set; }
         public string Description { get; set; }
+        public decimal UnitCost { get; set; }
         public virtual ICollection<RawMaterial> RawMaterials { get; set; }
     }
 

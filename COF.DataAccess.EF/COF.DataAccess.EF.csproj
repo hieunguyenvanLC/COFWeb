@@ -196,6 +196,10 @@
     <Compile Include="Migrations\201911280758508_TrackingOrderInRmHistory.Designer.cs">
       <DependentUpon>201911280758508_TrackingOrderInRmHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912071609561_AddUnitCostForRm.cs" />
+    <Compile Include="Migrations\201912071609561_AddUnitCostForRm.Designer.cs">
+      <DependentUpon>201912071609561_AddUnitCostForRm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -344,6 +348,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911280758508_TrackingOrderInRmHistory.resx">
       <DependentUpon>201911280758508_TrackingOrderInRmHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912071609561_AddUnitCostForRm.resx">
+      <DependentUpon>201912071609561_AddUnitCostForRm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
