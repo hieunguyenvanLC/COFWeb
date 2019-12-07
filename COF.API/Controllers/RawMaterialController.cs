@@ -159,7 +159,8 @@ namespace COF.API.Controllers
                     AutoTotalQty = rm.AutoTotalQty,
                     UserInputTotalQty = rm.UserInputTotalQty,
                     ShopId = rm.ShopId,
-                    Shop = rm.Shop.ShopName
+                    Shop = rm.Shop.ShopName,
+                    UnitCost = rm.UnitCost
                 };
                 return View(res);
             }

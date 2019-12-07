@@ -21,7 +21,8 @@ DECLARE @query NVARCHAR(MAX) ='
 		rm.Description,
 		rm.RawMaterialUnitId,
 		rmu.Name as RawMaterialUnitName,
-		rm.AutoTotalQty
+		rm.AutoTotalQty,
+		rm.UnitCost
 		from [RawMaterial] rm
 		inner join [Shop] shop on rm.ShopId = shop.Id	
 		inner join [RawMaterialUnit] rmu on rm.RawMaterialUnitId = rmu.Id
@@ -47,7 +48,8 @@ DECLARE @query NVARCHAR(MAX) ='
 		null Description,
 		0 RawMaterialUnitId,
 	    null RawMaterialUnitName,
-		0 AutoTotalQty
+		0 AutoTotalQty,
+		0 UnitCost
 	from paging p
 
 	union all

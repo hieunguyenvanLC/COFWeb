@@ -17,6 +17,7 @@ namespace COF.DataAccess.EF.Models
         public int ShopId { get; set; }
         public virtual Shop Shop { get; set; }
         public virtual RawMaterialUnit RawMaterialUnit { get; set; }
+        public decimal UnitCost { get; set; }
 
         public virtual ICollection<ProductHasRawMaterial> ProductHasRawMaterials { get; set; }
         public virtual ICollection<RawMaterialHistory> RawMaterialHistories { get; set; }

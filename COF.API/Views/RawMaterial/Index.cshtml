@@ -99,6 +99,7 @@
                                                 <td><b>Tên nguyên liệu</b></td>
                                                 <td><b>Mô tả</b></td>
                                                 <td><b>Đơn vị</b></td>
+                                                <td><b>Giá tiền </b></td>
                                                 <td><b>Số lượng</b></td>
                                                 <td><b>Mô tả</b></td>
                                                 <td style="width:20%"><b>Thao tác</b></td>
@@ -194,6 +195,7 @@
         <td>{{Name}}</td>
         <td>{{Description}}</td>
         <td>{{RawMaterialUnitName}}</td>
+        <td>{{UnitCost}}</td>
         <td style="width:10%"><span id="currentQty_{{Id}}">
     {{AutoTotalQtyFormat}}
 </span>
@@ -267,6 +269,8 @@
             rawMaterialController.getTodayReport(homeconfig.shopId);
             rawMaterialController.registerEvent();
             rawMaterialController.loadRawMaterialUnits();
+
+            $('#txtUnitCost').mask('000.000.000.000.000', { reverse: true });
         },
         // register event for elements
         registerEvent: function () {
@@ -345,6 +349,7 @@
                     RawMaterialUnitId: $('#ddlRawMaterialUnits').val(),
                     ShopId: homeconfig.shopId,
                     Description: $('#txtDescription').val(),
+                    UnitCost: $('#txtUnitCost').val().split('.').join('')
                 };
                 rawMaterialController.saveData(data);
             });
@@ -428,7 +433,8 @@
                                 Description: item.Description,
                                 RawMaterialUnitName: item.RawMaterialUnitName,
                                 AutoTotalQty: item.AutoTotalQty,
-                                AutoTotalQtyFormat: rawMaterialController.formatMoney(item.AutoTotalQty)
+                                AutoTotalQtyFormat: rawMaterialController.formatMoney(item.AutoTotalQty),
+                                UnitCost: rawMaterialController.formatMoney(item.UnitCost) 
                             });
 
                         });
@@ -579,7 +585,8 @@
                                 OrderUsedAmount: item.OrderUsedAmount,
                                 DiffrentAmount: item.DiffrentAmount,
                                 AddNewAmount: item.AddNewAmount,
-                                RawMaterialUnitName: item.RawMaterialUnitName
+                                RawMaterialUnitName: item.RawMaterialUnitName,
+                              
                             });
 
                         });

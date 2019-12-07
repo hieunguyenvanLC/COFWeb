@@ -200,6 +200,14 @@
     <Compile Include="Migrations\201912071609561_AddUnitCostForRm.Designer.cs">
       <DependentUpon>201912071609561_AddUnitCostForRm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912071626464_ReverseUnitCost.cs" />
+    <Compile Include="Migrations\201912071626464_ReverseUnitCost.Designer.cs">
+      <DependentUpon>201912071626464_ReverseUnitCost.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.cs" />
+    <Compile Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.Designer.cs">
+      <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -351,6 +359,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912071609561_AddUnitCostForRm.resx">
       <DependentUpon>201912071609561_AddUnitCostForRm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912071626464_ReverseUnitCost.resx">
+      <DependentUpon>201912071626464_ReverseUnitCost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.resx">
+      <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

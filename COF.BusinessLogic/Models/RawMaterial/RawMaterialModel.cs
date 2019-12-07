@@ -13,6 +13,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal AutoTotalQty { get; set; }
+        public decimal UnitCost { get; set; }
         public int RawMaterialUnitId { get; set; }
         public string RawMaterialUnitName { get; set; }
         public decimal UserInputTotalQty { get; set; }
@@ -38,6 +39,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public decimal UserInputTotalQty { get; set; }
         public int ShopId { get; set; }
         public string Shop { get; set; }
+        public decimal UnitCost { get; set; }
     }
 
     public class RawMaterialHistoryDetailModel

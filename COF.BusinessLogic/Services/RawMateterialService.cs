@@ -99,7 +99,8 @@ namespace COF.BusinessLogic.Services
                     UserInputTotalQty = 0,
                     RawMaterialUnitId = rawMaterialUnit.Id,
                     ShopId = shopId,
-                    PartnerId = shop.PartnerId
+                    PartnerId = shop.PartnerId,
+                    UnitCost = model.UnitCost.GetValueOrDefault()
                 };
 
                 _rawMaterialRepository.Add(rawMaterial);
@@ -388,6 +389,7 @@ namespace COF.BusinessLogic.Services
 
                 rm.RawMaterialUnitId = model.RawMaterialUnitId;
                 rm.Name = model.Name;
+                rm.UnitCost = model.UnitCost.GetValueOrDefault();
                 rm.Description = model.Description;
 
                 await _unitOfWork.SaveChangesAsync();

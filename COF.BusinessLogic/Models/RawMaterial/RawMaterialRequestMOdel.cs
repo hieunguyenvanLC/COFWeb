@@ -23,6 +23,7 @@ namespace COF.BusinessLogic.Models.RawMaterial
         public int RawMaterialUnitId { get; set; }
         [Required(ErrorMessage = "Chi nhánh là bắt buộc")]
         public int ShopId { get; set; }
+        public decimal? UnitCost { get; set; }
     }
 
     public class RmUpdateQtyModel

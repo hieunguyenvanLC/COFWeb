@@ -13,6 +13,7 @@ namespace COF.DataAccess.EF.Configurations
         public RawMaterialMapping()
         {
             ToTable("RawMaterial");
+            Property(x => x.UnitCost).HasPrecision(18, 0);
         }
     }
 }
