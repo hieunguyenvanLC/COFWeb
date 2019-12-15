@@ -266,7 +266,8 @@
                     new AppRole { Name = "ShopManager", Description = "Shop Manager"},
                     new AppRole { Name = "Cashier", Description = "Cashier"},
                     new AppRole { Name = "Staff" , Description = "Staff"},
-                    new AppRole { Name = "Partner" , Description = "Đối tác"}
+                    new AppRole { Name = "Partner" , Description = "Đối tác"},
+                    new AppRole { Name = "Customer" , Description = "Khách hàng"},
                 };
 
                 roles.ForEach(x =>

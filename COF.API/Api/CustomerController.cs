@@ -2,6 +2,7 @@
 using COF.API.Models.Customer;
 using COF.BusinessLogic.Services;
 using COF.BusinessLogic.Settings;
+using COF.DataAccess.EF.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -83,7 +84,35 @@ namespace COF.API.Api
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
                 }
+                var customer = logicResult.Result;
+                try
+                {
+                    var user = new AppUser
+                    {
+                        UserName = customer.PhoneNumber,
+                        PartnerId = customer.PartnerId,
+                        PhoneNumber = customer.PhoneNumber,
+                        Address = customer.Address,
+                        FullName = customer.FullName,
+                        EmailConfirmed = true,
+                        Email = model.Email,
+                        BirthDay = DateTime.Now,
+                        Avatar = "",
+                        Gender = true,
 
+                    };
+
+                    var result = await AppUserManager.CreateAsync(user, "123456");
+                    if (result.Succeeded)
+                    {
+                        var createdUser = AppUserManager.FindByName(user.UserName);
+                        AppUserManager.AddToRoles(createdUser.Id, new string[] { "Customer" });
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+           
                 return SuccessResult(new CustomerCreateResultModel { CustomerId = logicResult.Result.Id });
 
             }
