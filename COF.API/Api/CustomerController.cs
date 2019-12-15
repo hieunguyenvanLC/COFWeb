@@ -123,6 +123,69 @@ namespace COF.API.Api
             
         }
 
+        [Route("signup")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> SignUp([FromBody] CustomerCreateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ErrorResult(ModelStateErrorMessage());
+                }
+
+                var createModel = new ServiceModels.Customer.CustomerCreateModel
+                {
+                    Address = model.Address,
+                    Email = model.Email,
+                    FullName = model.FullName,
+                    Gender = model.Gender,
+                    PhoneNumber = model.PhoneNumber
+                };
+                var logicResult = await _customerService.CreateAsync(_workContext.CurrentUser.PartnerId.GetValueOrDefault(), createModel);
+                if (logicResult.Validations != null)
+                {
+                    return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+                var customer = logicResult.Result;
+                try
+                {
+                    var user = new AppUser
+                    {
+                        UserName = customer.PhoneNumber,
+                        PartnerId = customer.PartnerId,
+                        PhoneNumber = customer.PhoneNumber,
+                        Address = customer.Address,
+                        FullName = customer.FullName,
+                        EmailConfirmed = true,
+                        Email = model.Email,
+                        BirthDay = DateTime.Now,
+                        Avatar = "",
+                        Gender = true,
+
+                    };
+
+                    var result = await AppUserManager.CreateAsync(user, "123456");
+                    if (result.Succeeded)
+                    {
+                        var createdUser = AppUserManager.FindByName(user.UserName);
+                        AppUserManager.AddToRoles(createdUser.Id, new string[] { "Customer" });
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+
+                return SuccessResult();
+
+            }
+            catch (Exception ex)
+            {
+                return ErrorResult(ex.Message);
+            }
+
+        }
+
         #endregion
     }
 }
