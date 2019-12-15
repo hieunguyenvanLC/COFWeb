@@ -21,5 +21,11 @@ namespace COF.API.Api
             _shopService = shopService;
         }
 
+        [Route("all")]
+        public async Task<HttpResponseMessage> GetAllProductByIdAsync()
+        {
+            var result = await _shopService.GetAllShopAsync(0);
+            return SuccessResult(result);
+        }
     }
 }
