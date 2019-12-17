@@ -258,6 +258,8 @@ namespace COF.BusinessLogic.Services
                     await CalculateRmsAfterOrderFinshed(order.Id);
                     
                 }
+
+                await _unitOfWork.SaveChangesAsync();
                 
                 return new BusinessLogicResult<Order>
                 {
