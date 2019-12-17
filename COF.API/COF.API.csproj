@@ -7175,10 +7175,16 @@
     <None Include="Properties\PublishProfiles\cof-dev - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP2.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - FTP3.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - FTP4.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - FTP5.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - ReadOnly - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev - Web Deploy3.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - Web Deploy4.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-dev - Web Deploy5.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-dev-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\phannhathoang - Web Deploy.pubxml" />
