@@ -216,6 +216,7 @@ namespace COF.BusinessLogic.Services
 
                     order.OrderStatus = model.OrderStatus;
                     _orderRepository.Update(order);
+                    await _unitOfWork.SaveChangesAsync();
                 }
                 if (order.OrderStatus != 
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
