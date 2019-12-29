@@ -73,10 +73,10 @@ namespace COF.API.Api
 
                 var order = await _orderService.GetByOrderCodeAsync(model.OrderCode);
 
-                if (order.Result != null)
-                {
-                    return ErrorResult("OrderCode da ton tai.");
-                }
+                //if (order.Result != null)
+                //{
+                //    return ErrorResult("OrderCode da ton tai.");
+                //}
 
                 var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
                 if (logicResult.Validations != null)

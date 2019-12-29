@@ -47,6 +47,7 @@ namespace COF.BusinessLogic.Services
         private readonly IRawMaterialRepository _rawMaterialRepository;
         private readonly IProductSizeRawMaterialRepository _productSizeRawMaterialRepository;
         private readonly IRawMaterialHistoryRepository _materialHistoryRepository;
+        private readonly IUserService _userService;
         #endregion
 
         #region ctor
@@ -62,8 +63,8 @@ namespace COF.BusinessLogic.Services
             IBonusPointHistoryRepository bonusPointHistoryRepository,
             IRawMaterialRepository rawMaterialRepository,
             IProductSizeRawMaterialRepository productSizeRawMaterialRepository,
-            IRawMaterialHistoryRepository materialHistoryRepository
-
+            IRawMaterialHistoryRepository materialHistoryRepository,
+            IUserService userService
            )
         {
             _orderRepository = orderRepository;
@@ -78,6 +79,7 @@ namespace COF.BusinessLogic.Services
             _rawMaterialRepository = rawMaterialRepository;
             _productSizeRawMaterialRepository = productSizeRawMaterialRepository;
             _materialHistoryRepository = materialHistoryRepository;
+            _userService = userService;
         }
 
        
@@ -201,8 +203,9 @@ namespace COF.BusinessLogic.Services
                         lowestUnit.UnitPrice = 0;
                         lowestUnit.Description = "Sản phẩm thuộc diện mua 1 tặng 1";
                     }
-
-                    _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                    var createdByUser = _userService.GetByUserName(model.CheckInPerson);
+                    var createdByUserFullName = createdByUser != null ? createdByUser.FullName : _workContext.CurrentUser.FullName;
+                    _orderRepository.Add(order, createdByUserFullName);
                 }
                 else
                 {
@@ -210,8 +213,8 @@ namespace COF.BusinessLogic.Services
                      OrderStatus.PosCancel || order.OrderStatus != OrderStatus.PosPreCancel ||
                      order.OrderStatus == OrderStatus.PreCancel)
                     {
-                        order.CancelDate = DateTimeHelper.CurentVnTime;
-                        order.CancelBy = _workContext.CurrentUser.FullName;
+                        order.CancelDate = model.CanceledDate.HasValue ? model.CanceledDate : DateTimeHelper.CurentVnTime;
+                        order.CancelBy = !string.IsNullOrEmpty(model.CanceledBy) ? model.CanceledBy : _workContext.CurrentUser.FullName;
                     }
 
                     order.OrderStatus = model.OrderStatus;

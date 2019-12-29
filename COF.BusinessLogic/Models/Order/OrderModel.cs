@@ -109,7 +109,9 @@ namespace COF.BusinessLogic.Models.Order
         public List<OrderDetailModel> OrderDetailViewModels { get; set; }
         public DiscountType DiscountType { get; set; }
         public double DiscountAmount { get; set; }
-
+        public string CreatedBy { get; set; }
+        public string CanceledBy { get; set; }
+        public DateTime? CanceledDate { get; set; }
     }
 
     public class OrderDetailModel
