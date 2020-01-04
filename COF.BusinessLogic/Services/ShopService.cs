@@ -39,7 +39,15 @@ namespace COF.BusinessLogic.Services
         public async Task<List<ShopModel>> GetAllShopAsync(int partnerId)
         {
             var shops = await _shopRepository.GetAllAsync();
-            var result = shops.Select(x => new ShopModel { Id = x.Id, Name = x.ShopName }).ToList();
+            var result = shops.Select(x => new ShopModel 
+            { 
+                Id = x.Id, 
+                Name = x.ShopName,
+                Address = x.Address,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime,
+                Image = x.Image
+            }).ToList();
             return result;
         }
 
