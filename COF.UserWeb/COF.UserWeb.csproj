@@ -313,8 +313,14 @@
     <Content Include="asset\img\.DS_Store" />
     <Content Include="fonts\.DS_Store" />
     <Content Include="fonts\Pestapora.otf" />
+    <None Include="Properties\PublishProfiles\cof-app - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-app - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-app - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-app - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-app - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-app - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-app - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\cof-user-app - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\cof-user-dev - Web Deploy.pubxml" />
