@@ -208,6 +208,10 @@
     <Compile Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.Designer.cs">
       <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001041405286_AddShopInfo.cs" />
+    <Compile Include="Migrations\202001041405286_AddShopInfo.Designer.cs">
+      <DependentUpon>202001041405286_AddShopInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -365,6 +369,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.resx">
       <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001041405286_AddShopInfo.resx">
+      <DependentUpon>202001041405286_AddShopInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
