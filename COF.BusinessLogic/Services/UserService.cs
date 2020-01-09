@@ -107,10 +107,10 @@ namespace COF.BusinessLogic.Services
                         u.PasswordHash, u.userName, u.Phonenumber,
                         (select STRING_AGG(r.Name, ',') from[Role] r join[UserRole] ur                     
                         on r.Id = ur.RoleId
-                        join ShopHasUser shs on shs.UserId = u.Id
-                        join Shop shop on shop.Id = shs.ShopId
                         where ur.UserId = u.Id ) as Roles
                         from[User] u
+                        join ShopHasUser shs on shs.UserId = u.Id
+                        join Shop shop on shop.Id = shs.ShopId
                         where shop.Id = @p0";
             var users = await _context.Database.SqlQuery<UserRoleModel>(sql, shopId).ToListAsync();
             users = users.Where(x => x.Roles.Contains("ShopManager") || x.Roles.Contains("PartnerAdmin")).ToList();

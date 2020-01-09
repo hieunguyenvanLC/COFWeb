@@ -30,6 +30,8 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId,DateTime fromDate, DateTime toDate);
         BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
         Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId);
+
+        Task<BusinessLogicResult<bool>> AcceptOnlineOrder(string ordercode);
     }
 
     public class OrderService : IOrderService
@@ -527,6 +529,30 @@ namespace COF.BusinessLogic.Services
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public async Task<BusinessLogicResult<bool>> AcceptOnlineOrder(string ordercode)
+        {
+            try
+            {
+                var order = await _orderRepository.GetByOrderCode(ordercode);
+                order.OrderStatus = OrderStatus.AcceptedOrderMobile;
+                _orderRepository.Update(order);
+                await _unitOfWork.SaveChangesAsync();
+                return new BusinessLogicResult<bool>
+                {
+                    Result = true,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BusinessLogicResult<bool>
+                {
+                    Success = false,
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                };
             }
         }
 

@@ -148,7 +148,7 @@ namespace COF.API.Api
 
         [AllowAnonymous]
         [Route("calculaterms/{id}")]
-        public async Task<IHttpActionResult> CalculateRmsByOrderId([FromUri] int id)
+        public async Task<HttpResponseMessage> CalculateRmsByOrderId([FromUri] int id)
         {
             try
             {
@@ -159,6 +159,27 @@ namespace COF.API.Api
 
             }
             return null;
+        }
+        [HttpGet]
+        [Route("accept-online-order/{orderCode}")]
+        public async  Task<HttpResponseMessage> AcceptOnlineOrder(string orderCode)
+        {
+            try
+            {
+                var order = await _orderService.GetByOrderCodeAsync(orderCode);
+                if (order.Result is null)
+                {
+                    return ErrorResult("Order khong ton tai");
+                }
+                await _orderService.AcceptOnlineOrder(orderCode);
+                return SuccessResult();
+            }
+            catch (Exception ex)
+            {
+
+                return ErrorResult(ex.Message);
+            }
+           
         }
 
         #region private methods
