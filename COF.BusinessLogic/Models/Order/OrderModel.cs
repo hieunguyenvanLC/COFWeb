@@ -70,6 +70,7 @@ namespace COF.BusinessLogic.Models.Order
     }
     public class OrderCreateModel
     {
+        public int? OrderId { get; set; }
         public string OrderCode { get; set; }
         public System.DateTime CheckInDate { get; set; }
         public Nullable<System.DateTime> CheckOutDate { get; set; }

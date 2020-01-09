@@ -221,6 +221,7 @@ namespace COF.BusinessLogic.Services
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
                     order.OrderStatus !=  OrderStatus.PreCancel)
                 {
+                    // tao orde binh thuong nhugn khong tru diem. nao qua trang thai Accept Order moi dc nha
                     if (order.OrderStatus != OrderStatus.CreateOrderMobile)
                     {
                         if (customer != null)

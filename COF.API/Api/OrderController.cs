@@ -1,9 +1,12 @@
 ﻿using COF.API.Core;
+using COF.API.Models.Announcement;
 using COF.API.Models.Order;
+using COF.API.SignalR;
 using COF.BusinessLogic.Services;
 using COF.BusinessLogic.Settings;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +25,18 @@ namespace COF.API.Api
         #region fields
         private readonly IOrderService _orderService;
         private readonly IWorkContext _workContext;
+        private readonly IUserService _userService;
         #endregion
 
         #region ctor
         public OrderController(
             IOrderService orderService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IUserService userService)
         {
             _orderService = orderService;
             _workContext = workContext;
+            _userService = userService;
         }
         #endregion
 
@@ -50,6 +56,15 @@ namespace COF.API.Api
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
+                }
+
+                if (model.OrderStatus == DataAccess.EF.Models.OrderStatus.CreateOrderMobile)
+                {
+                    var managers = await _userService.GetAllNotificationUsers(model.StoreId);
+
+                    var message = JsonConvert.DeserializeObject<AnnouncementModel>(JsonConvert.SerializeObject(model));
+                    message.OrderId = logicResult.Result.Id;
+                    OrderNotificationHub.PushToUsers(managers.Select(x => x.UserId).ToArray(), message, null);
                 }
                 return SuccessResult();
             }

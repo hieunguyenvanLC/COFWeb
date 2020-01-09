@@ -21,6 +21,7 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<UserPagingModel>>> GetAllUserWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
 
         Task Update(AppUser appUser);
+        Task<List<UserRoleModel>> GetAllNotificationUsers(int shopId);
         #endregion
     }
     public class UserService : IUserService
@@ -98,6 +99,22 @@ namespace COF.BusinessLogic.Services
         {
             _context.Entry(appUser).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<UserRoleModel>> GetAllNotificationUsers(int shopId)
+        {
+            var sql = @"select u.Id as UserId, u.FullName, u.Email,
+                        u.PasswordHash, u.userName, u.Phonenumber,
+                        (select STRING_AGG(r.Name, ',') from[Role] r join[UserRole] ur                     
+                        on r.Id = ur.RoleId
+                        join ShopHasUser shs on shs.UserId = u.Id
+                        join Shop shop on shop.Id = shs.ShopId
+                        where ur.UserId = u.Id ) as Roles
+                        from[User] u
+                        where shop.Id = @p0";
+            var users = await _context.Database.SqlQuery<UserRoleModel>(sql, shopId).ToListAsync();
+            users = users.Where(x => x.Roles.Contains("ShopManager") || x.Roles.Contains("PartnerAdmin")).ToList();
+            return users;
         }
         #endregion
     }

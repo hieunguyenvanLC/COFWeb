@@ -311,6 +311,7 @@
     <Compile Include="Controllers\RawMaterialController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Filter\Hangfire\HangfireAuthFilter.cs" />
+    <Compile Include="Models\Announcement\AnnouncementModel.cs" />
     <Compile Include="Models\Customer\CustomerCreateModel.cs" />
     <Compile Include="Models\Dashboard\FilterRevenueModel.cs" />
     <Compile Include="Models\Product\ProductSizeFormularModel.cs" />
@@ -349,6 +350,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\AuthorizationServerProvider.cs" />
     <Compile Include="Providers\QueryStringOAuthBearerProvider.cs" />
+    <Compile Include="SignalR\ConnectionMapping.cs" />
     <Compile Include="SignalR\OrderNotificationHub.cs" />
   </ItemGroup>
   <ItemGroup>
