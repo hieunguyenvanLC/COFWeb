@@ -94,6 +94,9 @@ namespace COF.DataAccess.EF.Models
 
         PosPreCancel = 12,//Don hang bi huy truoc khi che bien - CHUA SUBMIT LEN SERVER
         PreCancel = 4,//Don hang bi huy truoc khi che bien - DA SUBMIT LEN SERVER
+
+        CreateOrderMobile = 14,
+        AcceptedOrderMobile = 15
     }
 
     public enum DiscountType

@@ -36,6 +36,16 @@ namespace COF.API.Api
             });
             return SuccessResult(result);
         }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<HttpResponseMessage> GetProductDetail(int id)
+        {
+            var result = await _productService.GetByIdAsync(id);
+            return SuccessResult(result);
+        }
         #endregion
+
+
     }
 }

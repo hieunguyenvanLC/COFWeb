@@ -221,44 +221,47 @@ namespace COF.BusinessLogic.Services
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
                     order.OrderStatus !=  OrderStatus.PreCancel)
                 {
-                    if (customer != null)
+                    if (order.OrderStatus != OrderStatus.CreateOrderMobile)
                     {
-                        var allLevels = await _bonusLevelRepository.GetAllAsync();
-                        var point = Math.Round((decimal)model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
-
-
-                        var orderHistory = new BonusPointHistory
+                        if (customer != null)
                         {
-                            PartnerId = customer.PartnerId,
-                            CustomerId = customer.Id,
-                            OldLevel = customer.BonusLevel.Name,
-                            OldPoint = customer.ActiveBonusPoint
-                        };
+                            var allLevels = await _bonusLevelRepository.GetAllAsync();
+                            var point = Math.Round((decimal)model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
 
-                        customer.TotalBonusPoint += point;
 
-                        if (model.DiscountType == DiscountType.UseActiveBonus)
-                        {
-                            customer.ActiveBonusPoint -= point;
+                            var orderHistory = new BonusPointHistory
+                            {
+                                PartnerId = customer.PartnerId,
+                                CustomerId = customer.Id,
+                                OldLevel = customer.BonusLevel.Name,
+                                OldPoint = customer.ActiveBonusPoint
+                            };
+
+                            customer.TotalBonusPoint += point;
+
+                            if (model.DiscountType == DiscountType.UseActiveBonus)
+                            {
+                                customer.ActiveBonusPoint -= point;
+                            }
+                            else
+                            {
+                                customer.ActiveBonusPoint += point;
+                            }
+
+                            var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
+                            customer.BonusLevelId = newLevel.Id;
+
+                            orderHistory.Level = newLevel.Name;
+                            orderHistory.Point = customer.ActiveBonusPoint;
+                            _bonusPointHistoryRepository.Add(orderHistory);
+                            _customerRepository.Update(customer);
                         }
-                        else
-                        {
-                            customer.ActiveBonusPoint += point;
-                        }
-
-                        var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
-                        customer.BonusLevelId = newLevel.Id;
-
-                        orderHistory.Level = newLevel.Name;
-                        orderHistory.Point = customer.ActiveBonusPoint;
-                        _bonusPointHistoryRepository.Add(orderHistory);
-                        _customerRepository.Update(customer);
+                        await _unitOfWork.SaveChangesAsync();
+                        await CalculateRmsAfterOrderFinshed(order.Id);
                     }
-                    await _unitOfWork.SaveChangesAsync();
-                    await CalculateRmsAfterOrderFinshed(order.Id);
-                    
                 }
                 
+
                 return new BusinessLogicResult<Order>
                 {
                     Result = order,
