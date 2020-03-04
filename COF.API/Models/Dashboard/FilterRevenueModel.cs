@@ -35,7 +35,7 @@ namespace COF.API.Models.Dashboard
             }
         }
 
-        public List<int> Years { get; set; }
+        public int Year { get; set; }
     }
     public enum FilterType
     {

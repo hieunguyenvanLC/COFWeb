@@ -32,8 +32,8 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
         Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId);
 
-        BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, List<int> years);
-        BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, List<int> years);
+        BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, int year);
+        BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, int year);
     }
 
     public class OrderService : IOrderService
@@ -562,37 +562,65 @@ namespace COF.BusinessLogic.Services
             }
         }
 
-        public BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, List<int> years)
+        public BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, int year)
         {
             var today = DateTime.UtcNow.Date.AddHours(7);
-            var result = _unitOfWork.Context.Set<Order>()
-                .Include(x => x.OrderDetails)
-                .Where(x => x.ShopId == shopId && years.Contains(x.CheckInDate.Year)
-                ).ToList();
+            var orderss = _unitOfWork.Context.Database.SqlQuery<OrderSSModel>($@"select Id, FinalAmount, CheckinDate  FROM [dbo].[Order]
+                            where Year(checkInDate)  = {year}    and OrderStatus = 11 and shopId = {shopId} ").ToList();
+            var orderDetails = orderss.Any() ? _unitOfWork.Context.Database.SqlQuery<OrderDetail>("select * from OrderDetail").ToList() : new List<OrderDetail>();
+            var orders = orderss.Select(x => new Order
+            {
+                Id = x.Id,
+                FinalAmount = x.FinalAmount,
+                CheckInDate = x.CheckinDate
+            }).ToList();
+            Parallel.ForEach(orders, (current) =>
+            {
+                current.OrderDetails = orderDetails.Where(y => y.OrderId == current.Id).ToList();
+            });
             return new BusinessLogicResult<List<Order>>
             {
                 Success = true,
-                Result = result
+                Result = orders
             };
         }
 
-        public BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, List<int> years)
+        public BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, int year)
         {
             var today = DateTime.UtcNow.Date.AddHours(7);
-            var result = _unitOfWork.Context.Set<Order>()
-                .Include(x => x.OrderDetails)
-                .Include(x => x.Shop)
-                .Where(x => x.PartnerId == partnerId &&
-                            years.Contains(x.CheckInDate.Year)
-                ).ToList();
-            return new BusinessLogicResult<List<Order>>()
+            var orderss = _unitOfWork.Context.Database.SqlQuery<OrderSSModel>($@"SELECT [Id], FinalAmount, CheckinDate   
+  FROM [dbo].[Order]
+                            where Year(checkInDate)  = {year}   and OrderStatus = 11 and PartnerId = {partnerId} ").ToList();
+            var orderDetails = orderss.Any() ? _unitOfWork.Context.Database.SqlQuery<OrderDetail>("select * from OrderDetail").ToList() : new List<OrderDetail>();
+
+            var orders = orderss.Select(x => new Order
+            {
+                Id = x.Id,
+                FinalAmount = x.FinalAmount,
+                CheckInDate = x.CheckinDate
+            }).ToList();
+            Parallel.ForEach(orders, (current) =>
+            {
+                current.OrderDetails = orderDetails.Where(y => y.OrderId == current.Id).ToList();
+            });
+            return new BusinessLogicResult<List<Order>>
             {
                 Success = true,
-                Result = result
+                Result = orders
             };
 
             #endregion
 
         }
+
+       
+    }
+
+    public class OrderSSModel
+    {
+        public int Id { get; set; }
+        public double FinalAmount { get; set; }
+        public DateTime CheckinDate { get; set; }
+        public List<OrderDetail> OrderDetails { get; set; }
     }
 }

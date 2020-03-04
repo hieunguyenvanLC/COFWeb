@@ -104,7 +104,7 @@ namespace COF.API.Controllers
                 {
                     result = _reportService.GetShopRevenueReportInYearsModels(
                         user.PartnerId.GetValueOrDefault(),
-                        model.ShopId, model.Years);
+                        model.ShopId, model.Year);
                         break;
                 }
                     

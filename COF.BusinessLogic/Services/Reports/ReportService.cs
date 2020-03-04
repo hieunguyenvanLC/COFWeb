@@ -20,7 +20,7 @@ namespace COF.BusinessLogic.Services.Reports
         List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId);
         List<ShopRevenueReportModel> GetShopRevenueReportInRange(int partnerId, int? shopId, DateTime fromDate, DateTime toDate);
 
-        List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, List<int> years);
+        List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, int year);
 
     }
     public class ReportService : IReportService
@@ -163,36 +163,43 @@ namespace COF.BusinessLogic.Services.Reports
 
         }
 
-        public List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, List<int> years)
+        public List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, int year)
         {
             var partner = _partnerService.GetById(partnerId);
             List<Order> allOrders = null;
             if (shopId != null)
             {
-                var queryRes = _orderService.GetOrdersInYearsByShopId(shopId.Value, years);
+                var queryRes = _orderService.GetOrdersInYearsByShopId(shopId.Value, year);
                 allOrders = queryRes.Result;
             }
             else
             {
-                var queryRes = _orderService.GetOrdersInYears(partnerId, years);
+                var queryRes = _orderService.GetOrdersInYears(partnerId, year);
                 allOrders = queryRes.Result;
             }
-            allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
-            var result = years.Select(x => {
 
+            var months = allOrders.Select(x => x.CheckInDate.Month).Distinct().ToList();
+
+            var result = new List<ShopRevenueReportModel>();
+            for (int i = 1; i <= 12; i++)
+            {
                 var tmp = new ShopRevenueReportModel
                 {
-                    Header = x.ToString(),
-                    Details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Year == x).ToList()),
-                    TotalMoney = allOrders.Where(y => y.CheckInDate.Year == x)
-                        .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum()
-                    ,
-                    TotalOrder = allOrders.Where(y => y.CheckInDate.Year == x).Count(),
+                    Header = $"Tháng {i} - {year} ",
                 };
-                tmp.TotalUnit = tmp.Details.Sum(y => y.TotalUnit);
-                return tmp;
-            }).ToList();
+                if (months.Contains(i))
+                {
+                    var data = allOrders.Where(y => y.CheckInDate.Month == i).ToList();
+                    tmp.Details = GetOrderDetails(data);
+                    tmp.TotalMoney = data
+                               .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum();
+                    tmp.TotalOrder = data.Count();
 
+                    tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
+                }
+                
+                result.Add(tmp);
+            }
             return result;
         }
 
@@ -242,7 +249,21 @@ namespace COF.BusinessLogic.Services.Reports
             }).ToList();
             return result;
         }
-       
-        
+
+        //private List<CategoryReportModel> GetOrderDetails(List<OrderModel> orders)
+        //{
+        //    var allCategories = _productCategoryService.GetAll();
+        //    var orderDetails = orders.SelectMany(x => x.OrderDetails).ToList();
+        //    var groupBy = orderDetails.GroupBy(x => x.CategoryId).ToList();
+        //    var result = groupBy.Select(x => new CategoryReportModel
+        //    {
+        //        Type = allCategories.FirstOrDefault(y => y.Id == x.Key).Name,
+        //        TotalUnit = x.Sum(y => y.Quantity),
+        //        TotalMoney = x.Sum(y => 1.0m * y.Quantity * y.UnitPrice)
+        //    }).ToList();
+        //    return result;
+        //}
+
+
     }
 }

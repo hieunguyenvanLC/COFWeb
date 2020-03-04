@@ -26,9 +26,9 @@ namespace COF.DataAccess.EF.Models
         [MaxLength(250)]
         public string Status { get; set; }
         public int PartnerId { get; set; }
-        public string Image { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
+        //public string Image { get; set; }
+        //public string StartTime { get; set; }
+        //public string EndTime { get; set; }
         public virtual Partner Partner { get; set; }
         public virtual ICollection<Table> Tables { get; set; }
         public virtual ICollection<Product> Products { get; set; }

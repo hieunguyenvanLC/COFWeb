@@ -224,8 +224,14 @@
                                         <ul id="options" class="dropdown-menu" role="menu">
                                             <li data-id="1"><a href="javascript:void(0)"></a></li>
                                             <li data-id="2"><a href="javascript:void(0)">Tháng này</a></li>
-                                            <li data-id="3"><a href="javascript:void(0)">Năm này</a></li>
-                                            <li data-id="5"><a href="javascript:void(0)">Tất cả các năm</a></li>
+                                 
+
+                                            @{
+                                                for (int i = 2019; i <= DateTime.UtcNow.Year; i++)
+                                                {
+                                                    <li data-id="5" data-year="@i"><a href="javascript:void(0)">Năm @i</a></li>
+                                                }
+                                            }
                                             <li><a href="javascript:void(0)">Tùy chỉnh</a></li>
                                         </ul>
                                     </div>
@@ -475,15 +481,13 @@
                 end = moment().endOf('month');
                 renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
             }
-            else if (selectedOption == 3) {
-                start = moment().startOf('year');
-                end = moment().endOf('year');
-                renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
-            }
+            
             else if (selectedOption == 5) {
                 //start = moment().startOf('year');
                 //end = moment().endOf('year');
-                renderRangeFilter('2019', '2020');
+                var year = $(this).data('year');
+                $('#date-time-display').data('year', year);
+                renderRangeFilter(`1-${year}` ,`12-${year}`);
             }
             else {
                 $('#searchDateTime').modal('show');
@@ -531,14 +535,15 @@
             var filterType = $('#date-time-display').data('filtertype');
             var fromDate = $('#date-time-display').data('fromdate');
             var toDate = $('#date-time-display').data('todate');
-            filterRevenue(shopId, filterType, fromDate, toDate);
+            var year = $('#date-time-display').data('year');
+            filterRevenue(shopId, filterType, fromDate, toDate, year);
         }
-        function filterRevenue(shopId, filterType, fromDate, toDate) {
+        function filterRevenue(shopId, filterType, fromDate, toDate, year) {
             $.ajax({
                 url: '/Dashboard/FilterRevenuneByPartner',
                 data: {
                     Type: filterType, shopId: shopId, fromDate: fromDate, toDate: toDate,
-                    years : [2019,2020]
+                    year : year
                 },
                 type: 'post',
                 success: function (res) {
@@ -557,10 +562,8 @@
 
                             html += '<td> <b>Ngày </b></td>';
                         }
-                        else if (filterType == 5) {
-                            html += '<td> <b>Năm</b> </td>';
-                        }
-                        else if (filterType == 3) {
+   
+                        else if (filterType == 3 || filterType == 5) {
                             html += '<td> <b>Tháng</b> </td>';
                         }
                         html += '<td> <b>Tổng hóa đơn</b>  </td>';
