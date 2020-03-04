@@ -20,6 +20,8 @@ namespace COF.BusinessLogic.Services.Reports
         List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId);
         List<ShopRevenueReportModel> GetShopRevenueReportInRange(int partnerId, int? shopId, DateTime fromDate, DateTime toDate);
 
+        List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, List<int> years);
+
     }
     public class ReportService : IReportService
     {
@@ -159,6 +161,39 @@ namespace COF.BusinessLogic.Services.Reports
             }
             return result;
 
+        }
+
+        public List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, List<int> years)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInYearsByShopId(shopId.Value, years);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInYears(partnerId, years);
+                allOrders = queryRes.Result;
+            }
+            allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
+            var result = years.Select(x => {
+
+                var tmp = new ShopRevenueReportModel
+                {
+                    Header = x.ToString(),
+                    Details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Year == x).ToList()),
+                    TotalMoney = allOrders.Where(y => y.CheckInDate.Year == x)
+                        .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum()
+                    ,
+                    TotalOrder = allOrders.Where(y => y.CheckInDate.Year == x).Count(),
+                };
+                tmp.TotalUnit = tmp.Details.Sum(y => y.TotalUnit);
+                return tmp;
+            }).ToList();
+
+            return result;
         }
 
         public List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId)

@@ -100,6 +100,13 @@ namespace COF.API.Controllers
                         model._toDate.GetValueOrDefault());
                         break;
                  }
+                case FilterType.Years:
+                {
+                    result = _reportService.GetShopRevenueReportInYearsModels(
+                        user.PartnerId.GetValueOrDefault(),
+                        model.ShopId, model.Years);
+                        break;
+                }
                     
             }
             return HttpPostSuccessResponse(result);

@@ -34,12 +34,15 @@ namespace COF.API.Models.Dashboard
                 return null;
             }
         }
+
+        public List<int> Years { get; set; }
     }
     public enum FilterType
     {
         InWeek = 1,
         InMonth = 2,
         InYear = 3,
-        Customize = 4
+        Customize = 4,
+        Years = 5
     }
 }

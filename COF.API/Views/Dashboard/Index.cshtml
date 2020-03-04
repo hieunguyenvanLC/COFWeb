@@ -225,6 +225,7 @@
                                             <li data-id="1"><a href="javascript:void(0)"></a></li>
                                             <li data-id="2"><a href="javascript:void(0)">Tháng này</a></li>
                                             <li data-id="3"><a href="javascript:void(0)">Năm này</a></li>
+                                            <li data-id="5"><a href="javascript:void(0)">Tất cả các năm</a></li>
                                             <li><a href="javascript:void(0)">Tùy chỉnh</a></li>
                                         </ul>
                                     </div>
@@ -479,6 +480,11 @@
                 end = moment().endOf('year');
                 renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
             }
+            else if (selectedOption == 5) {
+                //start = moment().startOf('year');
+                //end = moment().endOf('year');
+                renderRangeFilter('2019', '2020');
+            }
             else {
                 $('#searchDateTime').modal('show');
                 return;
@@ -531,7 +537,8 @@
             $.ajax({
                 url: '/Dashboard/FilterRevenuneByPartner',
                 data: {
-                    Type: filterType, shopId: shopId, fromDate: fromDate, toDate: toDate
+                    Type: filterType, shopId: shopId, fromDate: fromDate, toDate: toDate,
+                    years : [2019,2020]
                 },
                 type: 'post',
                 success: function (res) {
@@ -549,6 +556,9 @@
                         if (filterType == 2 || filterType == 4) {
 
                             html += '<td> <b>Ngày </b></td>';
+                        }
+                        else if (filterType == 5) {
+                            html += '<td> <b>Năm</b> </td>';
                         }
                         else if (filterType == 3) {
                             html += '<td> <b>Tháng</b> </td>';

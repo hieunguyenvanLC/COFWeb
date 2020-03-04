@@ -9,6 +9,7 @@ using FluentValidation.Results;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,11 +31,15 @@ namespace COF.BusinessLogic.Services
         BusinessLogicResult<List<Order>> GetOrdersInRangeShopId(int shopId,DateTime fromDate, DateTime toDate);
         BusinessLogicResult<List<Order>> GetOrdersInRange(int partnerId, DateTime fromDate, DateTime toDate);
         Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId);
+
+        BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, List<int> years);
+        BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, List<int> years);
     }
 
     public class OrderService : IOrderService
     {
         #region fields
+
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
@@ -47,9 +52,11 @@ namespace COF.BusinessLogic.Services
         private readonly IRawMaterialRepository _rawMaterialRepository;
         private readonly IProductSizeRawMaterialRepository _productSizeRawMaterialRepository;
         private readonly IRawMaterialHistoryRepository _materialHistoryRepository;
+
         #endregion
 
         #region ctor
+
         public OrderService(
             IOrderRepository orderRepository,
             IUnitOfWork unitOfWork,
@@ -64,7 +71,7 @@ namespace COF.BusinessLogic.Services
             IProductSizeRawMaterialRepository productSizeRawMaterialRepository,
             IRawMaterialHistoryRepository materialHistoryRepository
 
-           )
+        )
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
@@ -80,24 +87,27 @@ namespace COF.BusinessLogic.Services
             _materialHistoryRepository = materialHistoryRepository;
         }
 
-       
+
         #endregion
 
         #region public methods
+
         public async Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model)
         {
             try
             {
-                 var shop = await _shopRepository.GetByIdAsync(shopId);
-                 if (shop is null)
-                 {
+                var shop = await _shopRepository.GetByIdAsync(shopId);
+                if (shop is null)
+                {
                     return new BusinessLogicResult<Order>
                     {
-                        Success = false, 
-                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Shop", "Shop Id không tồn tại.") })
+                        Success = false,
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                            {new ValidationFailure("Shop", "Shop Id không tồn tại.")})
                     };
-                 }
-                Customer customer = null; 
+                }
+
+                Customer customer = null;
                 if (model.CustomerId != null)
                 {
                     customer = await _customerRepository.GetByIdAsync(model.CustomerId);
@@ -107,7 +117,8 @@ namespace COF.BusinessLogic.Services
                         return new BusinessLogicResult<Order>
                         {
                             Success = false,
-                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Khách hàng không tồn tại.") })
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                                {new ValidationFailure("Khách hàng", "Khách hàng không tồn tại.")})
                         };
                     }
                 }
@@ -122,7 +133,8 @@ namespace COF.BusinessLogic.Services
                         return new BusinessLogicResult<Order>
                         {
                             Success = false,
-                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Khách hàng", "Tổng số điểm hiện tại không đủ để trừ.") })
+                            Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                                {new ValidationFailure("Khách hàng", "Tổng số điểm hiện tại không đủ để trừ.")})
                         };
                     }
                 }
@@ -180,9 +192,14 @@ namespace COF.BusinessLogic.Services
                             return new BusinessLogicResult<Order>
                             {
                                 Success = false,
-                                Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Sản phẩm với Id {item.ProductSizeId} không tồn tại. ") })
+                                Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                                {
+                                    new ValidationFailure("Lỗi xảy ra",
+                                        $"Sản phẩm với Id {item.ProductSizeId} không tồn tại. ")
+                                })
                             };
                         }
+
                         order.OrderDetails.Add(new OrderDetail
                         {
                             PartnerId = shop.PartnerId,
@@ -193,8 +210,9 @@ namespace COF.BusinessLogic.Services
                             CategoryId = productSize.Product.CategoryId,
                             Description = ""
                         });
-                        
+
                     }
+
                     if (order.DiscountType == DiscountType.OneGetOne)
                     {
                         var lowestUnit = order.OrderDetails.OrderBy(x => x.UnitPrice).FirstOrDefault();
@@ -207,8 +225,8 @@ namespace COF.BusinessLogic.Services
                 else
                 {
                     if (order.OrderStatus !=
-                     OrderStatus.PosCancel || order.OrderStatus != OrderStatus.PosPreCancel ||
-                     order.OrderStatus == OrderStatus.PreCancel)
+                        OrderStatus.PosCancel || order.OrderStatus != OrderStatus.PosPreCancel ||
+                        order.OrderStatus == OrderStatus.PreCancel)
                     {
                         order.CancelDate = DateTimeHelper.CurentVnTime;
                         order.CancelBy = _workContext.CurrentUser.FullName;
@@ -217,14 +235,16 @@ namespace COF.BusinessLogic.Services
                     order.OrderStatus = model.OrderStatus;
                     _orderRepository.Update(order);
                 }
-                if (order.OrderStatus != 
+
+                if (order.OrderStatus !=
                     OrderStatus.PosCancel && order.OrderStatus != OrderStatus.PosPreCancel &&
-                    order.OrderStatus !=  OrderStatus.PreCancel)
+                    order.OrderStatus != OrderStatus.PreCancel)
                 {
                     if (customer != null)
                     {
                         var allLevels = await _bonusLevelRepository.GetAllAsync();
-                        var point = Math.Round((decimal)model.FinalAmount * 1.0m / customer.BonusLevel.MoneyToOnePoint);
+                        var point = Math.Round((decimal) model.FinalAmount * 1.0m /
+                                               customer.BonusLevel.MoneyToOnePoint);
 
 
                         var orderHistory = new BonusPointHistory
@@ -246,7 +266,9 @@ namespace COF.BusinessLogic.Services
                             customer.ActiveBonusPoint += point;
                         }
 
-                        var newLevel = allLevels.FirstOrDefault(x => x.StartPointToReach <= customer.TotalBonusPoint && x.EndPointToReach >= customer.TotalBonusPoint);
+                        var newLevel = allLevels.FirstOrDefault(x =>
+                            x.StartPointToReach <= customer.TotalBonusPoint &&
+                            x.EndPointToReach >= customer.TotalBonusPoint);
                         customer.BonusLevelId = newLevel.Id;
 
                         orderHistory.Level = newLevel.Name;
@@ -254,11 +276,12 @@ namespace COF.BusinessLogic.Services
                         _bonusPointHistoryRepository.Add(orderHistory);
                         _customerRepository.Update(customer);
                     }
+
                     await _unitOfWork.SaveChangesAsync();
                     await CalculateRmsAfterOrderFinshed(order.Id);
-                    
+
                 }
-                
+
                 return new BusinessLogicResult<Order>
                 {
                     Result = order,
@@ -270,17 +293,20 @@ namespace COF.BusinessLogic.Services
                 return new BusinessLogicResult<Order>
                 {
                     Success = false,
-                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                        {new ValidationFailure("Lỗi xảy ra", ex.Message)})
                 };
             }
         }
 
-        public async Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string keyword)
+        public async Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex,
+            int pageSize, string keyword)
         {
             try
             {
                 var sql = "exec [dbo].[AllOrderByShopWithPaging] @p0, @p1, @p2, @p3";
-                var queryRes = await _unitOfWork.Context.Database.SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, keyword).ToListAsync();
+                var queryRes = await _unitOfWork.Context.Database
+                    .SqlQuery<OrderModel>(sql, shopId, pageIndex, pageSize, keyword).ToListAsync();
 
                 if (queryRes.Any())
                 {
@@ -302,10 +328,11 @@ namespace COF.BusinessLogic.Services
                 return new BusinessLogicResult<List<OrderModel>>
                 {
                     Success = false,
-                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                        {new ValidationFailure("Lỗi xảy ra", ex.Message)})
                 };
             }
-            
+
         }
 
         public BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId)
@@ -314,7 +341,7 @@ namespace COF.BusinessLogic.Services
 
             var dailyOrderReport = new PartnerDailyOrderReport();
             var partnerQuery = _partnerService.GetById(partnerId);
-            
+
             dailyOrderReport.PartnerId = partnerQuery.Result.Id;
             dailyOrderReport.PartnerName = partnerQuery.Result.Name;
 
@@ -394,24 +421,27 @@ namespace COF.BusinessLogic.Services
             return _orderRepository.GetTotalOrder(partnerId);
         }
 
-        public async Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode,string cancelByUserId, string reason)
+        public async Task<BusinessLogicResult<bool>> CancelOrder(int partnerId, string orderCode, string cancelByUserId,
+            string reason)
         {
             try
             {
-                var order = await _orderRepository.GetSingleAsync(filter: x => x.OrderCode == orderCode && x.PartnerId == partnerId);
+                var order = await _orderRepository.GetSingleAsync(filter: x =>
+                    x.OrderCode == orderCode && x.PartnerId == partnerId);
                 if (order is null)
                 {
                     return new BusinessLogicResult<bool>
                     {
                         Success = false,
-                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", $"Mã hóa đơn không tồn tại.") })
+                        Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                            {new ValidationFailure("Lỗi xảy ra", $"Mã hóa đơn không tồn tại.")})
                     };
                 }
 
                 order.OrderStatus = OrderStatus.PreCancel;
                 order.CancelDate = DateTimeHelper.CurentVnTime;
                 order.CancelBy = cancelByUserId;
-                _orderRepository.Update(order, cancelByUserId );
+                _orderRepository.Update(order, cancelByUserId);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<bool>
                 {
@@ -424,7 +454,8 @@ namespace COF.BusinessLogic.Services
                 return new BusinessLogicResult<bool>
                 {
                     Success = false,
-                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", ex.Message) })
+                    Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure>
+                        {new ValidationFailure("Lỗi xảy ra", ex.Message)})
                 };
             }
         }
@@ -433,6 +464,7 @@ namespace COF.BusinessLogic.Services
         #endregion
 
         #region private methods
+
         private async Task<List<OrderDetailModelVm>> GetAllOrderDetailsWithOrderIds(List<int> orderIds)
         {
             var sql = @"select od.Id,
@@ -448,7 +480,8 @@ namespace COF.BusinessLogic.Services
                         join Size size on size.Id = pd.SizeId
                         where od.OrderId in (select data from [dbo].[nop_splitstring_to_table](@p0,','))                          
                     ";
-            var result = await _unitOfWork.Context.Database.SqlQuery<OrderDetailModelVm>(sql, string.Join(",", orderIds)).ToListAsync();
+            var result = await _unitOfWork.Context.Database
+                .SqlQuery<OrderDetailModelVm>(sql, string.Join(",", orderIds)).ToListAsync();
             return result;
         }
 
@@ -485,14 +518,16 @@ namespace COF.BusinessLogic.Services
         public async Task<BusinessLogicResult<bool>> CalculateRmsAfterOrderFinshed(int orderId)
         {
             try
-            {  
+            {
                 var order = await _orderRepository.GetByIdAsync(orderId);
                 var orderDetails = order.OrderDetails;
                 var productSizeIds = orderDetails.Select(x => x.ProductSizeId).Distinct().ToList();
-                
-                var allRms = await _productSizeRawMaterialRepository.GetByFilterAsync(x => productSizeIds.Contains(x.ProductSizeId));
+
+                var allRms =
+                    await _productSizeRawMaterialRepository.GetByFilterAsync(x =>
+                        productSizeIds.Contains(x.ProductSizeId));
                 foreach (var detail in orderDetails)
-                {             
+                {
                     var rms = allRms.Where(x => x.ProductSizeId == x.ProductSizeId).ToList();
                     foreach (var rawMaterial in rms)
                     {
@@ -509,7 +544,8 @@ namespace COF.BusinessLogic.Services
                             RawMaterialId = currentRm.Id,
                             TransactionTypeId = TransactionType.Decreasement,
                             CreatedBy = order.CreatedBy,
-                            Description = $"Đơn hàng #{order.OrderCode}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}, Số lượng : {detail.Quantity}",
+                            Description =
+                                $"Đơn hàng #{order.OrderCode}, Sản phẩm : {detail.ProductSize.Product.ProductName} , Size : {detail.ProductSize.Size.Name}, Số lượng : {detail.Quantity}",
                             OrderId = order.Id
                         };
                         _materialHistoryRepository.Add(transaction);
@@ -517,7 +553,7 @@ namespace COF.BusinessLogic.Services
 
                     }
                 }
-                
+
                 return null;
             }
             catch (Exception ex)
@@ -526,8 +562,37 @@ namespace COF.BusinessLogic.Services
             }
         }
 
+        public BusinessLogicResult<List<Order>> GetOrdersInYearsByShopId(int shopId, List<int> years)
+        {
+            var today = DateTime.UtcNow.Date.AddHours(7);
+            var result = _unitOfWork.Context.Set<Order>()
+                .Include(x => x.OrderDetails)
+                .Where(x => x.ShopId == shopId && years.Contains(x.CheckInDate.Year)
+                ).ToList();
+            return new BusinessLogicResult<List<Order>>
+            {
+                Success = true,
+                Result = result
+            };
+        }
 
-        #endregion
+        public BusinessLogicResult<List<Order>> GetOrdersInYears(int partnerId, List<int> years)
+        {
+            var today = DateTime.UtcNow.Date.AddHours(7);
+            var result = _unitOfWork.Context.Set<Order>()
+                .Include(x => x.OrderDetails)
+                .Include(x => x.Shop)
+                .Where(x => x.PartnerId == partnerId &&
+                            years.Contains(x.CheckInDate.Year)
+                ).ToList();
+            return new BusinessLogicResult<List<Order>>()
+            {
+                Success = true,
+                Result = result
+            };
 
+            #endregion
+
+        }
     }
 }
