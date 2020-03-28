@@ -35,7 +35,7 @@ namespace COF.BusinessLogic.Services.Hangfire
             var isReportServer = true;
             if (isReportServer)
             {
-                RecurringJob.AddOrUpdate<IReportService>(ScheduleTaskName.DailyOrderReport, p => p.ExportDailyOrderReport(), Cron.Minutely);
+                //RecurringJob.AddOrUpdate<IReportService>(ScheduleTaskName.DailyOrderReport, p => p.ExportDailyOrderReport(), Cron.Minutely);
                
                 var tasks = _scheduleTaskService.GetAll();
                 //foreach (var task in tasks)

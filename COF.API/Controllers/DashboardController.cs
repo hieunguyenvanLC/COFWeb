@@ -6,10 +6,14 @@ using COF.BusinessLogic.Services.Reports;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using COF.BusinessLogic.Services.AzureBlob;
+using COF.BusinessLogic.Services.Export;
+using COF.Common.Helper;
 
 namespace COF.API.Controllers
 {
@@ -23,6 +27,8 @@ namespace COF.API.Controllers
         private readonly IShopService _shopService;
         private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
+        private readonly IExcelExportService _excelExportService;
+        private readonly IAzureBlobSavingService _azureBlobSavingService;
         #endregion
 
         #region ctor
@@ -31,13 +37,18 @@ namespace COF.API.Controllers
             IUserService userService,
             IShopService shopService,
             ICustomerService customerService,
-            IOrderService orderService)
+            IOrderService orderService,
+            IExcelExportService excelExportService,
+            IAzureBlobSavingService azureBlobSavingService)
         {
             _reportService = reportService;
             _userService = userService;
             _shopService = shopService;
             _customerService = customerService;
             _orderService = orderService;
+            _excelExportService = excelExportService;
+            _azureBlobSavingService = azureBlobSavingService;
+
         }
         #endregion
 
@@ -124,6 +135,19 @@ namespace COF.API.Controllers
             {
                 TotalOrder = totalOrder,
                 TotalCustomer = totalCustomer
+            });
+        }
+
+        [HttpPost]
+        public ActionResult ExportExcel(MonthlyRevenueFilterByCakeOrDrinkCategoryModel model)
+        {
+            var fileBytes = _excelExportService.ExportMonthyCakeOrDrinkCategoryRevenue(model);
+            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var fileName = _azureBlobSavingService.SavingFileToAzureBlob(fileBytes, $"DoanhthuCOF{model.Month}-{model.Year}.xlsx", contentType, AzureHelper.DailyOrderExportContainer);
+            return HttpPostSuccessResponse(new
+            {
+                Url = $"{ConfigurationManager.AppSettings["ServerImage"]}/{ConfigurationManager.AppSettings["DailyOrderExport"]}/{ fileName}",
+                FileName = fileName
             });
         }
     }

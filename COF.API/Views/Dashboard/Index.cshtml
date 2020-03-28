@@ -37,9 +37,9 @@
 </style>
 <section class="content-header">
     <h1>
-       THỐNG KÊ
+        THỐNG KÊ
     </h1>
-   
+
 </section>
 
 
@@ -48,30 +48,30 @@
     <!-- Info boxes -->
     <div class="row">
         @*<div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box">
-                <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+                <div class="info-box">
+                    <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
 
-                <div class="info-box-content">
-                    <span class="info-box-text">CPU Traffic</span>
-                    <span class="info-box-number">90<small>%</small></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">CPU Traffic</span>
+                        <span class="info-box-number">90<small>%</small></span>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
+                <!-- /.info-box -->
             </div>
-            <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box">
-                <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+            <!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
 
-                <div class="info-box-content">
-                    <span class="info-box-text">Likes</span>
-                    <span class="info-box-number">41,410</span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Likes</span>
+                        <span class="info-box-number">41,410</span>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-        </div>*@
+                <!-- /.info-box -->
+            </div>*@
         <!-- /.col -->
         <!-- fix for small devices only -->
         <div class="clearfix visible-sm-block"></div>
@@ -216,7 +216,7 @@
                                     <label for="daterange-btn">Khoảng ngày: </label>
                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-default" data-filtertype="2" id="date-time-display" ></button>
+                                        <button type="button" class="btn btn-default" data-filtertype="2" id="date-time-display"></button>
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                                             <span class="caret"></span>
                                             <span class="sr-only">Toggle Dropdown</span>
@@ -224,7 +224,7 @@
                                         <ul id="options" class="dropdown-menu" role="menu">
                                             <li data-id="1"><a href="javascript:void(0)"></a></li>
                                             <li data-id="2"><a href="javascript:void(0)">Tháng này</a></li>
-                                 
+
 
                                             @{
                                                 for (int i = 2019; i <= DateTime.UtcNow.Year; i++)
@@ -276,16 +276,32 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-xs-12">
-                          <table class="table table-responsive">
-                             
-                              <tbody id="tblRevenueDetail">
-                                  
-                              </tbody>
+                            <table class="table table-responsive">
+
+                                <tbody id="tblRevenueDetail">
+                                </tbody>
 
 
-                          </table>
+                            </table>
                         </div>
-                        
+
+                        <div class="col-sm-12 col-xs-12" hidden="" id="yearFilterByCategory">
+                            <table class="table table-responsive">
+
+                                <tr style="background-color: #ddd; text-align: center" >
+                                    <td><b>Tháng</b></td>
+                                        <td><b>Doanh thu tổng</b></td>
+                                        <td><b>Doanh thu nước PM</b></td>
+                                    <td><b>Doanh thu bánh PM</b></td>
+                                    <td></td>
+                                 </tr>
+                                <tbody id="tblRevenueDetailByCategory">
+                                </tbody>
+
+
+                            </table>
+                        </div>
+
                     </div>
                     <!-- /.row -->
                 </div>
@@ -305,7 +321,9 @@
         <td>{{TotalOrder}}</td>
         <td>{{TotalCost}}</td>
         <td>
-            <button data-id="{{Id}}"  onclick="viewDetail({{Id}})" class="btn btn-primary btnDetail"><i class="fa fa-eye"></i></button>
+            <button data-id="{{Id}}" onclick="viewDetail({{Id}})" class="btn btn-primary">
+            <i class="fa fa-eye" ></i>
+            </button>
         </td>
     </tr>
     <tr id="detail_{{Id}}" hidden>
@@ -335,318 +353,432 @@
     </tr>
 </script>
 
+<script id="data-template-bycategory" type="x-tmpl-mustache">
+    <tr style="text-align:center;vertical-align: middle;">
+        <td>{{Header}}</td>
+        <td>{{TotalRevenue}}</td>
+        <td>{{DrinkRevenue}}</td>
+        <td>{{CakeRevenue}}</td>
+        <td>
+            <button data-id="{{Id}}" onclick="viewDetailCategory({{Id}})" class="btn btn-primary">
+                <i class="fa fa-eye"></i>
+            </button>
+            <button type="button" class="btn btn-success" onclick="exportExcel({{YEAR}},{{MONTH}},{{REVENUE_MONTH_JSON}})">
+                <i class="fa fa-file-excel-o"></i>
+                <span></span>
+            </button>
+        </td>
+    </tr>
+    <tr id="category_detail_{{Id}}" hidden>
+        <td colspan="9">
+            <table class="table table-bordered">
+                <thead>
+                 
+                    <tr style="background-color:#EFFBFB;">
+                        <th><b>Ngày</b></th>
+                        <th><b>Doanh thu  tổng</b></th>
+                        <th><b>Doanh thu nước PM </b></th>
+                        <th><b>Doanh thu bánh PM </b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{{Details}}}
+                    <tr>
+                        <td><b>TỔNG</b></td>
+                        <td> <b>{{TotalRevenue}}</b></td>
+                        <td><b>{{DrinkRevenue}}</b></td>
+                        <td><b>{{CakeRevenue}}</b></td>
+                    </tr>
 
-    <!-- Button trigger modal -->
-    <!-- Modal -->
-    <div class="modal fade" id="searchDateTime" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="padding-top:15%" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Chọn khoảng ngày</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-inline">
-                        <label>Từ : </label>
 
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="fromDate">
+                </tbody>
+            </table>
+            <button style="float:right" type="button" onclick="closeDetailCategory({{Id}})" class="btn btn-danger">Đóng</button>
+        </td>
+
+    </tr>
+</script>
+
+
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="searchDateTime" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="padding-top:15%" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chọn khoảng ngày</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-inline">
+                    <label>Từ : </label>
+
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
-                        <!-- /.input group -->
+                        <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="fromDate">
+                    </div>
+                    <!-- /.input group -->
 
-                        <label> Đến :</label>
+                    <label> Đến :</label>
 
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="toDate">
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
+                        <input type="text" data-date-format="dd-mm-yyyy" class="form-control pull-right" id="toDate">
                     </div>
-                    <div class="form-group">
+                </div>
+                <div class="form-group">
 
-                        <!-- /.input group -->
-                    </div>
+                    <!-- /.input group -->
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" id="btnFilterDetail" class="btn btn-primary">Lựa chọn</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnFilterDetail" class="btn btn-primary">Lựa chọn</button>
             </div>
         </div>
     </div>
-    <!-- Modal -->
+</div>
+<!-- Modal -->
 
-    <script>
-        var homeConfig = {
-            filterType: 3,
-            shopId: 0,
-            fromDate: '',
-            toDate: ''
+<script>
+    var homeConfig = {
+        filterType: 3,
+        shopId: 0,
+        fromDate: '',
+        toDate: ''
+    }
+    function loadShopRevenue() {
+        $.ajax({
+            url: '/dashboard/GetShopRevenue',
+            type: 'post',
+            success: function (res) {
+                var listData = [];
+                var html = '';
+                var totalRevenue = 0;
+                var totalOrder = 0;
+                var detailTemplate = $('#data-inMonthRevenue').html();
+                var summaryTemplate = $('#data-inMonthRevenue-summary').html();
+                var colorCodes = ['#FFC300', '#FF5733', '#C70039', '#581845']
+                $.each(res.data, function (i, item) {
+
+                    html += Mustache.render(detailTemplate, {
+
+                        Shop: item.Shop,
+                        TotalOrder: commonController.formatMoney(item.TotalOrder),
+                        Address: item.Address,
+                        TotalMoney: commonController.formatMoney(item.TotalMoney)
+                    });
+
+                    listData.push({ data: [['<b>' + item.Shop + '</b>', item.TotalMoney]], color: colorCodes[i] })
+                    totalRevenue += item.TotalMoney;
+                    totalOrder += item.TotalOrder;
+                });
+
+                html += Mustache.render(summaryTemplate, {
+                    TotalOrderSummary: commonController.formatMoney(totalOrder),
+                    TotalMoneySummary: commonController.formatMoney(totalRevenue)
+                });
+                $('#inMonthRevenueDetail').html(html);
+                var shop_data = {
+                    data: listData,
+                    color: '#3c8dbc'
+                }
+                console.log(shop_data);
+                $.plot('#bar-chart', listData, {
+                    grid: {
+                        borderWidth: 2,
+                        borderColor: '#f3f3f3',
+                        tickColor: '#f3f3f3'
+                    },
+                    series: {
+                        bars: {
+                            show: true,
+                            align: "center",
+                            barWidth: 0.8,
+                            fill: true,
+                            // horizontal: false
+                        }
+                    },
+                    xaxis: {
+                        mode: 'categories',
+                        tickLength: 0,
+                        autoscaleMargin: .02
+                    },
+                    yaxis: {
+                        tickFormatter: function (v, axis) {
+
+                            return '<h5>' + commonController.formatMoney(v) + '</h4>';
+                        },
+                    }
+                })
+            }
+        });
+    }
+
+    function renderRangeFilter(start, end) {
+        var html = start + " đến " + end;
+        $('#date-time-display').data('fromdate', start);
+        $('#date-time-display').data('todate', end);
+        $('#date-time-display').html(html);
+
+        refreshFilterDetail();
+    }
+
+    $('#options li').off('click').on('click', function () {
+        var selectedOption = $(this).data('id');
+        var start = null;
+        var end = null;
+        $('#date-time-display').data('filtertype', selectedOption);
+        if (selectedOption == 1) {
+            start = moment().startOf('isoWeek');
+            end = moment().endOf('isoWeek')
+            renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
         }
-        function loadShopRevenue() {
-            $.ajax({
-                url: '/dashboard/GetShopRevenue',
-                type: 'post',
-                success: function (res) {
-                    var listData = [];
+        else if (selectedOption == 2) {
+            start = moment().startOf('month');
+            end = moment().endOf('month');
+            renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
+        }
+
+        else if (selectedOption == 5) {
+            //start = moment().startOf('year');
+            //end = moment().endOf('year');
+            var year = $(this).data('year');
+            $('#date-time-display').data('year', year);
+            renderRangeFilter(`1-${year}`, `12-${year}`);
+        }
+        else {
+            $('#searchDateTime').modal('show');
+            return;
+        }
+    });
+
+    $('#ddlShop').off('change').on('change', function () {
+        refreshFilterDetail();
+    })
+
+
+    $('#fromDate').datepicker({
+        format: 'dd/mm/yyyy',
+    });
+    $('#toDate').datepicker({
+        format: 'dd/mm/yyyy',
+    });
+
+    $('#btnFilterDetail').click(function () {
+        var startTime = $('#fromDate').val();
+        var endDate = $('#toDate').val();
+        $('#date-time-display').data('filtertype', 4);
+        renderRangeFilter(startTime, endDate);
+
+    });
+    function getGeneralInfo() {
+
+
+        $.ajax({
+            url: '/Dashboard/GetGeneralInfo',
+
+            type: 'post',
+            success: function (res) {
+                if (res.status) {
+                    var result = res.data;
+                    $('#generalTotalCustomer').html(commonController.formatMoney(result.TotalCustomer));
+                    $('#generalTotalOrder').html(commonController.formatMoney(result.TotalOrder));
+                }
+            }
+        });
+    }
+    function refreshFilterDetail() {
+        var shopId = $('#ddlShop').val();
+        var filterType = $('#date-time-display').data('filtertype');
+        var fromDate = $('#date-time-display').data('fromdate');
+        var toDate = $('#date-time-display').data('todate');
+        var year = $('#date-time-display').data('year');
+        filterRevenue(shopId, filterType, fromDate, toDate, year);
+    }
+    function filterRevenue(shopId, filterType, fromDate, toDate, year) {
+        $.ajax({
+            url: '/Dashboard/FilterRevenuneByPartner',
+            data: {
+                Type: filterType, shopId: shopId, fromDate: fromDate, toDate: toDate,
+                year: year
+            },
+            type: 'post',
+            success: function (res) {
+                if (res.status) {
+                    $('#searchDateTime').modal('hide');
+                    var result = res.data;
+                    $('#revenue-bar-chart').empty();
+                    $('#totalOrder').text(0);
+                    $('#totalMoney').text(0);
                     var html = '';
-                    var totalRevenue = 0;
-                    var totalOrder = 0;
-                    var detailTemplate = $('#data-inMonthRevenue').html();
-                    var summaryTemplate = $('#data-inMonthRevenue-summary').html();
-                    var colorCodes = ['#FFC300', '#FF5733', '#C70039', '#581845']
-                    $.each(res.data, function (i, item) {
 
-                        html += Mustache.render(detailTemplate, {
+                    var byCategoryHtml = '';
 
-                            Shop: item.Shop,
-                            TotalOrder: commonController.formatMoney(item.TotalOrder),
-                            Address: item.Address,
-                            TotalMoney: commonController.formatMoney(item.TotalMoney)
+                    var template = $('#data-template').html();
+                    var categoryTemplate = $('#data-template-bycategory').html();
+
+                    html += '<tr style="background-color: #ddd; text-align: center">';
+                    if (filterType == 2 || filterType == 4) {
+
+                        html += '<td> <b>Ngày </b></td>';
+                    }
+
+                    else if (filterType == 3 || filterType == 5) {
+                        html += '<td> <b>Tháng</b> </td>';
+                    }
+                    html += '<td> <b>Tổng hóa đơn</b>  </td>';
+                    html += '<td> <b>Tổng doanh thu</b>  </td>';
+                    html += '<td> <b>Chi tiết</b> </td>'
+                    html += '</tr>';
+                    if (result.length > 0) {
+                        var totalMoney = 0;
+                        var totalOrder = 0;
+                        $.each(result, function (i, item) {
+                            html += Mustache.render(template, {
+                                Header: item.Header,
+                                Id: i,
+                                TotalOrder: commonController.formatMoney(item.TotalOrder),
+                                TotalCost: commonController.formatMoney(item.TotalMoney),
+                                Details: renderRevenueDetails(item.Details),
+                                TotalUnit: commonController.formatMoney(item.TotalUnit)
+                            });
+                            totalMoney += item.TotalMoney;
+                            totalOrder += item.TotalOrder;
+                            if (filterType == 5 && item.MonthlyRevenueDetail ) {
+                                console.log(item.MonthlyRevenueDetail);
+                                byCategoryHtml += Mustache.render(categoryTemplate, {
+                                    Header: "Tháng " + item.MonthlyRevenueDetail.Month,
+                                    MONTH: item.MonthlyRevenueDetail.Month,
+                                    YEAR: item.MonthlyRevenueDetail.Year,
+                                    Id: i,
+                                    TotalRevenue: commonController.formatMoney(item.MonthlyRevenueDetail.TotalRevenue),
+                                    DrinkRevenue: commonController.formatMoney(item.MonthlyRevenueDetail.DrinkRevenue),
+                                    CakeRevenue: commonController.formatMoney(item.MonthlyRevenueDetail.CakeRevenue),
+                                    Details: renderRevenueDetailsByCategory(item.MonthlyRevenueDetail.DayRevenues),
+                                    REVENUE_MONTH_JSON: JSON.stringify(item.MonthlyRevenueDetail)
+                                });
+                            }
+
                         });
 
-                        listData.push({ data: [['<b>' + item.Shop + '</b>', item.TotalMoney]], color: colorCodes[i] })
-                        totalRevenue += item.TotalMoney;
-                        totalOrder += item.TotalOrder;
-                    });
 
-                    html += Mustache.render(summaryTemplate, {
-                        TotalOrderSummary: commonController.formatMoney(totalOrder),
-                        TotalMoneySummary: commonController.formatMoney(totalRevenue)
-                    });
-                    $('#inMonthRevenueDetail').html(html);
-                    var shop_data = {
-                        data: listData,
-                        color: '#3c8dbc'
+                        $('#totalOrder').text(commonController.formatMoney(totalOrder));
+                        $('#totalMoney').text(commonController.formatMoney(totalMoney));
+                        var bar = new Morris.Bar({
+                            element: 'revenue-bar-chart',
+                            resize: true,
+                            data: result,
+                            barColors: ['#00a65a', '#f56954'],
+                            xkey: 'Header',
+                            ykeys: ['TotalMoney'],
+                            labels: ['Doanh thu'],
+                            hideHover: 'auto'
+                        });
+
+                        
                     }
-                    console.log(shop_data);
-                    $.plot('#bar-chart', listData, {
-                        grid: {
-                            borderWidth: 2,
-                            borderColor: '#f3f3f3',
-                            tickColor: '#f3f3f3'
-                        },
-                        series: {
-                            bars: {
-                                show: true,
-                                align: "center",
-                                barWidth: 0.8,
-                                fill: true,
-                                // horizontal: false
-                            }
-                        },
-                        xaxis: {
-                            mode: 'categories',
-                            tickLength: 0,
-                            autoscaleMargin: .02
-                        },
-                        yaxis: {
-                            tickFormatter: function (v, axis) {
-
-                                return '<h5>' + commonController.formatMoney(v) + '</h4>';
-                            },
-                        }
-                    })
+                    $('#tblRevenueDetail').html(html);
+                    $('#tblRevenueDetailByCategory').html('');
+                    $('#yearFilterByCategory').hide();
+                    if (filterType == 5) {
+                        $('#tblRevenueDetailByCategory').html(byCategoryHtml);
+                        $('#yearFilterByCategory').show();
+                    }
+                    
                 }
-            });
-        }
-
-        function renderRangeFilter(start, end) {
-            var html = start + " đến " + end;
-            $('#date-time-display').data('fromdate', start);
-            $('#date-time-display').data('todate', end);
-            $('#date-time-display').html(html);
-            
-            refreshFilterDetail();
-        }
-
-        $('#options li').off('click').on('click', function () {
-            var selectedOption = $(this).data('id');
-            var start = null;
-            var end = null;
-            $('#date-time-display').data('filtertype', selectedOption);
-            if (selectedOption == 1) {
-                start = moment().startOf('isoWeek');
-                end = moment().endOf('isoWeek')
-                renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
-            }
-            else if (selectedOption == 2) {
-                start = moment().startOf('month');
-                end = moment().endOf('month');
-                renderRangeFilter(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
-            }
-            
-            else if (selectedOption == 5) {
-                //start = moment().startOf('year');
-                //end = moment().endOf('year');
-                var year = $(this).data('year');
-                $('#date-time-display').data('year', year);
-                renderRangeFilter(`1-${year}` ,`12-${year}`);
-            }
-            else {
-                $('#searchDateTime').modal('show');
-                return;
-            }
-        });
-
-        $('#ddlShop').off('change').on('change', function () {
-            refreshFilterDetail();
-        })
-
-
-        $('#fromDate').datepicker({
-            format: 'dd/mm/yyyy',
-        });
-        $('#toDate').datepicker({
-            format: 'dd/mm/yyyy',
-        });
-
-        $('#btnFilterDetail').click(function () {
-            var startTime = $('#fromDate').val();
-            var endDate = $('#toDate').val();
-            $('#date-time-display').data('filtertype', 4);
-            renderRangeFilter(startTime, endDate);
-            
-        });
-        function getGeneralInfo() {
-
-
-            $.ajax({
-                url: '/Dashboard/GetGeneralInfo',
-
-                type: 'post',
-                success: function (res) {
-                    if (res.status) {
-                        var result = res.data;
-                        $('#generalTotalCustomer').html(commonController.formatMoney(result.TotalCustomer));
-                        $('#generalTotalOrder').html(commonController.formatMoney(result.TotalOrder));
-                    }
+                else {
+                    toastr.error(res.errorMessage);
                 }
-            });
-        }
-        function refreshFilterDetail() {
-            var shopId = $('#ddlShop').val();
-            var filterType = $('#date-time-display').data('filtertype');
-            var fromDate = $('#date-time-display').data('fromdate');
-            var toDate = $('#date-time-display').data('todate');
-            var year = $('#date-time-display').data('year');
-            filterRevenue(shopId, filterType, fromDate, toDate, year);
-        }
-        function filterRevenue(shopId, filterType, fromDate, toDate, year) {
-            $.ajax({
-                url: '/Dashboard/FilterRevenuneByPartner',
-                data: {
-                    Type: filterType, shopId: shopId, fromDate: fromDate, toDate: toDate,
-                    year : year
-                },
-                type: 'post',
-                success: function (res) {
-                    if (res.status) {
-                        $('#searchDateTime').modal('hide');
-                        var result = res.data;
-                        $('#revenue-bar-chart').empty();
-                        $('#totalOrder').text(0);
-                        $('#totalMoney').text(0);
-                        var html = '';
-                        var template = $('#data-template').html();
+            }
+        });
+    };
+
+    loadShopRevenue();
+    getGeneralInfo();
+    renderRangeFilter(moment().startOf('month').format('DD-MM-YYYY'), moment().endOf('month').format('DD-MM-YYYY'));
+
+    function renderRevenueDetails(data) {
+        var html = '';
+        $.each(data, function (i, item) {
+            html += '<tr style="">';
+            html += '<td>' + item.Type + '</td>';
+            html += '<td>' + commonController.formatMoney(item.TotalUnit) + '</td>';
+            html += '<td>' + commonController.formatMoney(item.TotalMoney) + '</td>';
+
+            html += '</tr>';
+        });
+        return html;
+    }
+
+    function renderRevenueDetailsByCategory(data) {
+        var html = '';
+        
+        $.each(data, function (i, item) {
+            html += '<tr style="">';
+            html += '<td>' + item.Day + '</td>';
+            html += '<td>' + commonController.formatMoney(item.TotalRevenue) + '</td>';
+            html += '<td>' + commonController.formatMoney(item.DrinkRevenue) + '</td>';
+            html += '<td>' + commonController.formatMoney(item.CakeRevenue) + '</td>';
+            html += '</tr>';
+        });
+        return html;
+    }
+
+    function viewDetail(id) {
+
+        $('#detail_' + id).show();
+    }
 
 
-                        html += '<tr style="background-color: #ddd; text-align: center">';
-                        if (filterType == 2 || filterType == 4) {
+    function closeDetail(id) {
 
-                            html += '<td> <b>Ngày </b></td>';
-                        }
-   
-                        else if (filterType == 3 || filterType == 5) {
-                            html += '<td> <b>Tháng</b> </td>';
-                        }
-                        html += '<td> <b>Tổng hóa đơn</b>  </td>';
-                        html += '<td> <b>Tổng doanh thu</b>  </td>';
-                        html += '<td> <b>Chi tiết</b> </td>'
-                        html += '</tr>';
-                        if (result.length > 0) {
-                            var totalMoney = 0;
-                            var totalOrder = 0;
-                            $.each(result, function (i, item) {
-                                html += Mustache.render(template, {
-                                    Header: item.Header,
-                                    Id: i,
-                                    TotalOrder: commonController.formatMoney(item.TotalOrder),
-                                    TotalCost: commonController.formatMoney(item.TotalMoney),
-                                    Details: renderRevenueDetails(item.Details),
-                                    TotalUnit: commonController.formatMoney(item.TotalUnit)
-                                });
-                                totalMoney += item.TotalMoney;
-                                totalOrder += item.TotalOrder;
+        $('#detail_' + id).hide();
+    }
+
+    function viewDetailCategory(id) {
+
+        $('#category_detail_' + id).show();
+    }
 
 
-                            });
+    function closeDetailCategory(id) {
 
+        $('#category_detail_' + id).hide();
+    }
 
-                            $('#totalOrder').text(commonController.formatMoney(totalOrder));
-                            $('#totalMoney').text(commonController.formatMoney(totalMoney));
-                            var bar = new Morris.Bar({
-                                element: 'revenue-bar-chart',
-                                resize: true,
-                                data: result,
-                                barColors: ['#00a65a', '#f56954'],
-                                xkey: 'Header',
-                                ykeys: ['TotalMoney'],
-                                labels: ['Doanh thu'],
-                                hideHover: 'auto'
-                            });
-                        }
-                        $('#tblRevenueDetail').html(html);
-                    }
-                    else {
-                        toastr.error(res.errorMessage);
-                    }
-                }
-            });
-        };
-
-        loadShopRevenue();
-        getGeneralInfo();
-        renderRangeFilter(moment().startOf('month').format('DD-MM-YYYY'), moment().endOf('month').format('DD-MM-YYYY'));
-
-        function renderRevenueDetails (data) {
-            var html = '';
-            $.each(data, function (i, item) {
-                html += '<tr style="">';
-                html += '<td>' + item.Type + '</td>';
-                html += '<td>' + commonController.formatMoney(item.TotalUnit) + '</td>';
-                html += '<td>' + commonController.formatMoney(item.TotalMoney) + '</td>';
-               
-                html += '</tr>';
-            });
-            return html;
-        }
-
-        function viewDetail(id) {
-           
-            $('#detail_' + id).show();
-        }
-
-
-        function closeDetail(id) {
-
-            $('#detail_' + id).hide();
-        }
-       
+    function exportExcel(year, month, data) {
+        console.log(data);
+        $.ajax({
+            url: '/Dashboard/ExportExcel',
+            data: {
+                model : data
+            },
+            type: 'post',
+            success: function (res) {
+                var a = document.createElement("a");
+                a.href = res.data.Url;
+                a.download = res.data.FileName;
+                document.body.appendChild(a);
+                a.click();
+            }
+        });
+    }
 
 
 
-    </script>
 
-    <div id="loader"></div>
-    <style>
-        .daterangepicker_start_input, .daterangepicker_end_input {
-            display: none;
-        }
-    </style>
+</script>
+
+<div id="loader"></div>
+<style>
+    .daterangepicker_start_input, .daterangepicker_end_input {
+        display: none;
+    }
+</style>

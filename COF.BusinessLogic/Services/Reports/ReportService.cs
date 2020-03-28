@@ -14,7 +14,7 @@ namespace COF.BusinessLogic.Services.Reports
 {
     public interface IReportService
     {
-        void ExportDailyOrderReport();
+        byte[] ExportDailyOrderReport(string fileName);
         List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId);
         List<ShopRevenueReportModel> GetShopRevenueReportImMonthModels(int partnerId,int? shopId);
         List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId);
@@ -52,18 +52,28 @@ namespace COF.BusinessLogic.Services.Reports
             _unitOfWork = unitOfWork;
         }
         #endregion
-        public void ExportDailyOrderReport()
+        public byte[] ExportDailyOrderReport(string fileName)
         {
             var partners = _partnerService.GetAll();
             foreach (var partner in partners.Result)
             {
+                var result = GetShopRevenueReportImMonthModels(partner.Id, null);
                 var queryRes = _orderService.GetDailyOrders(partner.Id);
                 var dailyOrders = queryRes.Result;
-                var bytes = _excelExportService.ExportExcelOutsource(dailyOrders);
-                var fileName = $"{partner.Name}_Danh_sach_hoa_don_{DateTime.UtcNow.AddHours(7).ToString("dd-MM-yyyy")}.xlsx";
+                var category = _productCategoryService.GetAll();
+                var exportData = new ExportDailyModel()
+                {
+                    Categories = category,
+                    ToDayRevenue = result.LastOrDefault()
+                };
+                
+                var bytes = _excelExportService.ExportExcelOutsource(exportData);
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 _azureBlobSavingService.SavingFileToAzureBlob(bytes, fileName, contentType, AzureHelper.DailyOrderExportContainer);
+                return bytes;
             }
+
+            return null;
         }
 
         public List<ShopRevenueMonthlyReport> GetPartnerRevenueMonthlyReport(int partnerId)
@@ -181,6 +191,7 @@ namespace COF.BusinessLogic.Services.Reports
             var months = allOrders.Select(x => x.CheckInDate.Month).Distinct().ToList();
 
             var result = new List<ShopRevenueReportModel>();
+            var allCategories = _productCategoryService.GetAll();
             for (int i = 1; i <= 12; i++)
             {
                 var tmp = new ShopRevenueReportModel
@@ -196,8 +207,16 @@ namespace COF.BusinessLogic.Services.Reports
                     tmp.TotalOrder = data.Count();
 
                     tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
+
+                    tmp.MonthlyRevenueDetail = new MonthlyRevenueFilterByCakeOrDrinkCategoryModel(year, i,
+                        FilterByCakeOrDrinkCategoryByDay(year, i, allCategories, data));
                 }
-                
+                else
+                {
+                    tmp.MonthlyRevenueDetail = new MonthlyRevenueFilterByCakeOrDrinkCategoryModel(year, i,
+                        new List<DayRevenueFilterByCakeOrDrinkCategoryModel>());
+                }
+                tmp.IsFilterByYear = true;
                 result.Add(tmp);
             }
             return result;
@@ -264,6 +283,42 @@ namespace COF.BusinessLogic.Services.Reports
         //    return result;
         //}
 
+        private List<DayRevenueFilterByCakeOrDrinkCategoryModel> FilterByCakeOrDrinkCategoryByDay(int year, int month, List<Category> categories, List<Order> orders)
+        {
+            var catogoryNames = new String[]
+            {
+                "Bánh",
+                "Món thêm"
+            };
+            var cakeIds = categories.Where(x => catogoryNames.Contains(x.Name)).Select(x => x.Id).ToList();
+            var dayRevenues = new List<DayRevenueFilterByCakeOrDrinkCategoryModel>();
+
+            var currentDate = DateTime.UtcNow.AddHours(7);
+            var dateInMonth = Enumerable.Range(1, DateTime.DaysInMonth(year, month)) 
+                .Select(day => new DateTime(year, month, day)) 
+                .ToList(); // Load dates into a list
+
+
+            var result = dateInMonth.Select(x =>
+            {
+
+                var dayOrders = orders.Where(p => p.CheckInDate.Date == x.Date).ToList();
+                var orderDetails = dayOrders.SelectMany(p => p.OrderDetails).ToList();
+                var cakeRevenue = orderDetails.Where(p => cakeIds.Contains(p.CategoryId)).Sum(p => 1.0m * p.Quantity * p.UnitPrice);
+                var total = (decimal) dayOrders.Sum(p => p.FinalAmount);
+                var drinkRevenue = (decimal) dayOrders.Sum(p => p.FinalAmount) - cakeRevenue;
+                var tmp = new DayRevenueFilterByCakeOrDrinkCategoryModel
+                {
+                    Title = $"{x.Day}",
+                    Day =  x.Day,
+                    CakeRevenue = cakeRevenue,
+                    DrinkRevenue = drinkRevenue,
+                    TotalRevenue = total,
+                };
+                return tmp;
+            }).ToList();
+            return result;
+        }
 
     }
 }

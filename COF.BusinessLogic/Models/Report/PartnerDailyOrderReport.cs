@@ -36,4 +36,11 @@ namespace COF.BusinessLogic.Models.Report
         public DateTime? CreatedDate { get; set; }
         public string CreateDateTime => CreatedDate.HasValue ? CreatedDate.Value.ToString("dd-MM-yyyy HH:mm ") : "";
     }
+
+    public class ExportDailyModel
+    {
+        public List<DataAccess.EF.Models.Category> Categories { get; set; }
+        public ShopRevenueReportModel ToDayRevenue { get; set; }
+
+    }
 }
