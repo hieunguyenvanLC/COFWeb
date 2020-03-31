@@ -224,8 +224,8 @@ namespace COF.BusinessLogic.Services
                 }
                 else
                 {
-                    if (order.OrderStatus !=
-                        OrderStatus.PosCancel || order.OrderStatus != OrderStatus.PosPreCancel ||
+                    if (order.OrderStatus ==
+                        OrderStatus.PosCancel || order.OrderStatus == OrderStatus.PosPreCancel ||
                         order.OrderStatus == OrderStatus.PreCancel)
                     {
                         order.CancelDate = DateTimeHelper.CurentVnTime;
@@ -281,7 +281,7 @@ namespace COF.BusinessLogic.Services
                     await CalculateRmsAfterOrderFinshed(order.Id);
 
                 }
-
+                await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Order>
                 {
                     Result = order,
