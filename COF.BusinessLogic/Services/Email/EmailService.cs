@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +15,12 @@ namespace COF.BusinessLogic.Services.Email
     }
     public class EmailService : IEmailService
     {
+        private readonly string _sendgridKey;
+        private readonly string _sendgridEmail;
         public EmailService()
         {
+            _sendgridKey = ConfigurationManager.AppSettings["SendGridKey"];
+            _sendgridEmail = ConfigurationManager.AppSettings["SendGridEmail"];
         }
 
 
@@ -23,8 +28,8 @@ namespace COF.BusinessLogic.Services.Email
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var sg = new SendGridClient("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");
-            EmailAddress from = new EmailAddress("hoang.phan.nhat@bstarsolutions.com");
+            var sg = new SendGridClient(_sendgridKey);
+            EmailAddress from = new EmailAddress(_sendgridEmail);
             string subject = request.Subject;
             EmailAddress to = new EmailAddress(request.Recipients.Select(p => p.Email).FirstOrDefault());
             var mail = MailHelper.CreateSingleEmail(from, to, subject, request.Body, request.Body);

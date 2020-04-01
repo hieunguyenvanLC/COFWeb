@@ -355,7 +355,7 @@ namespace COF.BusinessLogic.Services
                     Name = shop.ShopName,
                     Address = shop.Address,
                     PhoneNumber = shop.PhoneNumber,
-                    Orders = orders.Where(x => x.ShopId == shop.Id).Select(y => new OrdersInDayModel
+                    Orders = orders.Where(x => x.ShopId == shop.Id && x.OrderStatus == OrderStatus.PosFinished).Select(y => new OrdersInDayModel
                     {
                         Id = y.Id,
                         CreatedDate = y.CreatedOnUtc,

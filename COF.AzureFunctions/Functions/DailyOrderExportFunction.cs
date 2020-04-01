@@ -21,7 +21,7 @@ namespace COF.AzureFunctions.Functions
             {
                 log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
                 var client = new HttpClient();
-                var result = await client.GetAsync("http://cof-dev.azurewebsites.net/api/export/daily-order");
+                var result = await client.GetAsync("http://quantri.cof.coffee/api/export/daily-order");
             }
             catch (Exception ex)
             {

@@ -74,7 +74,9 @@ namespace COF.BusinessLogic.Services.Export
 
             worksheet.Cells[2, 1].Value = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
             worksheet.Cells[2, 4].Value = shopDaily.ToDayRevenue.TotalUnit;
+            worksheet.Cells[2, 4].Style.Numberformat.Format = "###,###,##0";
             worksheet.Cells[2, 5].Value = shopDaily.ToDayRevenue.TotalMoney;
+            worksheet.Cells[2, 5].Style.Numberformat.Format = "###,###,##0";
             worksheet.Cells[2, 6].Value = "";
 
             row = 3;
@@ -109,12 +111,92 @@ namespace COF.BusinessLogic.Services.Export
 
                 column++;
                 worksheet.Cells[row, column].Value = category.TotalUnit;
+                worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
 
                 column++;
                 worksheet.Cells[row, column].Value = category.TotalMoney;
+                worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
 
 
             }
+
+            column = 0;
+            row++;
+            //column++;
+            //worksheet.Cells[row, column].Value = i + 1;
+
+            column++;
+            worksheet.Cells[row, column].Value = "Tổng";
+
+
+            column++;
+            worksheet.Cells[row, column].Value = shopDaily.ToDayRevenue.Details.Sum(x => x.TotalUnit);
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+            var totalRenueIncludePromotion = shopDaily.ToDayRevenue.Details.Sum(x => x.TotalMoney);
+
+            column++;
+            worksheet.Cells[row, column].Value = totalRenueIncludePromotion;
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+
+            column = 0;
+            row++;
+            column++;
+            worksheet.Cells[row, column].Value = "Khuyến mãi";
+
+
+            column++;
+            worksheet.Cells[row, column].Value = "";
+
+            column++;
+            worksheet.Cells[row, column].Value = ( totalRenueIncludePromotion - (decimal)shopDaily.ToDayRevenue.TotalMoney);
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+
+            column = 0;
+            row++;
+            column++;
+            worksheet.Cells[row, column].Value = "Tổng sau Khuyến mãi";
+
+
+            column++;
+            worksheet.Cells[row, column].Value = shopDaily.ToDayRevenue.Details.Sum(x => x.TotalUnit);
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+            column++;
+            worksheet.Cells[row, column].Value = shopDaily.ToDayRevenue.TotalMoney;
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+            column = 0;
+            row++;
+            column++;
+            worksheet.Cells[row, column].Value = "Tổng doanh thu bánh";
+
+
+            column++;
+            worksheet.Cells[row, column].Value = "";
+
+            column++;
+            var cakeFinalAmount = shopDaily.ToDayRevenue.Details.Where(x => x.TypeId == 20 || x.TypeId == 13)
+                .Sum(x => x.TotalMoney);
+            worksheet.Cells[row, column].Value = cakeFinalAmount;
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+            column = 0;
+            row++;
+            column++;
+            worksheet.Cells[row, column].Value = "Tổng doanh thu nước";
+
+
+            column++;
+            worksheet.Cells[row, column].Value = "";
+
+            column++;
+            
+            worksheet.Cells[row, column].Value = (decimal)shopDaily.ToDayRevenue.TotalMoney - cakeFinalAmount;
+            worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
             worksheet.Cells.AutoFitColumns(200);
         }
         private void ExportMonthyCakeOrDrinkCategoryRevenue(ExcelPackage xlPackage, MonthlyRevenueFilterByCakeOrDrinkCategoryModel monthlyRevenue)

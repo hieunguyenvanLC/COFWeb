@@ -41,6 +41,7 @@ namespace COF.BusinessLogic.Models.Report
     {
         public List<DataAccess.EF.Models.Category> Categories { get; set; }
         public ShopRevenueReportModel ToDayRevenue { get; set; }
+        public decimal FinalTodayRevenue { get; set; }
 
     }
 }

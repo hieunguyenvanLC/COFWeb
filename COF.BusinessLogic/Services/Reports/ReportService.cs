@@ -58,13 +58,11 @@ namespace COF.BusinessLogic.Services.Reports
             foreach (var partner in partners.Result)
             {
                 var result = GetShopRevenueReportImMonthModels(partner.Id, null);
-                var queryRes = _orderService.GetDailyOrders(partner.Id);
-                var dailyOrders = queryRes.Result;
                 var category = _productCategoryService.GetAll();
                 var exportData = new ExportDailyModel()
                 {
                     Categories = category,
-                    ToDayRevenue = result.LastOrDefault()
+                    ToDayRevenue = result.LastOrDefault(),
                 };
                 
                 var bytes = _excelExportService.ExportExcelOutsource(exportData);
@@ -263,6 +261,7 @@ namespace COF.BusinessLogic.Services.Reports
             var result = groupBy.Select(x => new CategoryReportModel
             {
                 Type = allCategories.FirstOrDefault(y => y.Id == x.Key).Name,
+                TypeId =  x.Key,
                 TotalUnit = x.Sum(y => y.Quantity),
                 TotalMoney = x.Sum(y => 1.0m *  y.Quantity * y.UnitPrice)
             }).ToList();
