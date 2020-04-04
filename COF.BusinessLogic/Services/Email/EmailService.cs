@@ -31,8 +31,11 @@ namespace COF.BusinessLogic.Services.Email
             var sg = new SendGridClient(_sendgridKey);
             EmailAddress from = new EmailAddress(_sendgridEmail);
             string subject = request.Subject;
-            EmailAddress to = new EmailAddress(request.Recipients.Select(p => p.Email).FirstOrDefault());
-            var mail = MailHelper.CreateSingleEmail(from, to, subject, request.Body, request.Body);
+            List<EmailAddress> to = request.Recipients.Select(p => new EmailAddress
+            {
+                Email = p.Email
+            }).ToList();
+            var mail = MailHelper.CreateSingleEmailToMultipleRecipients(from, to, subject, request.Body, request.Body);
             if (request.Attachments != null && request.Attachments.Any())
             {
                 mail.Attachments = request.Attachments;

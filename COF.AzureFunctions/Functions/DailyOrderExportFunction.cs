@@ -15,13 +15,13 @@ namespace COF.AzureFunctions.Functions
             .Build();
 
         [FunctionName("DailyOrderExportFunction")]
-        public async static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public async static void Run([TimerTrigger("0 34 16 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             try
             {
                 log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
                 var client = new HttpClient();
-                var result = await client.GetAsync("http://quantri.cof.coffee/api/export/daily-order");
+                var result = await client.GetAsync("http://quantri.cof.coffee/api/export/daily-order-force");
             }
             catch (Exception ex)
             {
