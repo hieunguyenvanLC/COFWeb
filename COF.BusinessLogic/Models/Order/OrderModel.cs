@@ -63,6 +63,15 @@ namespace COF.BusinessLogic.Models.Order
                     case DiscountType._20kDiscount:
                         description = "20.000";
                         break;
+                    case DiscountType.FiveGetOne:
+                        description = "Mua 5 tặng 1";
+                        break;
+                    case DiscountType.Delivery:
+                        description = "Delivery";
+                        break;
+                    case DiscountType.Sharing:
+                        description = "Sharing";
+                        break;
                 }
                 return description;
             }

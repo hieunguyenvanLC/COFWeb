@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@ViewBag.Title</title>
+    <link href=" http://cof.coffee/asset/img/CofIcon.png" rel="icon" type="image/x-icon">
+   
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
@@ -61,6 +63,12 @@
                 return ressult;
             }
         };
+        $.LoadingOverlaySetup({
+            background: "rgba(0, 0, 0, 0.5)",
+            image: "https://github.githubassets.com/images/spinners/octocat-spinner-64.gif",
+            imageAnimation: "1.5s fadein",
+            imageColor: "#ffcc00"
+        });
         $(document).ajaxStart(function () {
             $.LoadingOverlay("show");
         });
