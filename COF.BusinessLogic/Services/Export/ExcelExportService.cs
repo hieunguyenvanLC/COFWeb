@@ -374,7 +374,39 @@ namespace COF.BusinessLogic.Services.Export
 
             row++;
             column = 0;
-            worksheet.Cells[$"A{row}"].Value = "Tổng";
+            worksheet.Cells[$"A{row}"].Value = "Tổng trước khuyến mãi";
+            worksheet.Cells[$"A{row}"].Style.Font.Bold = true;
+
+
+            worksheet.Cells[$"B{row}"].Value = monthlyRevenue.TotalUnit;
+            worksheet.Cells[$"B{row}"].Style.Numberformat.Format = "###,###,##0";
+            worksheet.Cells[$"B{row}"].Style.Font.Bold = true;
+
+
+
+            worksheet.Cells[$"C{row}"].Value = monthlyRevenue.Details.Sum(x => x.TotalMoney);
+            worksheet.Cells[$"C{row}"].Style.Numberformat.Format = "###,###,##0";
+            worksheet.Cells[$"C{row}"].Style.Font.Bold = true;
+
+
+            row++;
+            column = 0;
+            worksheet.Cells[$"A{row}"].Value = "Khuyến mãi";
+            worksheet.Cells[$"A{row}"].Style.Font.Bold = true;
+
+            worksheet.Cells[$"B{row}"].Value = "";
+            worksheet.Cells[$"B{row}"].Style.Font.Bold = true;
+
+            
+            worksheet.Cells[$"C{row}"].Value = monthlyRevenue.Details.Sum(x => x.TotalMoney) - (decimal) monthlyRevenue.TotalMoney;
+            worksheet.Cells[$"C{row}"].Style.Numberformat.Format = "###,###,##0";
+            worksheet.Cells[$"C{row}"].Style.Font.Bold = true;
+
+
+
+            row++;
+            column = 0;
+            worksheet.Cells[$"A{row}"].Value = "Tổng sau khuyến mãi";
             worksheet.Cells[$"A{row}"].Style.Font.Bold = true;
 
 
