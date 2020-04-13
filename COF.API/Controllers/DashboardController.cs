@@ -150,5 +150,19 @@ namespace COF.API.Controllers
                 FileName = fileName
             });
         }
+
+        [HttpPost]
+        public ActionResult ExportCategoryByMonthExcel(ShopRevenueReportModel model)
+        {
+            var fileBytes = _excelExportService.ExportMonthReportByCategory(model);
+            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var fileName = _azureBlobSavingService.SavingFileToAzureBlob(fileBytes, $"Doanh_thu_theo_danh_muc_{model.Header}.xlsx", contentType, AzureHelper.DailyOrderExportContainer);
+            return HttpPostSuccessResponse(new
+            {
+                Url = $"{ConfigurationManager.AppSettings["ServerImage"]}/{ConfigurationManager.AppSettings["DailyOrderExport"]}/{ fileName}",
+                FileName = fileName
+            });
+        }
+
     }
 }

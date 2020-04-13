@@ -322,7 +322,11 @@
         <td>{{TotalCost}}</td>
         <td>
             <button data-id="{{Id}}" onclick="viewDetail({{Id}})" class="btn btn-primary">
-            <i class="fa fa-eye" ></i>
+                <i class="fa fa-eye"></i>
+            </button>
+            <button type="button" class="btn btn-success btnViewCategoryDetail" onclick="exportExcelByCategory({{REVENUE_MONTH_JSON}})">
+                <i class="fa fa-file-excel-o"></i>
+                <span></span>
             </button>
         </td>
     </tr>
@@ -334,6 +338,7 @@
                         <th><b>Tên danh mục</b></th>
                         <th><b>Tổng số sản phẩm</b></th>
                         <th><b>Doanh thu</b></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -647,7 +652,8 @@
                                 TotalOrder: commonController.formatMoney(item.TotalOrder),
                                 TotalCost: commonController.formatMoney(item.TotalMoney),
                                 Details: renderRevenueDetails(item.Details),
-                                TotalUnit: commonController.formatMoney(item.TotalUnit)
+                                TotalUnit: commonController.formatMoney(item.TotalUnit),
+                                REVENUE_MONTH_JSON: JSON.stringify(item)
                             });
                             totalMoney += item.TotalMoney;
                             totalOrder += item.TotalOrder;
@@ -690,6 +696,9 @@
                     if (filterType == 5) {
                         $('#tblRevenueDetailByCategory').html(byCategoryHtml);
                         $('#yearFilterByCategory').show();
+                        
+                    } else {
+                        $('.btnViewCategoryDetail').remove();
                     }
                     
                 }
@@ -711,7 +720,6 @@
             html += '<td>' + item.Type + '</td>';
             html += '<td>' + commonController.formatMoney(item.TotalUnit) + '</td>';
             html += '<td>' + commonController.formatMoney(item.TotalMoney) + '</td>';
-
             html += '</tr>';
         });
         return html;
@@ -760,6 +768,22 @@
             data: {
                 model : data
             },
+            type: 'post',
+            success: function (res) {
+                var a = document.createElement("a");
+                a.href = res.data.Url;
+                a.download = res.data.FileName;
+                document.body.appendChild(a);
+                a.click();
+            }
+        });
+    }
+
+    function exportExcelByCategory(data) {
+        console.log(data);
+        $.ajax({
+            url: '/Dashboard/ExportCategoryByMonthExcel',
+            data: data,
             type: 'post',
             success: function (res) {
                 var a = document.createElement("a");
