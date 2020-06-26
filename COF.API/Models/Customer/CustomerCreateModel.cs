@@ -17,6 +17,15 @@ namespace COF.API.Models.Customer
         public string Email { get; set; }
     }
 
+    public class CustomerRegisterModel : CustomerCreateModel
+    {
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public  string Password { get; set; }
+        public int PartnerId { get; set; }
+    }
+
     public class CustomerCreateResultModel
     {
         public int CustomerId { get; set; }

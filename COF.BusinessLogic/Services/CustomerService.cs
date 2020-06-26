@@ -133,7 +133,7 @@ namespace COF.BusinessLogic.Services
                         Validations = new FluentValidation.Results.ValidationResult(new List<ValidationFailure> { new ValidationFailure("Lỗi xảy ra", "Số điện thoại đã được đăng kí.") })
                     };
                 }
-                _customerRepository.Add(customer, _workContext.CurrentUser.FullName);
+                _customerRepository.Add(customer, _workContext.CurrentUser?.FullName);
                 await _unitOfWork.SaveChangesAsync();
                 return new BusinessLogicResult<Customer>
                 {
