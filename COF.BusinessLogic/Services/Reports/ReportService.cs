@@ -22,6 +22,7 @@ namespace COF.BusinessLogic.Services.Reports
 
         List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, int year);
 
+        List<ShopRevenueReportModel> GetShopXXXRevenueReportImMonthModelsV1(int partnerId, int? shopId);
     }
     public class ReportService : IReportService
     {
@@ -198,13 +199,31 @@ namespace COF.BusinessLogic.Services.Reports
                 };
                 if (months.Contains(i))
                 {
+
                     var data = allOrders.Where(y => y.CheckInDate.Month == i).ToList();
-                    tmp.Details = GetOrderDetails(data);
+
+
+                    List<CategoryReportModel> details;
+                    var xxxX1 = false;
+                    if (DateTime.Now < new DateTime(2020, 6, 1))
+                    {
+
+                        details = GetOrderDetails(data);
+                    }
+                    else
+                    {
+                        details = GetXXXOrderDetailsV1(data);
+                        xxxX1 = true;
+                    }
+
+
+                    tmp.Details = details;
                     tmp.TotalMoney = data
                                .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum();
                     tmp.TotalOrder = data.Count();
 
                     tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
+                    tmp.XXXX1 = xxxX1;
 
                     tmp.MonthlyRevenueDetail = new MonthlyRevenueFilterByCakeOrDrinkCategoryModel(year, i,
                         FilterByCakeOrDrinkCategoryByDay(year, i, allCategories, data));
@@ -219,7 +238,6 @@ namespace COF.BusinessLogic.Services.Reports
             }
             return result;
         }
-
         public List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId)
         {
             var partner = _partnerService.GetById(partnerId);
@@ -239,13 +257,26 @@ namespace COF.BusinessLogic.Services.Reports
             var result = new  List<ShopRevenueReportModel>();
             for (int i = 1; i <= currentDate.Month; i++)
             {
+                List<CategoryReportModel> details;
+                var xxxX1 = false;
+                if (DateTime.Now < new DateTime(2020, 6, 1))
+                {
+                    
+                    details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Month == i).ToList());
+                }
+                else
+                {
+                    details = GetXXXOrderDetailsV1(allOrders.Where(y => y.CheckInDate.Month == i).ToList());
+                    xxxX1 = true;
+                }
                 var tmp = new ShopRevenueReportModel
                 {
                     Header = $"Tháng {i}",
-                    Details = GetOrderDetails(allOrders.Where(y => y.CheckInDate.Month == i).ToList()),
+                    Details = details,
                     TotalMoney = allOrders.Where(x => x.CheckInDate.Month == i)
                                  .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum(),
-                    TotalOrder = allOrders.Where(x => x.CheckInDate.Month == i).Count()
+                    TotalOrder = allOrders.Where(x => x.CheckInDate.Month == i).Count(),
+                    XXXX1 = xxxX1
                 };
                 tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
                 result.Add(tmp);
@@ -267,6 +298,80 @@ namespace COF.BusinessLogic.Services.Reports
             }).ToList();
             return result;
         }
+
+        private List<CategoryReportModel> GetXXXOrderDetailsV1(List<Order> orders)
+        {
+            if (orders.Any())
+            {
+                var categoriesPercentDiscount = new List<CategoryPercent>();
+
+                var allCategories = _productCategoryService.GetAll();
+
+                var orderDetails = orders.SelectMany(x => x.OrderDetails).ToList();
+                var groupBy = orderDetails.GroupBy(x => x.CategoryId).ToList();
+
+                decimal finalAmountBefore = orderDetails.Sum(x => x.Quantity * x.UnitPrice);
+                decimal finalAmountAfter = (decimal)orders.Sum(x => x.FinalAmount);
+
+                decimal discountAmount = finalAmountBefore - finalAmountAfter;
+
+                var categoriesBeForeDiscount = groupBy.Select(x => new CategoryReportModel
+                {
+                    Type = allCategories.FirstOrDefault(y => y.Id == x.Key).Name,
+                    TypeId = x.Key,
+                    TotalUnit = x.Sum(y => y.Quantity),
+                    TotalMoney = x.Sum(y => 1.0m * y.Quantity * y.UnitPrice)
+                }).ToList();
+
+                var categoriesAfterDiscount = new List<CategoryReportModel>();
+
+                for (int i = 0; i < categoriesBeForeDiscount.Count; i++)
+                {
+                    var categoryTmp = categoriesBeForeDiscount[i];
+                    // percent category/doanhThuTruocGiamGia add to categoriesAfterDiscount
+                    decimal percent = i <= 9 ? 10 : 0;
+                    categoriesPercentDiscount.Add(new CategoryPercent
+                    {
+                        CategoryId = categoryTmp.TypeId,
+                        Name = categoryTmp.Type,
+                        Percent = percent
+                    });
+                }
+
+                categoriesBeForeDiscount = categoriesBeForeDiscount.OrderByDescending(x => x.TotalMoney).ToList();
+
+                var mustContinue = true;
+
+                while (mustContinue)
+                {
+                    foreach (var category in categoriesBeForeDiscount)
+                    {
+                        if (category.TotalMoney >= discountAmount * 2)
+                        {
+                            category.TotalMoney -= discountAmount;
+                            discountAmount = 0;
+                            mustContinue = false;
+                            break;
+                        }
+                        else if (category.TotalMoney <= discountAmount)
+                        {
+                            var percent = 10;
+                            var discountDetail = ( discountAmount * percent / 100) / 1000 * 1000 ;
+                            category.TotalMoney -= discountDetail;
+                            discountAmount -= discountDetail;
+                        }
+                    }
+                }
+
+                return categoriesBeForeDiscount;
+            }
+            else
+            {
+                return new List<CategoryReportModel>();
+            }
+            
+        }
+
 
         //private List<CategoryReportModel> GetOrderDetails(List<OrderModel> orders)
         //{
@@ -319,5 +424,57 @@ namespace COF.BusinessLogic.Services.Reports
             return result;
         }
 
+        public List<ShopRevenueReportModel> GetShopXXXRevenueReportImMonthModelsV1(int partnerId, int? shopId)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInMonthByShopId(shopId.Value);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInMonth(partnerId);
+                allOrders = queryRes.Result;
+            }
+            allOrders = allOrders.Where(x => x.OrderStatus == OrderStatus.PosFinished).ToList();
+            var currentDate = DateTime.UtcNow.AddHours(7);
+            var dateInMonth = Enumerable.Range(1, DateTime.DaysInMonth(currentDate.Year, currentDate.Month))  // Days: 1, 2 ... 31 etc.
+                .Select(day => new DateTime(currentDate.Year, currentDate.Month, day)) // Map each day to a date
+                .Where(day => day.Date <= currentDate.Date)
+                .ToList(); // Load dates into a list
+            var result = dateInMonth.Select(x => {
+
+                var tmp = new ShopRevenueReportModel
+                {
+                    Header = x.Date.ToString("dd/MM"),
+                    Details = GetXXXOrderDetailsV1(allOrders.Where(y => y.CheckInDate.Date == x.Date).ToList()),
+                    TotalMoney = allOrders.Where(y => y.CheckInDate.Date == x.Date)
+                        .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum()
+                    ,
+                    TotalOrder = allOrders.Where(y => y.CheckInDate.Date == x.Date).Count(),
+                };
+                tmp.TotalUnit = tmp.Details.Sum(y => y.TotalUnit);
+                return tmp;
+            }).ToList();
+
+            return result;
+        }
+
+    }
+
+    public class CategoryPercent 
+    {
+        public int CategoryId { get; set; }
+        public string Name { get; set; }
+        public decimal Percent { get; set; }
+    }
+
+    public class DailyCategoryAmount
+    {
+        public int CategoryId { get; set; }
+        public string Name { get; set; }
+        public decimal FinalAmount;
     }
 }

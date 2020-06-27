@@ -16,7 +16,7 @@ namespace COF.BusinessLogic.Services.Export
         byte[] ExportExcelOutsource(ExportDailyModel partnerReport);
         byte[] ExportMonthyCakeOrDrinkCategoryRevenue(MonthlyRevenueFilterByCakeOrDrinkCategoryModel monthlyRevenue);
 
-        byte[] ExportMonthReportByCategory( ShopRevenueReportModel monthlyRevenue);
+        byte[] ExportMonthReportByCategory(ShopRevenueReportModel monthlyRevenue, bool xxxX1 = false);
     }
     public class ExcelExportService : IExcelExportService
     {
@@ -56,14 +56,22 @@ namespace COF.BusinessLogic.Services.Export
             return bytes;
         }
 
-        public byte[] ExportMonthReportByCategory(ShopRevenueReportModel monthlyRevenue)
+        public byte[] ExportMonthReportByCategory(ShopRevenueReportModel monthlyRevenue, bool xxxX1 = false)
         {
             byte[] bytes;
             using (var stream = new MemoryStream())
             {
                 using (var xlPackage = new ExcelPackage(stream))
                 {
-                    ExportMonthReportByCategory(xlPackage, monthlyRevenue);
+                    if (xxxX1)
+                    {
+                        ExportXXXV1MonthReportByCategory(xlPackage, monthlyRevenue);
+                    }
+                    else
+                    {
+                        ExportMonthReportByCategory(xlPackage, monthlyRevenue);
+                    }
+                   
 
                     xlPackage.Save();
                 }
@@ -407,6 +415,80 @@ namespace COF.BusinessLogic.Services.Export
             row++;
             column = 0;
             worksheet.Cells[$"A{row}"].Value = "Tổng sau khuyến mãi";
+            worksheet.Cells[$"A{row}"].Style.Font.Bold = true;
+
+
+            worksheet.Cells[$"B{row}"].Value = monthlyRevenue.TotalUnit;
+            worksheet.Cells[$"B{row}"].Style.Numberformat.Format = "###,###,##0";
+            worksheet.Cells[$"B{row}"].Style.Font.Bold = true;
+
+
+
+            worksheet.Cells[$"C{row}"].Value = monthlyRevenue.TotalMoney;
+            worksheet.Cells[$"C{row}"].Style.Numberformat.Format = "###,###,##0";
+            worksheet.Cells[$"C{row}"].Style.Font.Bold = true;
+
+            worksheet.Cells.AutoFitColumns(200);
+        }
+
+        private void ExportXXXV1MonthReportByCategory(ExcelPackage xlPackage, ShopRevenueReportModel monthlyRevenue)
+        {
+            var worksheet = xlPackage.Workbook.Worksheets.Add("Doanh thu");
+            int row = 1;
+
+            worksheet.Cells[$"A{row}:F{row}"].Merge = true;
+            worksheet.Cells[$"A{row}:F{row}"].Value = $"THEO DÕI DOANH THU COF THEO DANH MỤC {monthlyRevenue.Header}";
+            worksheet.Cells[$"A{row}:F{row}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[$"A{row}:F{row}"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            worksheet.Cells[$"A{row}:F{row}"].Style.Font.Size = 18;
+            row++;
+
+            var properties = new List<string>
+                    {
+                        "Tên danh mục",
+                        "Tổng sản phẩm",
+                        "Doanh thu"
+                    };
+            int maxCol = properties.Count;
+
+            for (int i = 0; i < maxCol; i++)
+            {
+                worksheet.Cells[row, i + 1].Value = properties[i];
+                worksheet.Cells[row, i + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            }
+
+            worksheet.Cells[row, 1, row, maxCol].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            worksheet.Cells[row, 1, row, maxCol].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(184, 204, 228));
+            worksheet.Cells[row, 1, row, maxCol].Style.Font.Bold = true;
+            worksheet.Cells[row, 1, row, maxCol].Style.WrapText = true;
+            worksheet.Cells[row, 1, row, maxCol].Style.Font.Size = 11;
+            worksheet.Cells[row, 1, row, maxCol].Style.Font.Name = "Calibri";
+            //worksheet.View.FreezePanes(2, 1);
+
+            var column = 0;
+            for (int i = 0; i < monthlyRevenue.Details.Count; i++)
+            {
+                var category = monthlyRevenue.Details[i];
+
+                column = 0;
+                row++;
+
+                column++;
+                worksheet.Cells[row, column].Value = category.Type;
+
+                column++;
+                worksheet.Cells[row, column].Value = category.TotalUnit;
+                worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+                column++;
+                worksheet.Cells[row, column].Value = category.TotalMoney;
+                worksheet.Cells[row, column].Style.Numberformat.Format = "###,###,##0";
+
+            }
+
+            row++;
+            column = 0;
+            worksheet.Cells[$"A{row}"].Value = "Tổng";
             worksheet.Cells[$"A{row}"].Style.Font.Bold = true;
 
 

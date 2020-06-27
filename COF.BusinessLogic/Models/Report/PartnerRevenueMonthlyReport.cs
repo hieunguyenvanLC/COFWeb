@@ -33,6 +33,7 @@ namespace COF.BusinessLogic.Models.Report
 
         public MonthlyRevenueFilterByCakeOrDrinkCategoryModel MonthlyRevenueDetail { get; set; }
         public bool IsFilterByYear { get; set; }
+        public bool XXXX1 { get; set; }
     }
 
     public class CategoryReportModel

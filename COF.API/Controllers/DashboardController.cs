@@ -75,14 +75,26 @@ namespace COF.API.Controllers
         public async Task<JsonResult> FilterRevenuneByPartner(FilterRevenueModel model)
         {
             var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            
             var result = new List<ShopRevenueReportModel>();
             switch (model.Type)
             {
                 case FilterType.InMonth:
-                    result = _reportService.GetShopRevenueReportImMonthModels(
-                        user.PartnerId.GetValueOrDefault(), 
-                        model.ShopId);
-                    break;
+                {
+                    if (User.IsInRole("Partner") && DateTime.Now >= new DateTime(2020, 6, 1))
+                    {
+                        result = _reportService.GetShopXXXRevenueReportImMonthModelsV1(
+                            user.PartnerId.GetValueOrDefault(),
+                            model.ShopId);
+                    }
+                    else
+                    {
+                        result = _reportService.GetShopRevenueReportImMonthModels(
+                            user.PartnerId.GetValueOrDefault(),
+                            model.ShopId);
+                    }
+                    break; 
+                }
                 case FilterType.InYear:
                     result = _reportService.GetShopRevenueReportInYearModels(
                         user.PartnerId.GetValueOrDefault(), 
@@ -154,7 +166,9 @@ namespace COF.API.Controllers
         [HttpPost]
         public ActionResult ExportCategoryByMonthExcel(ShopRevenueReportModel model)
         {
-            var fileBytes = _excelExportService.ExportMonthReportByCategory(model);
+            var xxxX1 = User.IsInRole("Partner") && model.XXXX1;
+
+            var fileBytes = _excelExportService.ExportMonthReportByCategory(model, xxxX1);
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var fileName = _azureBlobSavingService.SavingFileToAzureBlob(fileBytes, $"Doanh_thu_theo_danh_muc_{model.Header}.xlsx", contentType, AzureHelper.DailyOrderExportContainer);
             return HttpPostSuccessResponse(new
