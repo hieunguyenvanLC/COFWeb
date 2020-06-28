@@ -7201,12 +7201,15 @@
     <None Include="Properties\PublishProfiles\quantri-cof - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - FTP2.pubxml" />
+    <None Include="Properties\PublishProfiles\quantri-cof - FTP3.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - ReadOnly - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - ReadOnly - FTP2.pubxml" />
+    <None Include="Properties\PublishProfiles\quantri-cof - ReadOnly - FTP3.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\quantri-cof - Web Deploy2.pubxml" />
+    <None Include="Properties\PublishProfiles\quantri-cof - Web Deploy3.pubxml" />
     <None Include="Properties\PublishProfiles\web-capstone - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />

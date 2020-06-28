@@ -125,10 +125,19 @@ namespace COF.API.Controllers
                  }
                 case FilterType.Years:
                 {
-                    result = _reportService.GetShopRevenueReportInYearsModels(
-                        user.PartnerId.GetValueOrDefault(),
-                        model.ShopId, model.Year);
-                        break;
+                    if (User.IsInRole("Partner"))
+                    {
+                        result = _reportService.GetShopXXXRevenueReportInYearsModelsV1(
+                            user.PartnerId.GetValueOrDefault(),
+                            model.ShopId, model.Year);
+                    }
+                    else
+                    {
+                        result = _reportService.GetShopRevenueReportInYearsModels(
+                            user.PartnerId.GetValueOrDefault(),
+                            model.ShopId, model.Year);
+                    }
+                    break;
                 }
                     
             }

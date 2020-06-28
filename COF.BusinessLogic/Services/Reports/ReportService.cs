@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace COF.BusinessLogic.Services.Reports
 {
@@ -21,6 +22,8 @@ namespace COF.BusinessLogic.Services.Reports
         List<ShopRevenueReportModel> GetShopRevenueReportInRange(int partnerId, int? shopId, DateTime fromDate, DateTime toDate);
 
         List<ShopRevenueReportModel> GetShopRevenueReportInYearsModels(int partnerId, int? shopId, int year);
+
+        List<ShopRevenueReportModel> GetShopXXXRevenueReportInYearsModelsV1(int partnerId, int? shopId, int year);
 
         List<ShopRevenueReportModel> GetShopXXXRevenueReportImMonthModelsV1(int partnerId, int? shopId);
     }
@@ -205,17 +208,7 @@ namespace COF.BusinessLogic.Services.Reports
 
                     List<CategoryReportModel> details;
                     var xxxX1 = false;
-                    if (DateTime.Now < new DateTime(2020, 6, 1))
-                    {
-
-                        details = GetOrderDetails(data);
-                    }
-                    else
-                    {
-                        details = GetXXXOrderDetailsV1(data);
-                        xxxX1 = true;
-                    }
-
+                    details = GetOrderDetails(data);
 
                     tmp.Details = details;
                     tmp.TotalMoney = data
@@ -238,6 +231,77 @@ namespace COF.BusinessLogic.Services.Reports
             }
             return result;
         }
+
+        public List<ShopRevenueReportModel> GetShopXXXRevenueReportInYearsModelsV1(int partnerId, int? shopId, int year)
+        {
+            var partner = _partnerService.GetById(partnerId);
+            List<Order> allOrders = null;
+            if (shopId != null)
+            {
+                var queryRes = _orderService.GetOrdersInYearsByShopId(shopId.Value, year);
+                allOrders = queryRes.Result;
+            }
+            else
+            {
+                var queryRes = _orderService.GetOrdersInYears(partnerId, year);
+                allOrders = queryRes.Result;
+            }
+
+            var months = allOrders.Select(x => x.CheckInDate.Month).Distinct().ToList();
+
+            var result = new List<ShopRevenueReportModel>();
+            var allCategories = _productCategoryService.GetAll();
+            for (int i = 1; i <= 12; i++)
+            {
+                var tmp = new ShopRevenueReportModel
+                {
+                    Header = $"Tháng {i} - {year} ",
+                };
+                if (months.Contains(i))
+                {
+
+                    var data = allOrders.Where(y => y.CheckInDate.Month == i).ToList();
+
+
+                    List<CategoryReportModel> details;
+                    var xxxX1 = false;
+                    var xxxX1Date = new DateTime(2020, 6, 1);
+
+                    tmp.MonthlyRevenueDetail = new MonthlyRevenueFilterByCakeOrDrinkCategoryModel(year, i,
+                        FilterByCakeOrDrinkCategoryByDay(year, i, allCategories, data));
+
+                    if (new DateTime(year,i, 1) >= xxxX1Date)
+                    {
+                        details = GetXXXOrderDetailsV1(data);
+                        xxxX1 = true;
+                    }
+                    else
+                    {
+                        details = GetOrderDetails(data);
+
+                    }
+                    
+                    tmp.Details = details;
+                    tmp.TotalMoney = data
+                               .Select(y => y.FinalAmount).DefaultIfEmpty(0).Sum();
+                    tmp.TotalOrder = data.Count();
+
+                    tmp.TotalUnit = tmp.Details.Sum(x => x.TotalUnit);
+                    tmp.XXXX1 = xxxX1;
+
+                    
+                }
+                else
+                {
+                    tmp.MonthlyRevenueDetail = new MonthlyRevenueFilterByCakeOrDrinkCategoryModel(year, i,
+                        new List<DayRevenueFilterByCakeOrDrinkCategoryModel>());
+                }
+                tmp.IsFilterByYear = true;
+                result.Add(tmp);
+            }
+            return result;
+        }
+
         public List<ShopRevenueReportModel> GetShopRevenueReportInYearModels(int partnerId, int? shopId)
         {
             var partner = _partnerService.GetById(partnerId);
@@ -346,20 +410,28 @@ namespace COF.BusinessLogic.Services.Reports
                 {
                     foreach (var category in categoriesBeForeDiscount)
                     {
-                        if (category.TotalMoney >= discountAmount * 2)
+                        if (category.TypeId == 20 || category.TypeId ==  13)
                         {
-                            category.TotalMoney -= discountAmount;
-                            discountAmount = 0;
-                            mustContinue = false;
-                            break;
+                            
                         }
-                        else if (category.TotalMoney <= discountAmount)
+                        else
                         {
-                            var percent = 10;
-                            var discountDetail = ( discountAmount * percent / 100) / 1000 * 1000 ;
-                            category.TotalMoney -= discountDetail;
-                            discountAmount -= discountDetail;
+                            if (category.TotalMoney >= discountAmount * 2)
+                            {
+                                category.TotalMoney -= discountAmount;
+                                discountAmount = 0;
+                                mustContinue = false;
+                                break;
+                            }
+                            else if (category.TotalMoney <= discountAmount)
+                            {
+                                var percent = 10;
+                                var discountDetail = (discountAmount * percent / 100) / 1000 * 1000;
+                                category.TotalMoney -= discountDetail;
+                                discountAmount -= discountDetail;
+                            }
                         }
+                        
                     }
                 }
 
