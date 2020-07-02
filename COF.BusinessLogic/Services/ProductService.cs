@@ -98,7 +98,8 @@ namespace COF.BusinessLogic.Services
                         Cost = z.Cost,
                         Size = z.Size.Name               
                     }).ToList(),
-                    IsActive = y.IsActive
+                    IsActive = y.IsActive,
+                    IsBestSeller = y.ProductSizes.Count() == 1
                 }).ToList(),
                 
             }).ToList();

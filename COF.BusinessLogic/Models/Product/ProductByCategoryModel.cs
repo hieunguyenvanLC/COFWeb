@@ -28,6 +28,7 @@ namespace COF.BusinessLogic.Models.Product
         public bool IsActive { get; set; }
         public List<ProductSize> Sizes { get; set;}
         public List<ProductRmUpdateModel> Rms { get; set; }
+        public bool IsBestSeller { get; set; } 
     }
 
 
