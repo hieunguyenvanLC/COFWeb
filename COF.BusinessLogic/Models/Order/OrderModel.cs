@@ -118,6 +118,8 @@ namespace COF.BusinessLogic.Models.Order
         public List<OrderDetailModel> OrderDetailViewModels { get; set; }
         public DiscountType DiscountType { get; set; }
         public double DiscountAmount { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public bool IsOnline { get; set; }
 
     }
 
@@ -146,5 +148,12 @@ namespace COF.BusinessLogic.Models.Order
          MobileApplication = 3
     }
 
+    public enum PaymentMethod
+    {
+        Cash = 0,
+        Momo = 1,
+        ZaloPay = 2,
+        Visa = 3
+    }
     
 }

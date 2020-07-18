@@ -180,7 +180,7 @@ namespace COF.BusinessLogic.Services
                         LastModifiedOrderDetail = model.LastModifiedOrderDetail,
                         LastModifiedPayment = model.LastModifiedPayment,
                         ApiLog = JsonConvert.SerializeObject(model),
-                        DiscountType = model.DiscountType,
+                        DiscountType = model.DiscountType
                     };
 
                     order.OrderDetails = new List<OrderDetail>();

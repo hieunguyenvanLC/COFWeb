@@ -103,7 +103,8 @@ namespace COF.API.Api
                         Email = model.Email,
                         FullName = model.FullName,
                         Gender = model.Gender,
-                        PhoneNumber = model.PhoneNumber
+                        PhoneNumber = model.PhoneNumber,
+                        Username = user.UserName
                     };
 
                     var logicResult = await _customerService.CreateAsync(model.PartnerId, createModel);

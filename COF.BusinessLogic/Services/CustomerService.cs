@@ -47,6 +47,8 @@ namespace COF.BusinessLogic.Services
         /// <param name="keyword">The keyword.</param>
         /// <returns></returns>
         Task<BusinessLogicResult<List<CustomerSearchPagingModel>>> GetAllCustomerWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
+
+        Task<Customer> GetByUserNameAsync(string username);
     }
     public class CustomerService : ICustomerService
     {
@@ -122,7 +124,8 @@ namespace COF.BusinessLogic.Services
                     Address = model.Address,
                     PhoneNumber = model.PhoneNumber,
                     PartnerId = partnerId,
-                    BonusLevelId = firstLevel.Id
+                    BonusLevelId = firstLevel.Id,
+                    UserName = model.Username
                 };
                 var duplicatedUser = _customerRepository.GetByFilter((x) => x.PhoneNumber == customer.PhoneNumber);
                 if (duplicatedUser.Any())
@@ -180,6 +183,11 @@ namespace COF.BusinessLogic.Services
                 };
             }
 
+        }
+
+        public async Task<Customer> GetByUserNameAsync(string username)
+        {
+            return await _customerRepository.GetSingleAsync(x => x.UserName == username);
         }
 
         #endregion

@@ -165,6 +165,7 @@
     <Compile Include="Services\Email\EmailService.cs" />
     <Compile Include="Services\Export\ExcelExportService.cs" />
     <Compile Include="Services\Hangfire\HangfireService.cs" />
+    <Compile Include="Services\Hangfire\TaskService.cs" />
     <Compile Include="Services\OrderSerivce.cs" />
     <Compile Include="Services\PartnerService.cs" />
     <Compile Include="Services\ProductCategoryService.cs" />
