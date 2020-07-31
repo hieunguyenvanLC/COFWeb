@@ -257,7 +257,7 @@
 
         private void CreateRoles(EFContext context)
         {
-            if (context.Roles.Any())
+            if (!context.Roles.Any())
             {
                 var allRoles = context.Set<AppRole>().ToList();
                 var roles = new List<AppRole>

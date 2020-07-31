@@ -87,8 +87,11 @@
                             <thead>
                                 <tr style="background-color:#ddd;text-align:center;vertical-align: middle;">
                                     @*<td><b>Mã khách hàng</b></td>*@
+                                    <td><b>KiotViet Code</b></td>
                                     <td><b>Tên khách hàng</b></td>
+
                                     <td><b>Số điện thoại</b></td>
+                                    <td><b>Ngày sinh</b></td>
                                     <td><b>Địa chỉ</b></td>
                                     <td><b>Tổng số điểm hiện tại</b></td>
                                     <td><b>Level</b></td>
@@ -112,9 +115,10 @@
 
 <script id="data-template" type="x-tmpl-mustache">
     <tr style="text-align:center;vertical-align: middle;">
-        @*<td>{{CustomerCode}}</td>*@
+        <td>{{CustomerCode}}</td>
         <td>{{FullName}}</td>
         <td>{{PhoneNumber}}</td>
+        <td>{{BirthDay}}</td>
         <td>{{Address}}</td>
         <td>{{ActiveBonusPoint}}</td>
         <td>{{CustomerLevel}}</td>
@@ -218,6 +222,7 @@
                         var template = $('#data-template').html();
                         $.each(data.Items, function (i, item) {
                             html += Mustache.render(template, {
+                                CustomerCode : item.Code,
                                 Id: item.Id,
                                 FullName: item.FullName,
                                 PhoneNumber: item.PhoneNumber,
@@ -225,7 +230,9 @@
                                 CreatedBy: item.StaffName,
                                 JoinDate: item.JoinDate,
                                 ActiveBonusPoint: commonController.formatMoney(item.ActiveBonusPoint),
-                                CustomerLevel : item.CustomerLevel                        
+                                CustomerLevel: item.CustomerLevel,
+                                BirthDay: item.BirthDateToString,
+                                ToDayIsBirhDay: item.ToDayIsBirhDay
     });
 
                         });

@@ -208,6 +208,14 @@
     <Compile Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.Designer.cs">
       <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007310847099_AddCustomerCode.cs" />
+    <Compile Include="Migrations\202007310847099_AddCustomerCode.Designer.cs">
+      <DependentUpon>202007310847099_AddCustomerCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007311129477_AddCustomerBirthDay.cs" />
+    <Compile Include="Migrations\202007311129477_AddCustomerBirthDay.Designer.cs">
+      <DependentUpon>202007311129477_AddCustomerBirthDay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -365,6 +373,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912071636434_UpdatePrecisionForUnitCost.resx">
       <DependentUpon>201912071636434_UpdatePrecisionForUnitCost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007310847099_AddCustomerCode.resx">
+      <DependentUpon>202007310847099_AddCustomerCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007311129477_AddCustomerBirthDay.resx">
+      <DependentUpon>202007311129477_AddCustomerBirthDay.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

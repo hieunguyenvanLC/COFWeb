@@ -24,6 +24,7 @@ namespace COF.API.Models.Customer
         [Required]
         public  string Password { get; set; }
         public int PartnerId { get; set; }
+        public string Code { get; set; }
     }
 
     public class CustomerCreateResultModel

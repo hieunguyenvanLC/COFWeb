@@ -22,7 +22,9 @@ DECLARE @query NVARCHAR(MAX) ='
 	customer.Address,
 	customer.CreatedOnUtc as CreatedDate,
 	customer.ActiveBonusPoint,
-	level.Name as CustomerLevel
+	level.Name as CustomerLevel,
+	customer.Code,
+	customer.BirthDate
 	from [Customer] customer
 	join [BonusLevel] level on customer.BonusLevelId = level.Id
 			WHERE 1=1 '
@@ -31,6 +33,7 @@ DECLARE @query NVARCHAR(MAX) ='
 	Begin
 	set @query = @query + ' and ( customer.Fullname like N''%' + @keyword  + '%'' or
 	customer.PhoneNumber like ''%' + @keyword  + '%'' or 	
+	customer.Code like ''%' + @keyword  + '%'' or 	
 	customer.Address like N''%' + @keyword  + '%'')
 	' 
 	
@@ -49,7 +52,9 @@ DECLARE @query NVARCHAR(MAX) ='
 	    null Address,
 	    null CreatedDate,
 	    0 ActiveBonusPoint,
-	    null  CustomerLevel
+	    null  CustomerLevel,
+		null Code,
+		null BirthDate
 	from paging p
 
 	union all

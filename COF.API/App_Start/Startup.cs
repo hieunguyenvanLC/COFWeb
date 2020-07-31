@@ -42,16 +42,17 @@ namespace COF.API.App_Start
 
             string schemaName = "assessment_hf";
             string connectionString = "HangFireConnection";
-            UseSqlServer(app, connectionString, schemaName);
+            UseSqlServer(container, app, connectionString, schemaName);
             UseDashboard(app, connectionString, schemaName);
         }
-        private static void UseSqlServer(IAppBuilder app, string connectionString, string schemaName)
+        private static void UseSqlServer(IContainer container,IAppBuilder app, string connectionString, string schemaName)
         {
             var storageOptions = new SqlServerStorageOptions
             {
                 SchemaName = schemaName
             };
-            Hangfire.GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString, storageOptions);
+            Hangfire.GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString, storageOptions)
+                .UseAutofacActivator(container);
             app.UseHangfireServer();
         }
 

@@ -30,30 +30,30 @@ namespace COF.API.Ioc
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterType<RoleStore<AppRole>>().As<IRoleStore<AppRole, string>>().InstancePerRequest();
+            builder.RegisterType<RoleStore<AppRole>>().As<IRoleStore<AppRole, string>>().InstancePerLifetimeScope();
             //Asp.net Identity
-            builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerRequest();
-            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
-            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
-            builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
-            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();
-            builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerRequest();
-            builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
-            builder.RegisterType<EFContext>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerLifetimeScope();
+            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerLifetimeScope();
+            builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerLifetimeScope();
+            builder.RegisterType<EFTransaction>().As<ITransaction>().InstancePerLifetimeScope();
+            builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+            builder.RegisterType<EFContext>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterModule(new AutofacWebTypesModule());
-            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerRequest();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerLifetimeScope();
 
 
             // Repositories
             builder.RegisterAssemblyTypes(typeof(ProductRepository).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
-                .AsImplementedInterfaces().InstancePerRequest();
+                .AsImplementedInterfaces().SingleInstance().InstancePerLifetimeScope();
 
             // Services
 
             builder.RegisterAssemblyTypes(typeof(ShopService).Assembly)
                .Where(t => t.Name.EndsWith("Service"))
-               .AsImplementedInterfaces().InstancePerRequest();
+               .AsImplementedInterfaces().SingleInstance().InstancePerLifetimeScope();
 
 
             return builder;

@@ -82,11 +82,10 @@ namespace COF.API.Api
                     Address = model.Address,
                     FullName = model.FullName,
                     EmailConfirmed = true,
-                    Email = model.Email,
+                    Email = !string.IsNullOrEmpty(model.Email) ? model.Email : $"{model.PhoneNumber}@gmail.com",
                     BirthDay = DateTime.Now,
                     Avatar = "",
                     Gender = true,
-
                 };
                 
 
@@ -104,7 +103,8 @@ namespace COF.API.Api
                         FullName = model.FullName,
                         Gender = model.Gender,
                         PhoneNumber = model.PhoneNumber,
-                        Username = user.UserName
+                        Username = user.UserName,
+                        Code = model.Code
                     };
 
                     var logicResult = await _customerService.CreateAsync(model.PartnerId, createModel);

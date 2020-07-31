@@ -1,9 +1,8 @@
-﻿using COF.BusinessLogic.Services.Email;
-using COF.BusinessLogic.Services.Reports;
-using SendGrid.Helpers.Mail;
+﻿using COF.BusinessLogic.Models.KiotViet.Common;
+using COF.BusinessLogic.Models.KiotViet.Customers;
+using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,47 +10,78 @@ namespace COF.BusinessLogic.Services.Hangfire
 {
     public interface ITaskService
     {
-        Task RunExportDailyRevenue();
+        Task ImportCustomerData();
     }
     public class TaskService : ITaskService
-    {
-        private readonly IReportService _reportService;
-        private readonly IEmailService _emailService;
-
+    {   
+        private readonly ICustomerService _customerService;
         public TaskService(
-            IReportService reportService,
-            IEmailService emailService
-        )
+            //ICustomerService customerService
+            )
         {
-            _reportService = reportService;
-            _emailService = emailService;
+           // _customerService = customerService;
         }
 
-        public async Task RunExportDailyRevenue()
+        public async Task ImportCustomerData()
         {
-            var emails = ConfigurationManager.AppSettings["DailyOrderReportEmails"].Split(',').ToList();
-            var fileName = $"Danh_sach_hoa_don_{DateTime.UtcNow.AddHours(7).ToString("dd-MM-yyyy")}.xlsx";
-            var fileContent = _reportService.ExportDailyOrderReport(fileName);
-            var request = new SendEmailRequest
+            var canBeFetch = true;
+            var pageSize = 2;
+            var currentItem = 0;
+            var listData = new List<KiotVietCustomerModel>();
+            //var customers = await _customerService.GetAllAsync();
+            //var customerCodes = customers.Select(x => x.Code).ToList();
+            while (canBeFetch)
             {
-                Subject = $"Doanh thu {DateTime.UtcNow.AddHours(7).ToString("dd-MM-yyyy")}",
-
-                Recipients = emails.Select(x => new EmailRecipient()
+                var client = new RestClient("https://public.kiotapi.com");
+                var access_token = @"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1OTYxNzA0NDEsImV4cCI6MTU5NjI1Njg0MSwiaXNzIjoiaHR0cDovL2lkLmtpb3R2aWV0LnZuIiwiYXVkIjpbImh0dHA6Ly9pZC5raW90dmlldC52bi9yZXNvdXJjZXMiLCJLaW90VmlldC5BcGkuUHVibGljIl0sImNsaWVudF9pZCI6IjJmYThlMDY3LTViMjYtNGIzMC1iNDJhLTBjMDE0YjJhM2I2YyIsImNsaWVudF9SZXRhaWxlckNvZGUiOiJob2FuZ3BoYW4xMjMiLCJjbGllbnRfUmV0YWlsZXJJZCI6IjU0ODk4NyIsImNsaWVudF9Vc2VySWQiOiI4MzE5OCIsImNsaWVudF9TZW5zaXRpdmVBcGkiOiJUcnVlIiwic2NvcGUiOlsiUHVibGljQXBpLkFjY2VzcyJdfQ.bfHz9ZrwrG5GEzKYp0hjRSHOhJWGIIlagRLw-Pkujidvy5c43SuhGK7Sw_3ebkZoFI02BRFheHFIyHAZUjLbehpFD63RjAxl0S8icmGO2jzoNKGNI8XwYPfZ256rC1TN9hUCfWuu3Bw6luQXpkJbbmam1G1V3R-sUWJGJeBx44NNBq-nPXg_9-KfZmTrO__BniJf1bWvRb4faAQ1q3J4pS4NNX8B_2cM14K2q7RSsvmQitpWSw0WvFh_5YbFFWqFZEYQ3qk6GjZBB9v1BWL790QFupbQxMORpJlizrQfgQTxwUApAozbj9YcT-PHCD8jZneTLrCKDZh2_78-Oio9Lg";
+                var request = new RestRequest("customers", DataFormat.Json);
+                request.AddParameter("Authorization", $"Bearer {access_token}", ParameterType.HttpHeader);
+                request.AddHeader("Accept", "application/json");
+                request.AddHeader("Retailer", "hoangphan123");
+                request.Parameters.Add(new Parameter("pageSize", pageSize, ParameterType.QueryString));
+                request.Parameters.Add(new Parameter("currentItem", currentItem, ParameterType.QueryString));
+                var customerData = await client.GetAsync<PagingModel<KiotVietCustomerModel>>(request);
+                listData.AddRange(customerData.Data);
+                if (customerData.Data.Count == 0)
                 {
-                    Email = x
-                }).ToList(),
-                Body = $"Doanh thu {DateTime.UtcNow.AddHours(7).ToString("dd-MM-yyyy")}"
-
-            };
-            request.Attachments = new List<Attachment>
-            {
-                new Attachment()
-                {
-                    Content = System.Convert.ToBase64String(fileContent),
-                    Filename = fileName
+                    break;
                 }
-            };
-            await _emailService.SendEmailAsync(request); ;
+                currentItem += customerData.Data.Count;
+                if (currentItem > customerData.Total)
+                {
+                    break;
+                }
+                else if (currentItem + 1 == customerData.Total)
+                {
+                    pageSize = 1;
+                }
+            }
+
+            //var createData = listData.Where(x => !customerCodes.Contains(x.Code));
+
+            var createData = listData.ToList();
+            foreach (var data in createData.OrderByDescending(x => x.CreatedDate))
+            {
+                var client = new RestClient("http://localhost:10000");
+                var request = new RestRequest("/api/account/register", DataFormat.Json)
+                    .AddJsonBody(new CustomerRegisterModel
+                    {
+                        Email = data.Email,
+                        FullName = data.Name,
+                        PhoneNumber = data.ContactNumber,
+                        Address = data.AddressDatail,
+                        Gender = data.Gender,
+                        Password = "User@12345",
+                        UserName = data.ContactNumber,
+                        Code = data.Code,
+                        BirthDate = data.BirthDate
+                    });
+                var response = await client.ExecutePostAsync(request);
+                if (!response.IsSuccessful)
+                {
+                    Console.WriteLine("Error");
+                }
+            }
         }
     }
 }

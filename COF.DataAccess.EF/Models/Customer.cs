@@ -8,6 +8,7 @@ namespace COF.DataAccess.EF.Models
 {
     public class Customer : BaseEntity, IPartner
     {
+        public string Code { get; set; }
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
@@ -21,6 +22,6 @@ namespace COF.DataAccess.EF.Models
         public decimal ActiveBonusPoint { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<BonusPointHistory> BonusPointHistories { get; set; }
-
+        public DateTime? BirthDate { get; set; }
     }
 }

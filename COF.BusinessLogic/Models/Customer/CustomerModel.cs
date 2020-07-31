@@ -23,6 +23,8 @@ namespace COF.BusinessLogic.Models.Customer
         public bool? Gender { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
+        public string Code { get; set; }
+        public DateTime? BirthDate { get; set; }
     }
     public class CustomerSearchPagingModel
     {
@@ -35,6 +37,10 @@ namespace COF.BusinessLogic.Models.Customer
         public string JoinDate => CreatedDate.HasValue ? CreatedDate.Value.ToString("dd-MM-yyyy HH:mm") : "";
         public string CustomerLevel { get; set; }
         public decimal ActiveBonusPoint { get; set; }
+        public string Code { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public string BirthDateToString => BirthDate.HasValue ? BirthDate.Value.ToString("dd-MM-yyyy") : "";
+        public bool ToDayIsBirhDay => BirthDate.HasValue && BirthDate.Value.Month == DateTime.Now.Month && BirthDate.Value.Day == DateTime.Now.Day;
         public long? RowCounts { get; set; }
     }
 }

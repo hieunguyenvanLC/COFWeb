@@ -7,8 +7,6 @@ using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace COF.BusinessLogic.Services
@@ -30,7 +28,7 @@ namespace COF.BusinessLogic.Services
         Task<CustomerModel> GetByIdAsync(int id);
 
         Task<BusinessLogicResult<Customer>> CreateAsync(int partnerId, CustomerCreateModel model);
-        
+
         /// <summary>
         /// Gets the total customer.
         /// </summary>
@@ -49,6 +47,10 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<CustomerSearchPagingModel>>> GetAllCustomerWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
 
         Task<Customer> GetByUserNameAsync(string username);
+
+        Task<List<Customer>> GetAllAsync();
+
+        void Update(Customer customer);
     }
     public class CustomerService : ICustomerService
     {
@@ -125,7 +127,9 @@ namespace COF.BusinessLogic.Services
                     PhoneNumber = model.PhoneNumber,
                     PartnerId = partnerId,
                     BonusLevelId = firstLevel.Id,
-                    UserName = model.Username
+                    UserName = model.Username,
+                    Code = model.Code,
+                    BirthDate = model.BirthDate
                 };
                 var duplicatedUser = _customerRepository.GetByFilter((x) => x.PhoneNumber == customer.PhoneNumber);
                 if (duplicatedUser.Any())
@@ -188,6 +192,17 @@ namespace COF.BusinessLogic.Services
         public async Task<Customer> GetByUserNameAsync(string username)
         {
             return await _customerRepository.GetSingleAsync(x => x.UserName == username);
+        }
+
+        public async Task<List<Customer>> GetAllAsync()
+        {
+            return await _customerRepository.GetAllAsync();
+        }
+
+        public void Update(Customer customer)
+        {
+            _customerRepository.Update(customer);
+             _unitOfWork.SaveChanges();
         }
 
         #endregion
