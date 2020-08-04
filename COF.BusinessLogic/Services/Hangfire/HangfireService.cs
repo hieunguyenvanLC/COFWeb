@@ -29,8 +29,7 @@ namespace COF.BusinessLogic.Services.Hangfire
             if (isReportServer)
             {
                 RecurringJob.RemoveIfExists(ScheduleTaskName.DailyOrderReport);
-                RecurringJob.AddOrUpdate<ITaskService>(ScheduleTaskName.DailyOrderReport, p => p.ImportCustomerData(), Cron.Minutely);
-                //BackgroundJob.Enqueue<ITaskService>(x => x.ImportCustomerData());
+                RecurringJob.AddOrUpdate<ITaskService>(ScheduleTaskName.DailyOrderReport, p => p.ImportCustomerData(), Cron.MinuteInterval(10));
 
                 var tasks = _scheduleTaskService.GetAll();
                 //foreach (var task in tasks)

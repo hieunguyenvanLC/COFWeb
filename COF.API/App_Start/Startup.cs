@@ -44,6 +44,11 @@ namespace COF.API.App_Start
             string connectionString = "HangFireConnection";
             UseSqlServer(container, app, connectionString, schemaName);
             UseDashboard(app, connectionString, schemaName);
+
+            if (DependencyResolver.Current.GetService(typeof(IHangfireService)) is IHangfireService hangfireService)
+            {
+                hangfireService.Start();
+            }
         }
         private static void UseSqlServer(IContainer container,IAppBuilder app, string connectionString, string schemaName)
         {

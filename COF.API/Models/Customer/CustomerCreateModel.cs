@@ -25,6 +25,7 @@ namespace COF.API.Models.Customer
         public  string Password { get; set; }
         public int PartnerId { get; set; }
         public string Code { get; set; }
+        public DateTime? BirthDate { get; set; }
     }
 
     public class CustomerCreateResultModel

@@ -86,6 +86,7 @@ namespace COF.API.Api
                     BirthDay = DateTime.Now,
                     Avatar = "",
                     Gender = true,
+                    
                 };
                 
 
@@ -104,7 +105,8 @@ namespace COF.API.Api
                         Gender = model.Gender,
                         PhoneNumber = model.PhoneNumber,
                         Username = user.UserName,
-                        Code = model.Code
+                        Code = model.Code,
+                        BirthDate = model.BirthDate
                     };
 
                     var logicResult = await _customerService.CreateAsync(model.PartnerId, createModel);
