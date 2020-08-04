@@ -58,6 +58,21 @@ namespace COF.API.Api
             if (result is null) return ErrorResult("Thông tin khách hàng không tồn tại");
             return SuccessResult(result);
         }
+        
+        [Route("info")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetCustomerInfo()
+        {
+            if (!User.IsInRole("Customer"))
+            {
+                return ErrorResult("User không có role Khách hàng.");
+            }
+
+            var user = await _userService.GetByIdAsync(User.Identity.GetUserId());
+            var result = await _customerService.GetByUserName(user.UserName);
+            if (result is null) return ErrorResult("Thông tin khách hàng không tồn tại");
+            return SuccessResult(result);
+        }
 
         [Route("create")]
         [HttpPost]

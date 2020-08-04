@@ -49,6 +49,8 @@ namespace COF.BusinessLogic.Services
         Task<BusinessLogicResult<List<CustomerSearchPagingModel>>> GetAllCustomerWithPaging(int partnerId, int pageIndex, int pageSize, string keyword);
 
         Task<Customer> GetByUserNameAsync(string username);
+        Task<CustomerModel> GetByUserName(string username);
+
     }
     public class CustomerService : ICustomerService
     {
@@ -188,6 +190,25 @@ namespace COF.BusinessLogic.Services
         public async Task<Customer> GetByUserNameAsync(string username)
         {
             return await _customerRepository.GetSingleAsync(x => x.UserName == username);
+        }
+
+        public async Task<CustomerModel> GetByUserName(string username)
+        {
+            CustomerModel resut = null;
+            var customer = await GetByUserNameAsync(username);
+            if (customer != null)
+            {
+                resut = new CustomerModel
+                {
+                    Id = customer.Id,
+                    FullName = customer.FullName,
+                    PhoneNumber = customer.PhoneNumber,
+                    ActiveBonusPoint = customer.ActiveBonusPoint,
+                    Address = customer.Address,
+                    BonusLevel = customer.BonusLevel.Name
+                };
+            }
+            return resut;
         }
 
         #endregion
