@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace COF.API
@@ -11,7 +7,6 @@ namespace COF.API
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
-
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.MapMvcAttributeRoutes();
             routes.MapRoute(
@@ -20,8 +15,6 @@ namespace COF.API
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
                 namespaces: new string[] { "COF.API.Controllers" }
             );
-
-            
         }
     }
 }

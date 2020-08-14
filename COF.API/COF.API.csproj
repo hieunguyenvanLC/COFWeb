@@ -310,6 +310,13 @@
     <Compile Include="Api\Core\WorkContext.cs" />
     <Compile Include="Api\CustomerController.cs" />
     <Compile Include="Api\ExportController.cs" />
+    <Compile Include="AutofacModules\ApplicationModule.cs" />
+    <Compile Include="AutofacModules\COFApplicationsModule.cs" />
+    <Compile Include="AutofacModules\EfModule.cs" />
+    <Compile Include="AutofacModules\HangfireModule.cs" />
+    <Compile Include="AutofacModules\IdentityModule.cs" />
+    <Compile Include="AutofacModules\ServiceModule.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\RawMaterialController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
@@ -340,7 +347,6 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ShopController.cs" />
     <Compile Include="Filter\Api\ValidateRolePermissionAttribute.cs" />
-    <Compile Include="Ioc\AutofacWebapiConfig.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

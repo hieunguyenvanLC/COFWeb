@@ -16,26 +16,21 @@ namespace COF.API.Controllers
     [Authorize(Roles = "ShopManager,PartnerAdmin")]
     public class CategoryController : MvcControllerBase
     {
-
         #region fields 
         private readonly IProductCategoryService _categoryService;
         private readonly IUserService _userService;
         private readonly IShopService _shopService;
-        private readonly ISizeService _sizeService;
         #endregion
-
 
         #region ctor
         public CategoryController(
-            IProductCategoryService categoryService,
-            IUserService userService,
-            IShopService shopService,
-            ISizeService sizeService)
+            IProductCategoryService categoryService, 
+            IUserService userService, 
+            IShopService shopService)
         {
             _categoryService = categoryService;
             _userService = userService;
             _shopService = shopService;
-            _sizeService = sizeService;
         }
 
         #endregion

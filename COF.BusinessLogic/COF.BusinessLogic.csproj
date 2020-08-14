@@ -177,7 +177,6 @@
     <Compile Include="Services\CustomerService.cs" />
     <Compile Include="Services\ProductService.cs" />
     <Compile Include="Services\ShopService.cs" />
-    <Compile Include="Services\UserRoleSerivce.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Settings\BusinessLogicResult.cs" />
     <Compile Include="Settings\IWorkContext.cs" />

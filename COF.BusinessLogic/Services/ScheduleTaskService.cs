@@ -3,9 +3,6 @@ using COF.DataAccess.EF.Models;
 using COF.DataAccess.EF.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace COF.BusinessLogic.Services
 {

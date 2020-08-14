@@ -16,6 +16,7 @@ namespace COF.API.Providers
         public AuthorizationServerProvider()
         {
         }
+
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             context.Validated();
@@ -38,6 +39,7 @@ namespace COF.API.Providers
                 context.Rejected();
                 return;
             }
+
             if (user != null)
             {
                 

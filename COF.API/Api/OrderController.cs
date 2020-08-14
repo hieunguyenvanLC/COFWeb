@@ -50,7 +50,7 @@ namespace COF.API.Api
                     return ErrorResult(ModelStateErrorMessage());
                 }
                
-                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
+                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model, User.Identity.GetUserId());
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
@@ -82,7 +82,7 @@ namespace COF.API.Api
                     return ErrorResult("OrderCode da ton tai.");
                 }
 
-                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
+                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model, User.Identity.GetUserId());
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);
@@ -166,7 +166,7 @@ namespace COF.API.Api
                     model.DeliveryPhone = customer.PhoneNumber;
                 }
                 
-                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model);
+                var logicResult = await _orderService.CreateOrderAsync(model.StoreId, model, User.Identity.GetUserId());
                 if (logicResult.Validations != null)
                 {
                     return ErrorResult(logicResult.Validations.Errors[0].ErrorMessage);

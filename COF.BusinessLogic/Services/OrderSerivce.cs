@@ -18,7 +18,7 @@ namespace COF.BusinessLogic.Services
 {
     public interface IOrderService
     {
-        Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model);
+        Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model, string createdBy);
         Task<BusinessLogicResult<List<OrderModel>>> GetAllOrderWithPaging(int shopId, int pageIndex, int pageSize, string keyword);
         BusinessLogicResult<PartnerDailyOrderReport> GetDailyOrders(int partnerId);
         BusinessLogicResult<List<Order>> GetOrdersInMonth(int partnerId);
@@ -44,7 +44,6 @@ namespace COF.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IShopRepository _shopRepository;
         private readonly IBonusLevelRepository _bonusLevelRepository;
-        private readonly IWorkContext _workContext;
         private readonly IProductSizeRepository _productSizeRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IPartnerService _partnerService;
@@ -52,6 +51,7 @@ namespace COF.BusinessLogic.Services
         private readonly IRawMaterialRepository _rawMaterialRepository;
         private readonly IProductSizeRawMaterialRepository _productSizeRawMaterialRepository;
         private readonly IRawMaterialHistoryRepository _materialHistoryRepository;
+        private readonly IUserService _userService;
 
         #endregion
 
@@ -61,7 +61,6 @@ namespace COF.BusinessLogic.Services
             IOrderRepository orderRepository,
             IUnitOfWork unitOfWork,
             IShopRepository shopRepository,
-            IWorkContext workContext,
             IProductSizeRepository productSizeRepository,
             ICustomerRepository customerRepository,
             IPartnerService partnerService,
@@ -69,14 +68,13 @@ namespace COF.BusinessLogic.Services
             IBonusPointHistoryRepository bonusPointHistoryRepository,
             IRawMaterialRepository rawMaterialRepository,
             IProductSizeRawMaterialRepository productSizeRawMaterialRepository,
-            IRawMaterialHistoryRepository materialHistoryRepository
-
+            IRawMaterialHistoryRepository materialHistoryRepository,
+            IUserService userService
         )
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _shopRepository = shopRepository;
-            _workContext = workContext;
             _productSizeRepository = productSizeRepository;
             _customerRepository = customerRepository;
             _partnerService = partnerService;
@@ -85,6 +83,7 @@ namespace COF.BusinessLogic.Services
             _rawMaterialRepository = rawMaterialRepository;
             _productSizeRawMaterialRepository = productSizeRawMaterialRepository;
             _materialHistoryRepository = materialHistoryRepository;
+            _userService = userService;
         }
 
 
@@ -92,10 +91,11 @@ namespace COF.BusinessLogic.Services
 
         #region public methods
 
-        public async Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model)
+        public async Task<BusinessLogicResult<Order>> CreateOrderAsync(int shopId, OrderCreateModel model, string createdBy)
         {
             try
             {
+                var currentUser = await _userService.GetByIdAsync(createdBy);
                 var shop = await _shopRepository.GetByIdAsync(shopId);
                 if (shop is null)
                 {
@@ -146,7 +146,7 @@ namespace COF.BusinessLogic.Services
                     {
                         CustomerId = model.CustomerId,
                         PartnerId = shop.PartnerId,
-                        UserId = _workContext.CurrentUserId,
+                        UserId = createdBy,
                         ShopId = shop.Id,
                         OrderCode = model.OrderCode,
                         TotalAmount = model.TotalAmount,
@@ -206,7 +206,7 @@ namespace COF.BusinessLogic.Services
                             ProductSizeId = productSize.Id,
                             Quantity = item.Quantity,
                             UnitPrice = productSize.Cost,
-                            CreatedBy = _workContext.CurrentUser.FullName,
+                            CreatedBy = currentUser.FullName,
                             CategoryId = productSize.Product.CategoryId,
                             Description = ""
                         });
@@ -220,7 +220,7 @@ namespace COF.BusinessLogic.Services
                         lowestUnit.Description = "Sản phẩm thuộc diện mua 1 tặng 1";
                     }
 
-                    _orderRepository.Add(order, _workContext.CurrentUser.FullName);
+                    _orderRepository.Add(order, currentUser.FullName);
                 }
                 else
                 {
@@ -229,7 +229,7 @@ namespace COF.BusinessLogic.Services
                         order.OrderStatus == OrderStatus.PreCancel)
                     {
                         order.CancelDate = DateTimeHelper.CurentVnTime;
-                        order.CancelBy = _workContext.CurrentUser.FullName;
+                        order.CancelBy = currentUser.FullName;
                     }
 
                     order.OrderStatus = model.OrderStatus;

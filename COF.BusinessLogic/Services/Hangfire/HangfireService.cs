@@ -1,12 +1,5 @@
-﻿using COF.BusinessLogic.Services.Reports;
-using COF.DataAccess.EF.Models;
+﻿using COF.DataAccess.EF.Models;
 using Hangfire;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace COF.BusinessLogic.Services.Hangfire
 {
     public interface IHangfireService
@@ -35,7 +28,7 @@ namespace COF.BusinessLogic.Services.Hangfire
             var isReportServer = true;
             if (isReportServer)
             {
-                //RecurringJob.AddOrUpdate<ITaskService>(ScheduleTaskName.DailyOrderReport, p => p.RunExportDailyRevenue(), Cron.Minutely);
+                RecurringJob.AddOrUpdate<ITaskService>(ScheduleTaskName.DailyOrderReport, p => p.RunExportDailyRevenue(), Cron.Minutely);
                
                 var tasks = _scheduleTaskService.GetAll();
                 //foreach (var task in tasks)

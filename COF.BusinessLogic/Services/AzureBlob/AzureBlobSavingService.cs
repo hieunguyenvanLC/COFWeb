@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace COF.BusinessLogic.Services.AzureBlob
@@ -21,7 +19,7 @@ namespace COF.BusinessLogic.Services.AzureBlob
 
         Task DeleteFilesAsync(CloudBlobContainer cloudBlobContainer, IEnumerable<string> filenames);
     }
-    class AzureBlobSavingService : IAzureBlobSavingService
+    public class AzureBlobSavingService : IAzureBlobSavingService
     {
         public string SavingFileToAzureBlob(byte[] bytes, string name, string contentType, CloudBlobContainer cloudBlobContainer)
         {
